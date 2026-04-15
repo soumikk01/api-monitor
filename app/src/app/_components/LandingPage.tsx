@@ -70,7 +70,10 @@ function useCounter(target: string, running: boolean) {
     if (!running) return;
     const numeric = parseFloat(target.replace(/[^0-9.]/g, ''));
     const suffix  = target.replace(/[0-9.]/g, '');
-    if (isNaN(numeric)) { setDisplay(target); return; }
+    if (isNaN(numeric)) { 
+      const t = setTimeout(() => setDisplay(target), 0); 
+      return () => clearTimeout(t); 
+    }
     const start = Date.now();
     const dur   = 1400;
     let raf: number;
@@ -348,14 +351,14 @@ export default function LandingPage() {
   const magToggle    = useMagnetic(0.35);
 
   // Scroll-reveal sections
-  const badge    = useInView(0.2);
-  const headline = useInView(0.2);
-  const sub      = useInView(0.2);
-  const ctas     = useInView(0.2);
-  const terminal = useInView(0.15);
-  const cards    = useInView(0.1);
-  const stats    = useInView(0.15);
-  const footer   = useInView(0.1);
+  const { ref: badgeRef, visible: badgeVisible } = useInView(0.2);
+  const { ref: headlineRef, visible: headlineVisible } = useInView(0.2);
+  const { ref: subRef, visible: subVisible } = useInView(0.2);
+  const { ref: ctasRef, visible: ctasVisible } = useInView(0.2);
+  const { ref: terminalRef, visible: terminalVisible } = useInView(0.15);
+  const { ref: cardsRef, visible: cardsVisible } = useInView(0.1);
+  const { ref: statsRef, visible: statsVisible } = useInView(0.15);
+  const { ref: footerRef, visible: footerVisible } = useInView(0.1);
 
   return (
     <div className={`${styles.page}${dark ? ' ' + styles.dark : ''}`}>
@@ -415,8 +418,8 @@ export default function LandingPage() {
 
         {/* Badge */}
         <div
-          ref={badge.ref as React.RefObject<HTMLDivElement>}
-          className={`${styles.socialProof} ${badge.visible ? styles.fadeUp : styles.hidden}`}
+          ref={badgeRef as React.RefObject<HTMLDivElement>}
+          className={`${styles.socialProof} ${badgeVisible ? styles.fadeUp : styles.hidden}`}
           style={{ animationDelay: '0.1s' }}
         >
           <div className={styles.avatarRow}>
@@ -434,8 +437,8 @@ export default function LandingPage() {
 
         {/* Headline */}
         <h1
-          ref={headline.ref as React.RefObject<HTMLHeadingElement>}
-          className={`${styles.headline} ${headline.visible ? styles.fadeUp : styles.hidden}`}
+          ref={headlineRef as React.RefObject<HTMLHeadingElement>}
+          className={`${styles.headline} ${headlineVisible ? styles.fadeUp : styles.hidden}`}
           style={{ animationDelay: '0.2s' }}
         >
           Monitor Your APIs<br />
@@ -444,8 +447,8 @@ export default function LandingPage() {
 
         {/* Sub */}
         <p
-          ref={sub.ref as React.RefObject<HTMLParagraphElement>}
-          className={`${styles.sub} ${sub.visible ? styles.fadeUp : styles.hidden}`}
+          ref={subRef as React.RefObject<HTMLParagraphElement>}
+          className={`${styles.sub} ${subVisible ? styles.fadeUp : styles.hidden}`}
           style={{ animationDelay: '0.3s' }}
         >
           Instantly track uptime, errors, and performance with a single command.<br />
@@ -454,8 +457,8 @@ export default function LandingPage() {
 
         {/* CTAs */}
         <div
-          ref={ctas.ref as React.RefObject<HTMLDivElement>}
-          className={`${styles.ctaRow} ${ctas.visible ? styles.fadeUp : styles.hidden}`}
+          ref={ctasRef as React.RefObject<HTMLDivElement>}
+          className={`${styles.ctaRow} ${ctasVisible ? styles.fadeUp : styles.hidden}`}
           style={{ animationDelay: '0.42s' }}
         >
           <Link
@@ -487,8 +490,8 @@ export default function LandingPage() {
         {/* Terminal */}
         <div
           id="terminal-demo"
-          ref={terminal.ref as React.RefObject<HTMLDivElement>}
-          className={`${styles.terminalWrap} ${terminal.visible ? styles.fadeUp : styles.hidden}`}
+          ref={terminalRef as React.RefObject<HTMLDivElement>}
+          className={`${styles.terminalWrap} ${terminalVisible ? styles.fadeUp : styles.hidden}`}
           style={{ animationDelay: '0.55s' }}
         >
           <TerminalDemo />
@@ -496,8 +499,8 @@ export default function LandingPage() {
 
         {/* Feature cards */}
         <div
-          ref={cards.ref as React.RefObject<HTMLDivElement>}
-          className={`${styles.cardRow} ${cards.visible ? styles.cardsIn : ''}`}
+          ref={cardsRef as React.RefObject<HTMLDivElement>}
+          className={`${styles.cardRow} ${cardsVisible ? styles.cardsIn : ''}`}
           id="features"
         >
           {[
@@ -524,8 +527,8 @@ export default function LandingPage() {
       {/* ── STATS ── */}
       <section
         id="stats"
-        ref={stats.ref as React.RefObject<HTMLElement>}
-        className={`${styles.statsBar} ${stats.visible ? styles.statsIn : ''}`}
+        ref={statsRef as React.RefObject<HTMLElement>}
+        className={`${styles.statsBar} ${statsVisible ? styles.statsIn : ''}`}
       >
         {[
           { v: '99.99%', l: 'Platform Uptime' },
@@ -537,8 +540,8 @@ export default function LandingPage() {
 
       {/* ── FOOTER ── */}
       <footer
-        ref={footer.ref as React.RefObject<HTMLElement>}
-        className={`${styles.footer} ${footer.visible ? styles.fadeUp : styles.hidden}`}
+        ref={footerRef as React.RefObject<HTMLElement>}
+        className={`${styles.footer} ${footerVisible ? styles.fadeUp : styles.hidden}`}
       >
         <span className={styles.footerCopy}>© 2025 NEURAL_ARCHITECT // CORE_KERNEL_STABLE</span>
         <div className={styles.footerLinks}>
