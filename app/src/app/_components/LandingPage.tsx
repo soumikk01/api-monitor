@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import styles from './LandingPage.module.scss';
 
-/* ── Spring Blossom Background ── */
+/* â”€â”€ Spring Blossom Background â”€â”€ */
 const SpringBackground = () => (
   <div className={styles.springBg} aria-hidden="true">
     {/* Branch top-left */}
@@ -133,7 +133,7 @@ const SpringBackground = () => (
   </div>
 );
 
-/* ── Soft pastel illustrations (style) + API monitoring content ── */
+/* â”€â”€ Soft pastel illustrations (style) + API monitoring content â”€â”€ */
 const IlluApiGlobe = () => (
   <svg viewBox="0 0 100 100" fill="none" className={styles.cardSvg}>
     {/* Cloud back */}
@@ -206,35 +206,13 @@ const IlluApiShield = () => (
   </svg>
 );
 
-const Doodles = () => (
-  <div className={styles.doodles}>
-    <svg className={styles.doodle1} viewBox="0 0 20 20" fill="none">
-      <path d="M10,2 Q12,8 18,10 Q12,12 10,18 Q8,12 2,10 Q8,8 10,2 Z" fill="#1A1A1A" opacity="0.8"/>
-    </svg>
-    <svg className={styles.doodle2} viewBox="0 0 20 20" fill="none">
-      <path d="M2,10 Q8,2 18,10" stroke="#1A1A1A" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
-    </svg>
-    <svg className={styles.doodle3} viewBox="0 0 20 20" fill="none">
-      <circle cx="5" cy="5" r="2" fill="#1A1A1A" opacity="0.6"/>
-      <circle cx="15" cy="15" r="1.5" fill="#1A1A1A" opacity="0.4"/>
-      <circle cx="4" cy="16" r="1" fill="#1A1A1A" opacity="0.5"/>
-    </svg>
-    <svg className={styles.doodle4} viewBox="0 0 30 30" fill="none">
-      <path d="M5,15 Q15,5 25,15 Q15,25 5,15" stroke="#1A1A1A" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.4"/>
-    </svg>
-    <svg className={styles.doodle5} viewBox="0 0 40 40" fill="none">
-      <path d="M10,10 C15,0 25,0 30,10 C40,15 40,25 30,30 C25,40 15,40 10,30 C0,25 0,15 10,10 Z" fill="#FFB38A" opacity="0.18"/>
-    </svg>
-  </div>
-);
-
 export default function LandingPage() {
   return (
     <div className={styles.page}>
       <div className={styles.noiseOverlay} />
       <SpringBackground />
 
-      {/* ── CENTERED PILL NAVBAR ── */}
+      {/* â”€â”€ CENTERED PILL NAVBAR â”€â”€ */}
       <header className={styles.navWrap}>
         <nav className={styles.nav}>
           <div className={styles.logo}>
@@ -255,7 +233,7 @@ export default function LandingPage() {
         </nav>
       </header>
 
-      {/* ── HERO ── */}
+      {/* â”€â”€ HERO â”€â”€ */}
       <main className={styles.hero}>
 
         {/* Status badge */}
@@ -273,13 +251,13 @@ export default function LandingPage() {
           <span className={styles.socialText}>Over <strong>1k</strong> engineers online</span>
         </div>
 
-        {/* Headline — original API monitoring copy */}
+        {/* Headline â€” original API monitoring copy */}
         <h1 className={styles.headline}>
           Monitor Your APIs<br />
           <span className={styles.hlAccent}>in Real-Time</span>
         </h1>
 
-        {/* Sub — original copy */}
+        {/* Sub â€” original copy */}
         <p className={styles.sub}>
           Instantly track uptime, errors, and performance with a single command.<br />
           The command center for high-performance engineering teams.
@@ -296,7 +274,7 @@ export default function LandingPage() {
           <button className={styles.ctaSecondary}>View Demo</button>
         </div>
 
-        {/* ── 3 ILLUSTRATION CARDS — original feature content ── */}
+        {/* â”€â”€ 3 ILLUSTRATION CARDS â€” original feature content â”€â”€ */}
         <div className={styles.cardRow} id="features">
 
           {/* Card 1: Auto API Detection (blue) */}
@@ -311,7 +289,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Card 2: Real-Time Monitoring (green) — raised center */}
+          {/* Card 2: Real-Time Monitoring (green) â€” raised center */}
           <div className={`${styles.card} ${styles.cardGreen} ${styles.cardCenter}`}>
             <div className={styles.cardVisual}>
               <IlluApiPulse />
@@ -338,7 +316,7 @@ export default function LandingPage() {
         </div>
       </main>
 
-      {/* ── STATS ROW ── */}
+      {/* â”€â”€ STATS ROW â”€â”€ */}
       <section id="stats" className={styles.statsBar}>
         {[
           { v: '99.99%', l: 'Platform Uptime' },
@@ -353,15 +331,16 @@ export default function LandingPage() {
         ))}
       </section>
 
-      {/* ── FOOTER ── */}
+      {/* â”€â”€ FOOTER â”€â”€ */}
       <footer className={styles.footer}>
-        <span className={styles.footerCopy}>© 2025 NEURAL_ARCHITECT // CORE_KERNEL_STABLE</span>
+        <span className={styles.footerCopy}>Â© 2025 NEURAL_ARCHITECT // CORE_KERNEL_STABLE</span>
         <div className={styles.footerLinks}>
           <a href="#" className={styles.footerLink}>Legal</a>
           <a href="#" className={styles.footerLink}>Docs</a>
-          <Link href="/login" className={styles.footerCta}>Initialize Session →</Link>
+          <Link href="/login" className={styles.footerCta}>Initialize Session â†’</Link>
         </div>
       </footer>
     </div>
   );
 }
+
