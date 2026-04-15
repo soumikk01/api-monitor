@@ -1,0 +1,493 @@
+// ══════════════════════════════════════════════
+//  DESIGN TOKENS (Soft Minimal SaaS)
+// ══════════════════════════════════════════════
+$bg-top:      #F7F3EA;
+$bg-bot:      #F1ECE2;
+
+$text-main:   #1A1A1A;
+$text-muted:  #6B6B6B;
+
+$blue-card:   #A8D8FF;
+$green-card:  #B8F2D6;
+$orange-card: #FFB38A;
+
+$white-glass: rgba(255, 255, 255, 0.7);
+
+$head:   'Inter', sans-serif; // Reverting to cleaner sans-serif for soft UI
+$body:   'Inter', sans-serif;
+$pill:   100px;
+$r-lg:   24px;
+$r-md:   16px;
+
+// ══════════════════════════════════════════════
+//  PAGE & BACKGROUND
+// ══════════════════════════════════════════════
+.page {
+  position: relative;
+  min-height: 100vh;
+  color: $text-main;
+  font-family: $body;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+// Subtle grain texture overlay
+.noiseOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.035;
+}
+
+// Spring blossom background
+@keyframes floatPetal {
+  0%   { transform: translateY(0)   rotate(0deg)   translateX(0); opacity: 0.7; }
+  25%  { transform: translateY(30px) rotate(40deg)  translateX(8px); }
+  50%  { transform: translateY(60px) rotate(80deg)  translateX(-6px); opacity: 0.5; }
+  75%  { transform: translateY(90px) rotate(120deg) translateX(10px); }
+  100% { transform: translateY(140px) rotate(160deg) translateX(0); opacity: 0; }
+}
+@keyframes gentleFloat {
+  0%,100% { transform: translateY(0px); }
+  50%      { transform: translateY(-10px); }
+}
+
+.springBg {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+// Blossom branches
+.branch1 {
+  position: absolute;
+  top: -10px;
+  left: -30px;
+  width: 380px;
+  opacity: 1;
+}
+.branch2 {
+  position: absolute;
+  top: -10px;
+  right: -30px;
+  width: 360px;
+  opacity: 0.9;
+}
+
+// Floating petals — scattered across background
+.petal {
+  position: absolute;
+  animation: floatPetal 8s ease-in infinite;
+}
+.petal1 { width: 18px; top: 12%; left: 18%; animation-duration: 9s; animation-delay: 0s; }
+.petal2 { width: 14px; top: 8%;  left: 55%; animation-duration: 7s; animation-delay: 1.5s; }
+.petal3 { width: 16px; top: 18%; left: 80%; animation-duration: 10s; animation-delay: 0.5s; }
+.petal4 { width: 12px; top: 5%;  left: 35%; animation-duration: 8s;  animation-delay: 2.5s; }
+.petal5 { width: 18px; top: 22%; left: 68%; animation-duration: 11s; animation-delay: 1s; }
+.petal6 { width: 13px; top: 10%; left: 42%; animation-duration: 9s;  animation-delay: 3s; }
+.petal7 { width: 15px; top: 15%; left: 8%;  animation-duration: 8s;  animation-delay: 0.8s; }
+
+// Sparkle stars — scattered naturally
+.sparkle { position: absolute; }
+.sp1 { width: 20px; top: 28%; left: 8%;  animation: gentleFloat 3.5s ease-in-out infinite; }
+.sp2 { width: 14px; top: 55%; left: 88%; animation: gentleFloat 4s   ease-in-out infinite 0.5s; }
+.sp3 { width: 18px; top: 70%; left: 12%; animation: gentleFloat 5s   ease-in-out infinite 1s; }
+.sp4 { width: 10px; top: 38%; left: 92%; animation: gentleFloat 3s   ease-in-out infinite 0.2s; }
+.sp5 { width: 16px; top: 48%; left: 5%;  animation: gentleFloat 4.5s ease-in-out infinite 1.5s; }
+.sp6 { width: 12px; top: 82%; left: 78%; animation: gentleFloat 3.8s ease-in-out infinite 0.7s; }
+
+// Standalone blossom flowers
+.bloom1 { position: absolute; width: 60px; top: 30%; right: 6%; animation: gentleFloat 5s ease-in-out infinite; }
+.bloom2 { position: absolute; width: 48px; top: 62%; left: 4%;  animation: gentleFloat 6s ease-in-out infinite 1s; }
+.bloom3 { position: absolute; width: 40px; top: 80%; right: 15%; animation: gentleFloat 4.5s ease-in-out infinite 0.5s; }
+
+// Curly vine doodles
+.curly1 { position: absolute; width: 80px; bottom: 12%; left: 10%; opacity: 1; transform: rotate(-10deg); }
+.curly2 { position: absolute; width: 65px; bottom: 25%; right: 8%; opacity: 1; transform: rotate(15deg); }
+
+// Dot clusters
+.dots1 { position: absolute; width: 70px; top: 45%; left: 5%; }
+.dots2 { position: absolute; width: 55px; bottom: 18%; right: 5%; }
+
+
+// ══════════════════════════════════════════════
+//  NAVBAR
+// ══════════════════════════════════════════════
+.navWrap {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding: 24px 1.5rem;
+  pointer-events: none;
+
+  > * { pointer-events: auto; }
+}
+
+.nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: 6px 6px 6px 20px;
+  height: 54px;
+  border-radius: $pill;
+  background: $white-glass;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-right: 18px;
+  flex-shrink: 0;
+}
+
+.logoMark {
+  font-family: $head;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: $text-main;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  @media (max-width: 720px) { display: none; }
+}
+
+.navLink {
+  padding: 8px 14px;
+  font-family: $body;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: $text-main;
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: $pill;
+  transition: background 0.2s;
+
+  &:hover { background: rgba(0,0,0,0.05); }
+}
+
+.navPill {
+  margin-left: 12px;
+  padding: 0 20px;
+  height: 40px;
+  border-radius: $pill;
+  background: $text-main;
+  color: #fff;
+  font-family: $body;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  }
+}
+
+// ══════════════════════════════════════════════
+//  HERO
+// ══════════════════════════════════════════════
+.hero {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 160px 1.5rem 80px;
+  width: 100%;
+  max-width: 1000px;
+}
+
+// Avatar Row
+.socialProof {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+.avatarRow {
+  display: flex;
+  > * + * { margin-left: -10px; }
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #F5F1E8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.socialText {
+  font-size: 0.85rem;
+  color: $text-muted;
+  font-weight: 500;
+
+  strong { color: $text-main; font-weight: 700; }
+}
+
+// Headline
+.headline {
+  font-family: $head;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: $text-main;
+  margin-bottom: 1.5rem;
+}
+
+.hlAccent {
+  font-weight: 600;
+  color: $text-muted;
+}
+
+.sub {
+  max-width: 580px;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: $text-muted;
+  margin-bottom: 2.5rem;
+}
+
+// CTAs
+.ctaRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 5rem;
+}
+
+.ctaPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.9rem 2.2rem;
+  border-radius: $pill;
+  background: $text-main;
+  color: #fff;
+  font-family: $body;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+}
+
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.9rem 2.2rem;
+  border-radius: $pill;
+  background: transparent;
+  border: 1px solid rgba(0,0,0,0.15);
+  color: $text-main;
+  font-family: $body;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+
+  &:hover {
+    background: rgba(0,0,0,0.03);
+    border-color: rgba(0,0,0,0.3);
+  }
+}
+
+// ══════════════════════════════════════════════
+//  CARDS ROW (Blue, Green, Orange)
+// ══════════════════════════════════════════════
+.cardRow {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; // Align bottom so heights map properly
+  gap: 24px;
+  width: 100%;
+  
+  @media (max-width: 800px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.card {
+  width: 260px;
+  height: auto;       // let content dictate height
+  border-radius: $r-lg;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+  transition: transform 0.3s ease;
+
+  &:hover { transform: translateY(-8px); }
+}
+
+// Raised centre card (middle one is taller)
+.cardCenter {
+  transform: translateY(-16px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.09);
+
+  &:hover { transform: translateY(-24px); }
+}
+
+.cardBlue { background: $blue-card; }
+.cardGreen { background: $green-card; }
+.cardOrange { background: $orange-card; }
+
+.cardVisual {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 2rem 1rem;
+}
+
+.cardBody {
+  padding: 0 1.4rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cardTag {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(26,26,26,0.45);
+}
+
+.cardTitle {
+  font-family: $head;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: $text-main;
+  margin: 2px 0;
+}
+
+.cardDesc {
+  font-size: 0.80rem;
+  line-height: 1.55;
+  color: $text-muted;
+}
+
+.cardSvg {
+  width: 100%;
+  height: auto;
+  max-width: 160px;
+  filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+}
+
+
+// ══════════════════════════════════════════════
+//  FOOTER
+// ══════════════════════════════════════════════
+.footer {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem 2rem;
+  border-top: 1px solid rgba(0,0,0,0.05);
+  margin-top: auto; // push to bottom
+}
+
+.footerCopy {
+  font-size: 0.85rem;
+  color: $text-muted;
+}
+
+.footerLinks {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footerLink {
+  font-size: 0.85rem;
+  color: $text-muted;
+  text-decoration: none;
+  &:hover { color: $text-main; }
+}
+
+.footerCta {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $text-main;
+  text-decoration: none;
+  &:hover { opacity: 0.7; }
+}
+
+// ══════════════════════════════════════════════
+//  STATS BAR
+// ══════════════════════════════════════════════
+.statsBar {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4rem;
+  padding: 4rem 2rem;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  background: rgba(255,255,255,0.35);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: default;
+
+  &:hover .statVal { opacity: 0.7; }
+}
+
+.statVal {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 800;
+  color: $text-main;
+  letter-spacing: -0.02em;
+  transition: opacity 0.2s;
+}
+
+.statLbl {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: $text-muted;
+}

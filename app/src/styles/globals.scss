@@ -1,6 +1,12 @@
 @import "tailwindcss";
 
+/* stylelint-disable-next-line at-rule-no-unknown */
 @theme {
+  /* ── Neon palette (new landing) ── */
+  --color-neon-cyan:   #00F0FF;
+  --color-neon-purple: #9D00FF;
+  --color-neon-pink:   #FF007A;
+
   --color-primary: #9cff93;
   --color-primary-dim: #00ec3b;
   --color-primary-fixed: #00fc40;
@@ -75,10 +81,12 @@
 }
 
 body {
-  background: #0e0e0e;
-  color: #ffffff;
+  background-color: #F5F1E8;
+  background-image: linear-gradient(to bottom, #F7F3EA, #F1ECE2);
+  color: #1A1A1A;
   font-family: "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
 .material-symbols-outlined {
