@@ -491,3 +491,135 @@ $r-md:   16px;
   text-transform: uppercase;
   color: $text-muted;
 }
+
+// ══════════════════════════════════════════════
+//  THEME TOGGLE BUTTON (moon / sun)
+// ══════════════════════════════════════════════
+.themeToggle {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  z-index: 200;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(26, 26, 26, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1A1A1A;
+  transition: background 0.25s ease, border-color 0.25s ease,
+              transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.13);
+  }
+
+  svg {
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s;
+  }
+}
+
+// ══════════════════════════════════════════════
+//  DARK MODE OVERRIDES (toggled via .dark class)
+// ══════════════════════════════════════════════
+$dm-bg:       #0E0E12;
+$dm-surface:  #16161C;
+$dm-text:     #EDEAE4;
+$dm-muted:    #888898;
+$dm-border:   rgba(255, 255, 255, 0.08);
+
+.dark {
+  // Page background
+  background: $dm-bg;
+  color: $dm-text;
+
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: $dm-bg;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  // Reduce cherry blossom brightness in dark mode
+  .springBg {
+    opacity: 0.25;
+  }
+
+  // Navbar
+  .nav {
+    background: rgba(22, 22, 28, 0.85);
+    border-color: $dm-border;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  }
+
+  .logoMark,
+  .navLink {
+    color: $dm-text;
+
+    &:hover { background: rgba(255, 255, 255, 0.06); }
+  }
+
+  .navPill {
+    background: $dm-text;
+    color: $dm-bg;
+  }
+
+  // Hero copy
+  .headline { color: $dm-text; }
+  .hlAccent { color: $dm-muted; }
+  .sub { color: $dm-muted; }
+
+  // Social proof
+  .socialText { color: $dm-muted; strong { color: $dm-text; } }
+  .avatar { border-color: $dm-surface; }
+
+  // Buttons
+  .ctaPrimary {
+    background: $dm-text;
+    color: $dm-bg;
+    &:hover { box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15); }
+  }
+  .ctaSecondary {
+    border-color: $dm-border;
+    color: $dm-text;
+    &:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255,255,255,0.2); }
+  }
+
+  // Cards
+  .cardBlue   { background: #1A2C3F; }
+  .cardGreen  { background: #1A2F27; }
+  .cardOrange { background: #2F2218; }
+  .cardTitle  { color: $dm-text; }
+  .cardDesc   { color: $dm-muted; }
+  .cardTag    { color: rgba(255, 255, 255, 0.35); }
+
+  // Stats bar
+  .statsBar {
+    background: rgba(255, 255, 255, 0.02);
+    border-top-color: $dm-border;
+  }
+  .statVal  { color: $dm-text; }
+  .statLbl  { color: $dm-muted; }
+
+  // Footer
+  .footer { border-top-color: $dm-border; }
+  .footerCopy, .footerLink { color: $dm-muted; &:hover { color: $dm-text; } }
+  .footerCta { color: $dm-text; }
+
+  // Theme toggle (dark mode state)
+  .themeToggle {
+    background: rgba(22, 22, 28, 0.85);
+    border-color: $dm-border;
+    color: #EDEAE4;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+}
