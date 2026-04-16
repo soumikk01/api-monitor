@@ -401,12 +401,12 @@ export default function LandingPage() {
             <span className={styles.logoMark}>N_ARCH</span>
           </div>
           <div className={styles.navLinks}>
-            {['Products','Solutions','Pricing','Company','Support'].map((link, i) => (
-              <a key={link} href={link === 'Solutions' ? '#features' : link === 'Pricing' ? '#stats' : '#'}
+            {['Products','Solutions','Pricing','Company','Support','Docs'].map((link, i) => (
+              <Link key={link} href={link === 'Docs' ? '/docs' : link === 'Solutions' ? '#features' : link === 'Pricing' ? '#stats' : '#'}
                 className={styles.navLink}
                 style={{ animationDelay: `${0.05 * i}s` }}>
                 {link}
-              </a>
+              </Link>
             ))}
           </div>
           <Link href="/login" className={styles.navPill}>Try for free</Link>

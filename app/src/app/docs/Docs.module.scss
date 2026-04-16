@@ -1,0 +1,334 @@
+// ══════════════════════════════════════════════
+//  DESIGN TOKENS — SaaS Enterprise Theme
+// ══════════════════════════════════════════════
+$bg-top:     #FAFAFA;
+$bg-bot:     #F3F4F6;
+$text-main:  #111827;
+$text-muted: #6B7280;
+$white-glass: rgba(255, 255, 255, 0.85);
+$accent:     #10B981; // Vibrant green
+
+// ══════════════════════════════════════════════
+//  GLOBAL WRAPPER
+// ══════════════════════════════════════════════
+.page {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(160deg, $bg-top 0%, $bg-bot 100%);
+  color: $text-main;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  display: flex;
+}
+
+// ══════════════════════════════════════════════
+//  SIDEBAR (Docs Navigation)
+// ══════════════════════════════════════════════
+.sidebar {
+  width: 280px;
+  height: 100vh;
+  background: $white-glass;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  padding: 2.5rem 1.5rem;
+  z-index: 10;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 3.5rem;
+  text-decoration: none;
+
+  .brandIcon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05));
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brandText {
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: $text-main;
+  }
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.navHead {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 1.5rem 0 0.5rem 0.5rem;
+}
+
+.navItem {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  color: $text-muted;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.03);
+    color: $text-main;
+  }
+
+  &.active {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border-left: 3px solid #10B981;
+    border-radius: 4px 8px 8px 4px;
+  }
+}
+
+// ══════════════════════════════════════════════
+//  SCROLLING CONTENT AREA
+// ══════════════════════════════════════════════
+.content {
+  flex: 1;
+  height: 100vh;
+  overflow-y: auto;
+  position: relative;
+  z-index: 5;
+  scroll-behavior: smooth;
+  padding-bottom: 5rem;
+}
+
+.docWrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+.hero {
+  margin-bottom: 4rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: $text-main;
+    margin-bottom: 1rem;
+    line-height: 1.1;
+  }
+  p {
+    font-size: 1.15rem;
+    color: $text-muted;
+    line-height: 1.6;
+    max-width: 600px;
+  }
+}
+
+.section {
+  scroll-margin-top: 4rem;
+  margin-bottom: 4rem;
+
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: $text-main;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $text-main;
+    margin: 2rem 0 1rem;
+  }
+
+  p {
+    font-size: 1rem;
+    color: $text-muted;
+    line-height: 1.7;
+    margin-bottom: 1.2rem;
+  }
+}
+
+// ══════════════════════════════════════════════
+//  COMPONENTS
+// ══════════════════════════════════════════════
+.terminal {
+  background: #111827; // Tailwind Gray-900
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  margin: 1.5rem 0;
+  border: 1px solid rgba(255,255,255,0.1);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+
+  .termLine {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .prompt { color: #10B981; user-select: none; }
+  .cmd { color: #E5E7EB; }
+  .comment { color: #6B7280; font-style: italic; }
+}
+
+.infoBox {
+  background: rgba(59, 130, 246, 0.05);
+  border-left: 4px solid #3B82F6;
+  padding: 1.5rem;
+  border-radius: 0 8px 8px 0;
+  margin: 2rem 0;
+
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 0.5rem 0;
+    color: #1D4ED8;
+    font-weight: 700;
+  }
+
+  p { margin: 0; color: #3B82F6; }
+}
+
+.tableContainer {
+  overflow-x: auto;
+  margin: 2rem 0;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: $white-glass;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+
+    th {
+      background: rgba(0,0,0,0.02);
+      text-align: left;
+      padding: 1rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: $text-muted;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    td {
+      padding: 1rem;
+      font-size: 0.95rem;
+      color: $text-main;
+      border-bottom: 1px solid rgba(0,0,0,0.03);
+    }
+    tr:last-child td { border-bottom: none; }
+    
+    code {
+      background: rgba(0,0,0,0.04);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #EF4444;
+    }
+  }
+}
+
+// ══════════════════════════════════════════════
+//  DARK MODE
+// ══════════════════════════════════════════════
+.themeToggle {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 50;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: $white-glass;
+  border: 1px solid rgba(0,0,0,0.08);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+
+  &:hover { transform: scale(1.05); }
+}
+
+$dm-bg:    #030712; // Gray-950
+$dm-bg2:   #111827;
+$dm-text:  #F9FAFB;
+$dm-muted: #9CA3AF;
+$dm-glass: rgba(17, 24, 39, 0.7);
+
+.dark {
+  background: $dm-bg;
+  color: $dm-text;
+
+  .sidebar {
+    background: $dm-glass;
+    border-color: rgba(255,255,255,0.05);
+  }
+
+  .brandText { color: $dm-text; }
+  
+  .navHead { color: rgba(255,255,255,0.3); }
+  .navItem {
+    color: $dm-muted;
+    &:hover { background: rgba(255,255,255,0.05); color: $dm-text; }
+    &.active {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10B981;
+    }
+  }
+
+  .hero {
+    border-color: rgba(255,255,255,0.05);
+    h1 { color: $dm-text; }
+    p { color: $dm-muted; }
+  }
+
+  .section {
+    h2, h3 { color: $dm-text; }
+    p { color: $dm-muted; }
+  }
+
+  .terminal {
+    background: #000;
+    border-color: rgba(255,255,255,0.1);
+  }
+
+  .infoBox {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: #60A5FA;
+    h4, p { color: #93C5FD; }
+  }
+
+  .tableContainer table {
+    background: #111827;
+    th { background: #000; color: rgba(255,255,255,0.4); border-color: rgba(255,255,255,0.05); }
+    td { color: $dm-text; border-color: rgba(255,255,255,0.05); }
+    code { background: rgba(255,255,255,0.1); color: #FCA5A5; }
+  }
+
+  .themeToggle {
+    background: #1F2937;
+    border-color: rgba(255,255,255,0.1);
+    color: #fff;
+  }
+}
