@@ -29,7 +29,7 @@ export function useAuth() {
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     if (!token) {
-      setState(s => ({ ...s, isLoading: false }));
+      void Promise.resolve().then(() => setState(s => ({ ...s, isLoading: false })));
       return;
     }
     // Validate token by fetching user profile

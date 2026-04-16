@@ -46,6 +46,7 @@ export function useFetch<T>(path: string, options?: RequestInit) {
       setState({ data: null, loading: false, error: msg });
       throw err;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url]);
 
   useEffect(() => {

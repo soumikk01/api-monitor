@@ -39,7 +39,7 @@ export function useMonitorSocket({
   const [events, setEvents] = useState<ApiCallEvent[]>([]);
   const socketRef = useRef<WebSocket | null>(null);
 
-  const connect = useCallback(() => {
+  const connect = useCallback(function doConnect() {
     if (!projectId || typeof window === 'undefined') return;
 
     // Use native WebSocket — works with Socket.io when using websocket transport
@@ -56,7 +56,7 @@ export function useMonitorSocket({
     ws.onclose = () => {
       setConnected(false);
       // Auto-reconnect after 3 seconds
-      setTimeout(connect, 3000);
+      setTimeout(doConnect, 3000);
     };
 
     ws.onerror = () => ws.close();
