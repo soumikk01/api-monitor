@@ -276,6 +276,59 @@ $r-lg:   24px;
   }
 }
 
+// ── Divider ───────────────────────────────────
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0 1rem;
+  gap: 1rem;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: rgba(26, 26, 26, 0.1);
+}
+
+.dividerText {
+  font-size: 0.8rem;
+  color: $text-muted;
+  font-weight: 500;
+}
+
+// ── OAuth Buttons ──────────────────────────────
+.oauthRow {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.oauthBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid rgba(26, 26, 26, 0.15);
+  background: transparent;
+  color: $text-main;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+
+  &:hover {
+    background: rgba(26, 26, 26, 0.04);
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
 // ── Bottom links ───────────────────────────────
 .utilLinks {
   margin-top: 1.5rem;
@@ -398,6 +451,15 @@ $dm-glass:  rgba(22, 22, 28, 0.82);
 
   .forgotLink { color: $dm-muted; &:hover { color: $dm-text; } }
   .registerLink { color: $dm-text; }
+
+  .dividerLine { background: $dm-border; }
+  .dividerText { color: $dm-muted; }
+  
+  .oauthBtn {
+    border-color: $dm-border;
+    color: $dm-text;
+    &:hover { background: rgba(255, 255, 255, 0.06); }
+  }
 
   .themeToggle {
     background: $dm-glass;

@@ -183,38 +183,11 @@ export default function LoginPage() {
               />
             </div>
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-            {/* Floating Metadata Panel – left side */}
-            <div style={{
-              position: 'absolute', left: -128, top: '25%',
-              width: 96, display: 'flex', flexDirection: 'column', gap: 16,
-            }}>
-              <div style={{ borderLeft: '1px solid rgba(192,178,248,0.4)', paddingLeft: 8 }}>
-                <p style={{ fontSize: 8, fontFamily: '"JetBrains Mono", monospace', color: '#c0b2f8', marginBottom: 4 }}>LATENCY</p>
-                <div style={{ height: 4, width: '100%', background: 'rgba(192,178,248,0.2)' }}>
-                  <div style={{ height: '100%', width: '66%', background: '#c0b2f8' }} />
-                </div>
-              </div>
-              <div style={{ borderLeft: '1px solid rgba(0,207,252,0.4)', paddingLeft: 8 }}>
-                <p style={{ fontSize: 8, fontFamily: '"JetBrains Mono", monospace', color: '#00cffc', marginBottom: 4 }}>PACKETS</p>
-                <div style={{ display: 'flex', gap: 2 }}>
-                  {[1,1,0,1].map((on, i) => (
-                    <div key={i} style={{ width: 4, height: 12, background: on ? '#00cffc' : 'rgba(0,207,252,0.2)' }} />
-                  ))}
-                </div>
-              </div>
-            </div>
-=======
->>>>>>> Stashed changes
             <Link href="/dashboard" className={styles.submitBtn}>
               Sign In
             </Link>
           </form>
 
-<<<<<<< Updated upstream
-=======
           <div className={styles.divider}>
             <span className={styles.dividerLine} />
             <span className={styles.dividerText}>or continue with</span>
@@ -239,16 +212,11 @@ export default function LoginPage() {
             </button>
           </div>
 
->>>>>>> Stashed changes
           <div className={styles.utilLinks}>
             <a href="#" className={styles.forgotLink}>Forgot password?</a>
             <Link href="/register" className={styles.registerLink}>
               Create account →
             </Link>
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
           </div>
         </div>
       </main>
