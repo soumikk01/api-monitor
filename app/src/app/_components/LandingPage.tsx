@@ -392,14 +392,14 @@ export default function LandingPage() {
 
       {/* ── NAVBAR ── */}
       <header className={styles.navWrap}>
+        <div className={styles.logoAbsolute}>
+          <svg viewBox="0 0 20 20" fill="none" width="22" height="22" className={styles.logoSvg}>
+            <polygon points="10,1 19,6 19,14 10,19 1,14 1,6" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <circle cx="10" cy="10" r="3" fill="currentColor"/>
+          </svg>
+          <span className={styles.logoMark}>API Nest</span>
+        </div>
         <nav className={`${styles.nav} ${styles.navIn}`}>
-          <div className={styles.logo}>
-            <svg viewBox="0 0 20 20" fill="none" width="14" height="14">
-              <polygon points="10,1 19,6 19,14 10,19 1,14 1,6" stroke="#1A1A1A" strokeWidth="1.5" fill="none"/>
-              <circle cx="10" cy="10" r="3" fill="#1A1A1A"/>
-            </svg>
-            <span className={styles.logoMark}>API Nest</span>
-          </div>
           <div className={styles.navLinks}>
             {['Products','Solutions','Pricing','Company','Support','Docs'].map((link, i) => (
               <Link key={link} href={link === 'Docs' ? '/docs' : link === 'Solutions' ? '#features' : link === 'Pricing' ? '#stats' : '#'}

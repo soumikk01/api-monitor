@@ -182,7 +182,7 @@ $r-md:        16px;
   display: inline-flex;
   align-items: center;
   gap: 0;
-  padding: 6px 6px 6px 20px;
+  padding: 6px 6px 6px 12px;
   height: 54px;
   border-radius: $pill;
   background: $white-glass;
@@ -196,24 +196,47 @@ $r-md:        16px;
   animation: navIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
 }
 
-.logo {
+.logoAbsolute {
+  position: absolute;
+  left: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
-  gap: 7px;
-  margin-right: 18px;
-  flex-shrink: 0;
-  transition: transform 0.3s ease;
-  &:hover { transform: scale(1.06); }
+  gap: 12px;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: $text-main;
+  z-index: 101;
+
+  &:hover {
+    transform: translateY(-50%) scale(1.04);
+  }
+  
+  @media (max-width: 720px) {
+    left: 1.25rem;
+  }
+}
+
+.logoSvg {
+  color: #1A1A1A;
+  transition: color 0.4s;
 }
 
 .logoMark {
   font-family: $head;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: $text-main;
-  transition: color 0.4s;
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  background: linear-gradient(135deg, #1A1A1A 0%, #6B6B6B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent; // fallback
+  transition: filter 0.4s, opacity 0.3s;
+  
+  // slightly glowing shadow
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
 .navLinks {
@@ -833,7 +856,14 @@ $dm-border:  rgba(255, 255, 255, 0.08);
     border-color: $dm-border;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   }
-  .logoMark, .navLink { color: $dm-text; &:hover { background: rgba(255,255,255,0.06); } }
+  .navLink { color: $dm-text; &:hover { background: rgba(255,255,255,0.06); } }
+  .logoSvg { color: $dm-text; }
+  .logoMark {
+    background: linear-gradient(135deg, #FFFFFF 0%, #A8D8FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0px 8px rgba(168, 216, 255, 0.5));
+  }
   .navLink::after { background: $dm-text; }
   .navPill { background: $dm-text; color: $dm-bg; }
 
