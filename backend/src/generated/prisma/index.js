@@ -156,7 +156,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\soumi\\api-monitor\\backend\\src\\generated\\prisma",
+      "value": "C:\\Users\\soumi\\api-nest\\backend\\src\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -170,7 +170,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\soumi\\api-monitor\\backend\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\soumi\\api-nest\\backend\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

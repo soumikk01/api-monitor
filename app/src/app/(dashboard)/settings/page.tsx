@@ -71,7 +71,7 @@ export default function SettingsPage() {
               <polygon points="10,1 19,6 19,14 10,19 1,14 1,6" stroke="#1A1A1A" strokeWidth="1.5" fill="none"/><circle cx="10" cy="10" r="3" fill="#1A1A1A"/>
             </svg>
           </div>
-          <span className={styles.brandText}>N_ARCH</span>
+          <span className={styles.brandText}>API Nest</span>
         </div>
 
         <nav className={styles.nav}>
@@ -118,7 +118,7 @@ export default function SettingsPage() {
         <div className={styles.panel}>
           <h3 style={{ marginBottom: '0.5rem' }}>CLI Integration</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-            Use the following command to initialize the API Monitor Interceptor inside your backend projects. This will bind the project to your dashboard automatically.
+            Use the following command to initialize the API Nest Interceptor inside your backend projects. This will bind the project to your dashboard automatically.
           </p>
           
           <div style={{ background: 'rgba(0,0,0,0.4)', borderRadius: '12px', padding: '1.2rem', position: 'relative' }}>

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
-  title: "Neural Architect API ",
-  description: "Cyberpunk API Monitoring System",
+  title: "API Nest ",
+  description: "Cyberpunk API Nesting System",
 };
 
 export default function RootLayout({

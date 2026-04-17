@@ -392,21 +392,21 @@ export default function LandingPage() {
 
       {/* ── NAVBAR ── */}
       <header className={styles.navWrap}>
+        <div className={styles.logoAbsolute}>
+          <svg viewBox="0 0 20 20" fill="none" width="22" height="22" className={styles.logoSvg}>
+            <polygon points="10,1 19,6 19,14 10,19 1,14 1,6" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <circle cx="10" cy="10" r="3" fill="currentColor"/>
+          </svg>
+          <span className={styles.logoMark}>API Nest</span>
+        </div>
         <nav className={`${styles.nav} ${styles.navIn}`}>
-          <div className={styles.logo}>
-            <svg viewBox="0 0 20 20" fill="none" width="14" height="14">
-              <polygon points="10,1 19,6 19,14 10,19 1,14 1,6" stroke="#1A1A1A" strokeWidth="1.5" fill="none"/>
-              <circle cx="10" cy="10" r="3" fill="#1A1A1A"/>
-            </svg>
-            <span className={styles.logoMark}>N_ARCH</span>
-          </div>
           <div className={styles.navLinks}>
-            {['Products','Solutions','Pricing','Company','Support'].map((link, i) => (
-              <a key={link} href={link === 'Solutions' ? '#features' : link === 'Pricing' ? '#stats' : '#'}
+            {['Products','Solutions','Pricing','Company','Support','Docs'].map((link, i) => (
+              <Link key={link} href={link === 'Docs' ? '/docs' : link === 'Solutions' ? '#features' : link === 'Pricing' ? '#stats' : '#'}
                 className={styles.navLink}
                 style={{ animationDelay: `${0.05 * i}s` }}>
                 {link}
-              </a>
+              </Link>
             ))}
           </div>
           <Link href="/login" className={styles.navPill}>Try for free</Link>
@@ -543,7 +543,7 @@ export default function LandingPage() {
         ref={footerRef as React.RefObject<HTMLElement>}
         className={`${styles.footer} ${footerVisible ? styles.fadeUp : styles.hidden}`}
       >
-        <span className={styles.footerCopy}>© 2025 NEURAL_ARCHITECT // CORE_KERNEL_STABLE</span>
+        <span className={styles.footerCopy}>© 2025 API_NEST // CORE_KERNEL_STABLE</span>
         <div className={styles.footerLinks}>
           <a href="#" className={styles.footerLink}>Legal</a>
           <a href="#" className={styles.footerLink}>Docs</a>

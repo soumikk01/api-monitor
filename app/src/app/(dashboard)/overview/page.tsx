@@ -76,7 +76,7 @@ export default function OverviewPage() {
               <circle cx="10" cy="10" r="3" fill="#1A1A1A"/>
             </svg>
           </div>
-          <span className={styles.brandText}>N_ARCH</span>
+          <span className={styles.brandText}>API Nest</span>
         </div>
 
         <nav className={styles.nav}>

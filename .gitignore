@@ -55,8 +55,8 @@ app/html-to-jsx.js
 app/landing-gen.js
 app/theme-gen.js
 
-# api monitor configuration
-.api-monitor.json
+# API Nest configuration
+.api-nest.json
 
 # prisma generated artifacts (avoid polluting git history)
 **/src/generated/prisma

@@ -26,7 +26,7 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundException('User not found');
     return {
-      command: `npx api-monitor-cli@latest init --token ${user.sdkToken}`,
+      command: `npx api-nest-cli@latest init --token ${user.sdkToken}`,
       token: user.sdkToken,
       instructions:
         'Run this command in the root of your dev project to start monitoring all HTTP calls.',
@@ -41,7 +41,7 @@ export class UsersService {
       data: { sdkToken: newToken },
     });
     return {
-      command: `npx api-monitor-cli@latest init --token ${user.sdkToken}`,
+      command: `npx api-nest-cli@latest init --token ${user.sdkToken}`,
       token: user.sdkToken,
     };
   }
