@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import styles from './Docs.module.scss';
-import { useRouter } from 'next/navigation';
 
 export default function DocsPage() {
   const [dark, setDark] = useState(false);
@@ -76,7 +75,7 @@ export default function DocsPage() {
 
           <section id="architecture" className={styles.section}>
             <h2>System Architecture</h2>
-            <p>The platform runs on a proprietary distributed 4-package monorepo design, utilizing the world's most robust open-source technologies:</p>
+            <p>The platform runs on a proprietary distributed 4-package monorepo design, utilizing the world&apos;s most robust open-source technologies:</p>
             
             <div className={styles.tableContainer}>
               <table>
@@ -144,7 +143,7 @@ export default function DocsPage() {
 
             <div className={styles.terminal}>
               <div className={styles.termLine}>
-                <span className={styles.cmd}>api-nest-cli init --token &lt;YOUR_TOKEN&gt; --ignore-paths "/health,/metrics"</span>
+                <span className={styles.cmd}>api-nest-cli init --token &lt;YOUR_TOKEN&gt; --ignore-paths &quot;/health,/metrics&quot;</span>
               </div>
               <div className={styles.termLine}>
                 <span className={styles.comment}># Prevent specific low-value routes from saturating the websocket</span>
