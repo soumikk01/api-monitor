@@ -15,13 +15,53 @@ $r-lg:   24px;
 .page {
   position: relative;
   min-height: 100vh;
-  background: linear-gradient(160deg, $bg-top 0%, $bg-bot 100%);
   color: $text-main;
   font-family: 'Inter', sans-serif;
+  background: linear-gradient(160deg, $bg-top 0%, $bg-bot 100%);
   overflow: hidden;
+  display: flex;
+}
+
+.splitLayout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.leftPane {
+  flex: 1;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: transparent;
+  overflow: hidden;
+}
+
+.rightPane {
+  flex: 1.1; // slightly wider right pane
+  position: relative;
+  background-color: #E2DBD0;
+  border-left: none;
+  overflow: hidden;
+  
+  // Smoothly blend the left edge of this pane into the background
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%);
+  mask-image: linear-gradient(to right, transparent 0%, black 15%);
+  
+  @media (max-width: 900px) {
+    display: none;
+  }
+}
+
+.patternOverlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0.85;
+  background-image: url('/login_pattern.png');
+  background-size: cover;
+  background-position: center;
+  mix-blend-mode: multiply;
 }
 
 .noiseOverlay {
@@ -93,7 +133,7 @@ $r-lg:   24px;
 //  NAVBAR (same pill style as landing)
 // ══════════════════════════════════════════════
 .navWrap {
-  position: fixed;
+  position: absolute;
   top: 0; left: 0; right: 0;
   z-index: 100;
   display: flex;
@@ -394,17 +434,21 @@ $dm-border: rgba(255, 255, 255, 0.08);
 $dm-glass:  rgba(22, 22, 28, 0.82);
 
 .dark {
-  background: $dm-bg;
+  background: linear-gradient(160deg, $dm-bg 0%, #111116 100%);
   color: $dm-text;
 
   &::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: $dm-bg;
+    background: linear-gradient(160deg, $dm-bg 0%, #111116 100%);
     z-index: 0;
     pointer-events: none;
   }
+
+  .leftPane { background: transparent; }
+  .rightPane { background-color: #121217; border-left: none; }
+  .patternOverlay { opacity: 0.3; mix-blend-mode: screen; filter: grayscale(1) invert(0.8) brightness(1.2); }
 
   .springBg { opacity: 0.2; }
 
