@@ -9,7 +9,7 @@ interface InitOptions {
 }
 
 export async function initCommand(options: InitOptions) {
-  console.log('\n🔍 API Monitor — Initializing...\n');
+  console.log('\n🔍 API Nest — Initializing...\n');
 
   const cwd = process.cwd();
   const configPath = saveConfig({
@@ -23,13 +23,13 @@ export async function initCommand(options: InitOptions) {
   // Inject require hook into package.json scripts or detect entry point
   injectRegisterHook(cwd);
 
-  console.log('\n🎉 API Monitor is ready!');
+  console.log('\n🎉 API Nest is ready!');
   console.log('   Every HTTP call from your dev server will appear in the dashboard.');
   console.log(`   Dashboard: ${options.backend.replace('4000', '3000')}/dashboard\n`);
 }
 
 /**
- * Inserts `require('api-monitor-cli/register')` at the top of the user's main entry file.
+ * Inserts `require('api-nest-cli/register')` at the top of the user's main entry file.
  * Supports common patterns: index.js, server.js, app.js, src/index.js, src/main.js
  */
 function injectRegisterHook(cwd: string) {
@@ -58,8 +58,8 @@ function injectRegisterHook(cwd: string) {
     const full = path.join(cwd, candidate);
     if (fs.existsSync(full)) {
       const content = fs.readFileSync(full, 'utf-8');
-      const hook = `require('api-monitor-cli/register'); // [api-monitor]\n`;
-      if (content.includes('[api-monitor]')) {
+      const hook = `require('api-nest-cli/register'); // [api-nest]\n`;
+      if (content.includes('[api-nest]')) {
         console.log(`ℹ️  Register hook already present in ${candidate}`);
         return;
       }
@@ -72,5 +72,5 @@ function injectRegisterHook(cwd: string) {
   // Fallback — just tell the user
   console.log('\n⚠️  Could not auto-detect your entry file.');
   console.log('   Manually add this line to the TOP of your main file:');
-  console.log("   require('api-monitor-cli/register');\n");
+  console.log("   require('api-nest-cli/register');\n");
 }

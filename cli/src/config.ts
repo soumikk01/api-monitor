@@ -7,7 +7,7 @@ export interface CliConfig {
   backendUrl: string;
 }
 
-const CONFIG_FILE = '.api-monitor.json';
+const CONFIG_FILE = '.api-nest.json';
 
 export function saveConfig(config: CliConfig, cwd = process.cwd()) {
   const filePath = path.join(cwd, CONFIG_FILE);

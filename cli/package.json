@@ -1,10 +1,10 @@
 {
-  "name": "api-monitor-cli",
+  "name": "api-nest-cli",
   "version": "1.0.0",
-  "description": "CLI agent for API Monitor — intercepts HTTP calls in your dev project and streams them to the dashboard",
+  "description": "CLI agent for API Nest — intercepts HTTP calls in your dev project and streams them to the dashboard",
   "main": "dist/index.js",
   "bin": {
-    "api-monitor": "dist/index.js"
+    "api-nest": "dist/index.js"
   },
   "files": ["dist"],
   "scripts": {

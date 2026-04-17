@@ -5,7 +5,7 @@ export default function StatusPage() {
     <div className={styles.container}>
       <main className={styles.content}>
         <div className={styles.header}>
-          <div className={styles.brand}>API Monitor</div>
+          <div className={styles.brand}>API Nest</div>
           <p className={styles.subtitle}>All Systems Operational</p>
         </div>
 

@@ -3,7 +3,7 @@ import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
   title: "Neural Architect API ",
-  description: "Cyberpunk API Monitoring System",
+  description: "Cyberpunk API Nesting System",
 };
 
 export default function RootLayout({

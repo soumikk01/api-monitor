@@ -126,7 +126,7 @@ export default function DocsPage() {
             <div className={styles.terminal}>
               <div className={styles.termLine}>
                 <span className={styles.prompt}>~/my-backend-app ❯</span>
-                <span className={styles.cmd}>npx api-monitor-cli init --token sdk_84f93a...</span>
+                <span className={styles.cmd}>npx api-nest-cli init --token sdk_84f93a...</span>
               </div>
               <div className={styles.termLine}>
                 <span className={styles.comment}># The CLI will now intercept external calls automatically.</span>
@@ -144,7 +144,7 @@ export default function DocsPage() {
 
             <div className={styles.terminal}>
               <div className={styles.termLine}>
-                <span className={styles.cmd}>api-monitor-cli init --token &lt;YOUR_TOKEN&gt; --ignore-paths "/health,/metrics"</span>
+                <span className={styles.cmd}>api-nest-cli init --token &lt;YOUR_TOKEN&gt; --ignore-paths "/health,/metrics"</span>
               </div>
               <div className={styles.termLine}>
                 <span className={styles.comment}># Prevent specific low-value routes from saturating the websocket</span>
