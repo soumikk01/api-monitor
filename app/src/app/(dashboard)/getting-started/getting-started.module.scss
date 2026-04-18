@@ -8,6 +8,40 @@ $accent-light: rgba(79, 123, 247, 0.1);
 $r-lg: 24px;
 $r-md: 16px;
 
+// Package manager selector
+.pmSelector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.pmLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $text-muted;
+  margin-right: 4px;
+}
+.pmTab {
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.6);
+  color: $text-muted;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  cursor: pointer;
+  transition: all 0.18s;
+  &:hover { background: #fff; color: $text-main; }
+}
+.pmActive {
+  background: $accent !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  box-shadow: 0 2px 8px rgba(79,123,247,0.3);
+}
+
 .page {
   position: relative;
   min-height: 100vh;

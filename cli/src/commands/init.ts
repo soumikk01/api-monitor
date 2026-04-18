@@ -130,6 +130,17 @@ function detectServerDirs(cwd: string): string[] {
 }
 
 /**
+ * Detects which package manager the project uses by checking lockfiles.
+ * Returns: 'bun' | 'yarn' | 'pnpm' | 'npm'
+ */
+function detectPackageManager(cwd: string): 'bun' | 'yarn' | 'pnpm' | 'npm' {
+  if (fs.existsSync(path.join(cwd, 'bun.lockb')) || fs.existsSync(path.join(cwd, 'bun.lock'))) return 'bun';
+  if (fs.existsSync(path.join(cwd, 'yarn.lock'))) return 'yarn';
+  if (fs.existsSync(path.join(cwd, 'pnpm-lock.yaml'))) return 'pnpm';
+  return 'npm';
+}
+
+/**
  * Recursively finds entry files up to maxDepth levels.
  * Looks for files named index/server/app with .js/.ts extension
  * that contain server framework keywords.
@@ -161,9 +172,12 @@ function findEntryRecursive(dir: string, depth = 0, maxDepth = 3): string | null
   return null;
 }
 
-const LOADER_FLAG_ESM = '--import api-nest-cli/dist/register.js';
-const LOADER_FLAG_CJS = '--require api-nest-cli/dist/register';
-const ALREADY_MARKER  = 'api-nest-cli';
+// Node.js flags
+const NODE_FLAG_ESM = '--import api-nest-cli/dist/register.js';
+const NODE_FLAG_CJS = '--require api-nest-cli/dist/register';
+// Bun preload flag (bun uses --preload instead of --import/--require)
+const BUN_FLAG = '--preload api-nest-cli/dist/register.js';
+const ALREADY_MARKER = 'api-nest-cli';
 
 /**
  * Patches the `node` command inside package.json scripts so that the
@@ -193,8 +207,15 @@ function injectRegisterHook(cwd: string) {
 
     if (!pkg.scripts || Object.keys(pkg.scripts).length === 0) continue;
 
+    const pm   = detectPackageManager(root);
+    const isBun = pm === 'bun';
     const esm  = pkg.type === 'module';
-    const flag = esm ? LOADER_FLAG_ESM : LOADER_FLAG_CJS;
+
+    // Bun uses --preload; Node.js uses --import (ESM) or --require (CJS)
+    const flag = isBun ? BUN_FLAG : (esm ? NODE_FLAG_ESM : NODE_FLAG_CJS);
+    // The runtime keyword to patch in the script
+    const runtimeRx = isBun ? /\bbun\b/ : /\bnode\b/;
+    const runtimeWord = isBun ? 'bun' : 'node';
 
     // Keys we consider as "server start" scripts
     const scriptKeys = ['dev', 'start', 'serve', 'server', 'start:dev', 'start:prod'];
@@ -210,14 +231,10 @@ function injectRegisterHook(cwd: string) {
         return;
       }
 
-      // Only patch scripts that directly invoke node (not cd/concurrently wrappers)
-      // Matching: "node ...", "node --watch ...", "nodemon ...", "ts-node ..."
-      if (/\bnode\b/.test(original) && !/\bcd\b/.test(original)) {
-        pkg.scripts[key] = original.replace(
-          /\bnode\b/,
-          `node ${flag}`,
-        );
-        console.log(`✅ Patched script "${key}" in ${path.relative(cwd, pkgPath)}`);
+      // Only patch scripts that directly invoke the runtime (not cd/concurrently wrappers)
+      if (runtimeRx.test(original) && !/\bcd\b/.test(original)) {
+        pkg.scripts[key] = original.replace(runtimeRx, `${runtimeWord} ${flag}`);
+        console.log(`✅ Patched script "${key}" in ${path.relative(cwd, pkgPath)} (${pm})`);
         patched = true;
       }
     }
@@ -230,8 +247,14 @@ function injectRegisterHook(cwd: string) {
   }
 
   // Fallback: couldn't patch automatically
+  const pm = detectPackageManager(cwd);
   console.log('\n⚠️  Could not auto-patch your start script.');
-  console.log('   Add one of these flags to your node command in package.json:');
-  console.log(`   ESM projects:  node ${LOADER_FLAG_ESM} src/index.js`);
-  console.log(`   CJS projects:  node ${LOADER_FLAG_CJS} src/index.js\n`);
+  console.log('   Add the appropriate flag to your start command in package.json:');
+  if (pm === 'bun') {
+    console.log(`   Bun:   bun ${BUN_FLAG} src/index.ts`);
+  } else {
+    console.log(`   ESM:   node ${NODE_FLAG_ESM} src/index.js`);
+    console.log(`   CJS:   node ${NODE_FLAG_CJS} src/index.js`);
+  }
+  console.log('');
 }

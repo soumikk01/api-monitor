@@ -19,6 +19,15 @@ export default function GettingStartedPage() {
   const [sdkToken, setSdkToken] = useState<string>('');
   const [copied, setCopied] = useState(false);
   const [dark, setDark] = useState(false);
+  const [pm, setPm] = useState<'npm' | 'yarn' | 'pnpm' | 'bun'>('npm');
+
+  // Derived package manager commands
+  const pmCmds = {
+    npm:  { install: 'npm install',  exec: 'npx',      run: 'npm run dev' },
+    yarn: { install: 'yarn add',     exec: 'yarn dlx',  run: 'yarn dev' },
+    pnpm: { install: 'pnpm add',     exec: 'pnpm dlx',  run: 'pnpm dev' },
+    bun:  { install: 'bun add',      exec: 'bunx',      run: 'bun run dev' },
+  }[pm];
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
@@ -33,7 +42,7 @@ export default function GettingStartedPage() {
       .catch(() => {});
   }, [user]);
 
-  const cliCommand = `npx api-nest-cli@latest init --token ${sdkToken || 'sdk_your_token_here'}`;
+  const cliCommand = `${pmCmds.exec} api-nest-cli@latest init --token ${sdkToken || 'sdk_your_token_here'}`;
 
   function copy(text: string) {
     navigator.clipboard.writeText(text).then(() => {
@@ -115,6 +124,20 @@ export default function GettingStartedPage() {
           </div>
         </div>
 
+        {/* Package manager selector */}
+        <div className={styles.pmSelector}>
+          <span className={styles.pmLabel}>Package manager:</span>
+          {(['npm', 'yarn', 'pnpm', 'bun'] as const).map(p => (
+            <button
+              key={p}
+              className={`${styles.pmTab}${pm === p ? ' ' + styles.pmActive : ''}`}
+              onClick={() => setPm(p)}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+
         {/* Steps */}
         <div className={styles.steps}>
 
@@ -161,11 +184,11 @@ export default function GettingStartedPage() {
                     <span className={styles.termDot} style={{ background: '#febc2e' }} />
                     <span className={styles.termDot} style={{ background: '#28c840' }} />
                     <span className={styles.termTitle}>Terminal</span>
-                    <button className={styles.termCopy} onClick={() => copy('npm install api-nest-cli@latest')}>Copy</button>
+                    <button className={styles.termCopy} onClick={() => copy(`${pmCmds.install} api-nest-cli`)}>Copy</button>
                   </div>
                   <div className={styles.termBody}>
                     <span className={styles.prompt}>~/your-backend ❯ </span>
-                    <span className={styles.cmd}>npm install api-nest-cli@latest</span>
+                    <span className={styles.cmd}>{pmCmds.install} api-nest-cli</span>
                   </div>
                 </div>
               </div>
@@ -223,7 +246,7 @@ export default function GettingStartedPage() {
                 </div>
                 <div className={styles.termBody}>
                   <span className={styles.prompt}>~/your-backend ❯ </span>
-                  <span className={styles.cmd}>npm run dev &nbsp;<span className={styles.comment}># monitoring loads automatically</span></span>
+                  <span className={styles.cmd}>{pmCmds.run} &nbsp;<span className={styles.comment}># monitoring loads automatically</span></span>
                 </div>
               </div>
               <div style={{marginTop:'1rem', padding:'0.85rem 1.2rem', background:'rgba(16,185,129,0.06)', border:'1px solid rgba(16,185,129,0.15)', borderRadius:12, fontSize:'0.85rem', color:'#059669'}}>
@@ -251,6 +274,59 @@ export default function GettingStartedPage() {
             </div>
           </div>
 
+        </div>
+
+        {/* Docker Section */}
+        <div className={styles.trouble} style={{marginBottom:'1.5rem'}}>
+          <div className={styles.troubleTitle}>🐳 Using Docker?</div>
+          <p style={{fontSize:'0.9rem', color:'var(--text-muted, #6B6B6B)', marginBottom:'1.25rem', lineHeight:1.6}}>
+            When your server runs inside a Docker container, <code style={{background:'rgba(0,0,0,0.06)', padding:'2px 6px', borderRadius:4, fontFamily:'monospace'}}>localhost:4000</code> points to the container itself — not your host machine.
+            Use environment variables to tell the agent where to reach the API Nest backend. <strong>No file changes needed.</strong>
+          </p>
+
+          <div style={{marginBottom:'1rem'}}>
+            <div style={{fontSize:'0.75rem', fontWeight:700, color:'#888', marginBottom:'0.5rem', textTransform:'uppercase', letterSpacing:'0.06em'}}>Option A — docker run</div>
+            <div className={styles.terminal}>
+              <div className={styles.termHeader}>
+                <span className={styles.termDot} style={{ background: '#ff5f57' }} />
+                <span className={styles.termDot} style={{ background: '#febc2e' }} />
+                <span className={styles.termDot} style={{ background: '#28c840' }} />
+                <span className={styles.termTitle}>Terminal</span>
+              </div>
+              <div className={styles.termBody} style={{lineHeight:2}}>
+                <span className={styles.cmd}>docker run \</span><br/>
+                <span className={styles.cmd}>&nbsp; -e APINEST_BACKEND_URL=http://host.docker.internal:4000 \</span><br/>
+                <span className={styles.cmd}>&nbsp; -e APINEST_SDK_TOKEN={sdkToken || 'sdk_your_token'} \</span><br/>
+                <span className={styles.cmd}>&nbsp; -e APINEST_PROJECT_ID=your_project_id \</span><br/>
+                <span className={styles.cmd}>&nbsp; your-image</span>
+              </div>
+            </div>
+          </div>
+
+          <div style={{marginBottom:'1rem'}}>
+            <div style={{fontSize:'0.75rem', fontWeight:700, color:'#888', marginBottom:'0.5rem', textTransform:'uppercase', letterSpacing:'0.06em'}}>Option B — docker-compose.yml</div>
+            <div className={styles.terminal}>
+              <div className={styles.termHeader}>
+                <span className={styles.termDot} style={{ background: '#ff5f57' }} />
+                <span className={styles.termDot} style={{ background: '#febc2e' }} />
+                <span className={styles.termDot} style={{ background: '#28c840' }} />
+                <span className={styles.termTitle}>docker-compose.yml</span>
+              </div>
+              <div className={styles.termBody} style={{lineHeight:1.9}}>
+                <span className={styles.comment}>services:</span><br/>
+                <span className={styles.comment}>&nbsp; backend:</span><br/>
+                <span className={styles.comment}>&nbsp;&nbsp;&nbsp; build: .</span><br/>
+                <span className={styles.comment}>&nbsp;&nbsp;&nbsp; environment:</span><br/>
+                <span className={styles.cmd}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; APINEST_BACKEND_URL: http://host.docker.internal:4000</span><br/>
+                <span className={styles.cmd}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; APINEST_SDK_TOKEN: {sdkToken || 'sdk_your_token'}</span><br/>
+                <span className={styles.cmd}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; APINEST_PROJECT_ID: your_project_id</span>
+              </div>
+            </div>
+          </div>
+
+          <div style={{background:'rgba(79,123,247,0.06)', border:'1px solid rgba(79,123,247,0.15)', borderRadius:12, padding:'0.9rem 1.2rem', fontSize:'0.85rem', color:'#4F7BF7'}}>
+            💡 <strong>Linux Docker users:</strong> Use <code style={{fontFamily:'monospace'}}>172.17.0.1</code> instead of <code style={{fontFamily:'monospace'}}>host.docker.internal</code> — that&apos;s the Docker bridge gateway IP on Linux.
+          </div>
         </div>
 
         {/* Troubleshoot */}

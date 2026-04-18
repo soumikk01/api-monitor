@@ -1,6 +1,6 @@
 {
   "name": "api-nest-cli",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "CLI agent for API Nest — intercepts HTTP calls in your dev project and streams them to the dashboard",
   "main": "dist/index.js",
   "exports": {
