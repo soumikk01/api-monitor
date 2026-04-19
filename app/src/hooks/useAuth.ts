@@ -1,4 +1,3 @@
-'use client';
 import { useState, useEffect, useCallback } from 'react';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
@@ -59,16 +58,22 @@ export function useAuth() {
     const data = await res.json() as { accessToken?: string; refreshToken?: string; message?: string };
     if (!res.ok) throw new Error(data.message ?? 'Login failed');
 
-    localStorage.setItem('access_token', data.accessToken!);
-    localStorage.setItem('refresh_token', data.refreshToken!);
+    // FIX: Validate tokens exist before storing
+    const accessToken = data.accessToken;
+    const refreshToken = data.refreshToken;
+    if (!accessToken) throw new Error('Server did not return an access token');
 
-    // Load user profile
+    localStorage.setItem('access_token', accessToken);
+    if (refreshToken) localStorage.setItem('refresh_token', refreshToken);
+
+    // FIX: Check /users/me response before using it
     const userRes = await fetch(`${API}/users/me`, {
-      headers: { Authorization: `Bearer ${data.accessToken}` },
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
+    if (!userRes.ok) throw new Error('Failed to load user profile after login');
     const user = await userRes.json() as AuthUser;
 
-    setState({ user, accessToken: data.accessToken!, isAuthenticated: true, isLoading: false });
+    setState({ user, accessToken, isAuthenticated: true, isLoading: false });
     return user;
   }, []);
 
@@ -81,15 +86,22 @@ export function useAuth() {
     const data = await res.json() as { accessToken?: string; refreshToken?: string; message?: string };
     if (!res.ok) throw new Error(data.message ?? 'Registration failed');
 
-    localStorage.setItem('access_token', data.accessToken!);
-    localStorage.setItem('refresh_token', data.refreshToken!);
+    // FIX: Validate tokens exist before storing
+    const accessToken = data.accessToken;
+    const refreshToken = data.refreshToken;
+    if (!accessToken) throw new Error('Server did not return an access token');
 
+    localStorage.setItem('access_token', accessToken);
+    if (refreshToken) localStorage.setItem('refresh_token', refreshToken);
+
+    // FIX: Check /users/me response before using it
     const userRes = await fetch(`${API}/users/me`, {
-      headers: { Authorization: `Bearer ${data.accessToken}` },
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
+    if (!userRes.ok) throw new Error('Failed to load user profile after registration');
     const user = await userRes.json() as AuthUser;
 
-    setState({ user, accessToken: data.accessToken!, isAuthenticated: true, isLoading: false });
+    setState({ user, accessToken, isAuthenticated: true, isLoading: false });
     return user;
   }, []);
 
@@ -105,6 +117,8 @@ export function useAuth() {
     const res = await fetch(`${API}/users/me/command`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    // FIX: Throw on HTTP errors instead of silently returning error body
+    if (!res.ok) throw new Error('Failed to fetch CLI command');
     return res.json() as Promise<{ command: string; token: string; instructions: string }>;
   }, []);
 
