@@ -103,7 +103,7 @@ $r-md: 16px;
   position: relative;
   z-index: 10;
   width: 260px;
-  height: 100vh;
+  height: calc(100vh - 46px);
   background: $white-glass;
   backdrop-filter: blur(20px);
   border-right: 1px solid rgba(255,255,255,0.55);
@@ -160,7 +160,7 @@ $r-md: 16px;
   position: relative;
   z-index: 10;
   flex: 1;
-  height: 100vh;
+  height: calc(100vh - 46px);
   overflow-y: auto;
   padding: 2.5rem 3rem;
 }

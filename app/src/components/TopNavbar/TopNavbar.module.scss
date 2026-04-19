@@ -1,0 +1,403 @@
+// ════════════════════════════════════════════
+//  Top Navbar — dark bar, matches screenshot
+// ════════════════════════════════════════════
+
+$bg:        #0f1117;
+$border:    rgba(255, 255, 255, 0.08);
+$border2:   rgba(255, 255, 255, 0.14);
+$text:      #e2e2e2;
+$muted:     #888;
+$green:     #1ed760;
+$orange:    #f97316;
+$r:         7px;
+$h:         46px;
+
+// ── Bar ──
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $h;
+  z-index: 1000;
+  background: $bg;
+  border-bottom: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+}
+
+// ── Sides ──
+.left, .right {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+// ── Separator ──
+.sep {
+  width: 1px;
+  height: 20px;
+  background: $border;
+  margin: 0 6px;
+  flex-shrink: 0;
+}
+
+// ════════════════════════════════════════════
+//  BRAND
+// ════════════════════════════════════════════
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  text-decoration: none;
+  color: $text;
+  padding: 4px 6px;
+  border-radius: $r;
+  transition: background 0.15s;
+  &:hover { background: rgba(255,255,255,0.05); }
+}
+
+.brandIcon {
+  width: 24px;
+  height: 24px;
+  background: $green;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #051a0a;
+  flex-shrink: 0;
+}
+
+.brandText {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: $text;
+}
+
+.freeBadge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: $muted;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+// ════════════════════════════════════════════
+//  SELECTOR BUTTONS (project / env)
+// ════════════════════════════════════════════
+.selectorBtn, .envBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: $text;
+  font-size: 0.82rem;
+  font-family: inherit;
+  font-weight: 500;
+  padding: 5px 8px;
+  border-radius: $r;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+  &:hover { background: rgba(255,255,255,0.06); }
+}
+
+.selectorLabel {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.caret {
+  transition: transform 0.2s;
+  flex-shrink: 0;
+  color: $muted;
+}
+.caretOpen { transform: rotate(180deg); }
+
+// ── PRODUCTION badge ──
+.prodBadge {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  background: rgba(249, 115, 22, 0.18);
+  border: 1px solid rgba(249, 115, 22, 0.35);
+  color: $orange;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+// ── Connect button ──
+.connectBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid $border;
+  border-radius: $r;
+  color: $text;
+  font-size: 0.82rem;
+  font-family: inherit;
+  font-weight: 500;
+  padding: 4px 10px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+  &:hover { background: rgba(255,255,255,0.09); border-color: $border2; }
+}
+
+// ════════════════════════════════════════════
+//  RIGHT SIDE
+// ════════════════════════════════════════════
+.ghostBtn {
+  background: transparent;
+  border: none;
+  color: $muted;
+  font-size: 0.82rem;
+  font-family: inherit;
+  font-weight: 500;
+  padding: 5px 8px;
+  border-radius: $r;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.15s, background 0.15s;
+  &:hover { color: $text; background: rgba(255,255,255,0.05); }
+}
+
+// ── Search ──
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid $border;
+  border-radius: $r;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, width 0.25s, background 0.15s;
+  width: 130px;
+  overflow: hidden;
+  &:hover { border-color: $border2; background: rgba(255,255,255,0.07); }
+}
+
+.searchOpen {
+  width: 220px;
+  border-color: rgba(30, 215, 96, 0.35) !important;
+  background: rgba(255,255,255,0.05) !important;
+}
+
+.searchIco { color: $muted; flex-shrink: 0; }
+
+.searchInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: $text;
+  font-size: 0.82rem;
+  font-family: inherit;
+  width: 100%;
+  &::placeholder { color: $muted; }
+}
+
+.kbdBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.kbd {
+  font-size: 0.68rem;
+  color: $muted;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid $border;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: inherit;
+  white-space: nowrap;
+  user-select: none;
+}
+
+// ── Icon buttons ──
+.iconBtn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: $r;
+  color: $muted;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  &:hover { background: rgba(255,255,255,0.07); color: $text; }
+}
+
+// ── Upgrade ──
+.upgradeBtn {
+  display: flex;
+  align-items: center;
+  background: $green;
+  color: #051a0a;
+  font-size: 0.78rem;
+  font-weight: 800;
+  font-family: inherit;
+  padding: 5px 12px;
+  border-radius: $r;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s, transform 0.1s;
+  margin-left: 4px;
+  &:hover { background: lighten($green, 8%); }
+}
+
+// ── Avatar ──
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(30, 215, 96, 0.2);
+  border: 1.5px solid rgba(30, 215, 96, 0.4);
+  color: $green;
+  font-size: 0.75rem;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+  transition: border-color 0.15s, transform 0.15s;
+  &:hover { border-color: $green; transform: scale(1.08); }
+}
+
+// ════════════════════════════════════════════
+//  DROPDOWN
+// ════════════════════════════════════════════
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.dropWrap { position: relative; }
+
+.drop {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 200px;
+  background: #1a1a1f;
+  border: 1px solid $border2;
+  border-radius: 10px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  z-index: 500;
+  animation: dropIn 0.15s ease;
+  overflow: hidden;
+}
+
+.dropRight { left: auto; right: 0; }
+
+.dropHeader {
+  padding: 10px 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: $muted;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.dropUser {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: $text;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-bottom: 2px;
+}
+
+.dropEmail {
+  font-size: 0.78rem;
+  color: $muted;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.dropDivider {
+  height: 1px;
+  background: $border;
+  margin: 2px 0;
+}
+
+.dropEmpty {
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: $muted;
+}
+
+.dropItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 14px;
+  border: none;
+  background: transparent;
+  color: $text;
+  font-size: 0.85rem;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s;
+  &:hover { background: rgba(255,255,255,0.06); }
+}
+
+.dropItemActive { color: $green; }
+
+.dropItemDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: $muted;
+  flex-shrink: 0;
+}
+
+.dropItemCheck { margin-left: auto; color: $green; }
+
+.dropItemDanger {
+  color: #f87171;
+  &:hover { background: rgba(248,113,113,0.08); }
+}
+
+.dropAction {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 14px;
+  border: none;
+  background: transparent;
+  color: $green;
+  font-size: 0.85rem;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s;
+  &:hover { background: rgba(30, 215, 96, 0.08); }
+}

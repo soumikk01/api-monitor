@@ -1,5 +1,5 @@
-﻿// Redirect /dashboard to /overview
+// Redirect /dashboard to /projects
 import { redirect } from 'next/navigation';
 export default function DashboardRedirectPage() {
-  redirect('/overview');
+  redirect('/projects');
 }

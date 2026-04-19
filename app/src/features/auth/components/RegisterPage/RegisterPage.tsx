@@ -41,7 +41,7 @@ export default function RegisterPage() {
     }
     try {
       await register(email, password, name);
-      router.push('/dashboard');
+      router.push('/projects');
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
       setIsShaking(true);

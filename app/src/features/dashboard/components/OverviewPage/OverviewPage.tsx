@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useMonitorSocket, ApiCallEvent } from '@/features/monitor/hooks/useMonitorSocket';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import styles from './OverviewPage.module.scss';
@@ -28,20 +29,38 @@ const SpringBackground = () => (
 export default function OverviewPage() {
   const [dark, setDark] = useState(false);
   const { user } = useAuth();
+  const searchParams = useSearchParams();
   const [projectId, setProjectId] = useState('');
+  const [projectName, setProjectName] = useState('');
 
-  // Fetch the user's first project to get the real project ID
+  // Use projectId from URL if present, else fetch first project
   useEffect(() => {
+    const paramId = searchParams.get('projectId');
     const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
     if (!token) return;
     const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
-    fetch(`${API}/projects`, { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.json())
-      .then((projects: { id: string; name: string }[]) => {
-        if (projects.length > 0) setProjectId(projects[0].id);
-      })
-      .catch(() => {/* ignore */});
-  }, [user]);
+
+    if (paramId) {
+      // Fetch project name and set both id + name together
+      fetch(`${API}/projects/${paramId}`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(r => r.json())
+        .then((p: { id: string; name: string }) => {
+          setProjectId(p.id);
+          setProjectName(p.name);
+        })
+        .catch(() => { setProjectId(paramId); });
+    } else {
+      fetch(`${API}/projects`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(r => r.json())
+        .then((projects: { id: string; name: string }[]) => {
+          if (projects.length > 0) {
+            setProjectId(projects[0].id);
+            setProjectName(projects[0].name);
+          }
+        })
+        .catch(() => {/* ignore */});
+    }
+  }, [user, searchParams]);
 
   // Connect to the real-time NestJS socket with the actual project ID
   const { connected: isConnected, events: calls } = useMonitorSocket({ projectId });
@@ -94,6 +113,12 @@ export default function OverviewPage() {
         </div>
 
         <nav className={styles.nav}>
+          <Link href="/projects" className={styles.navItem} style={{ marginBottom: '0.5rem', opacity: 0.7 }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            Projects
+          </Link>
           <Link href="/overview" className={`${styles.navItem} ${styles.active}`}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
               <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
@@ -125,7 +150,7 @@ export default function OverviewPage() {
       <main className={styles.content}>
         <div className={styles.header}>
           <div>
-            <h1>Platform Overview</h1>
+            <h1>{projectName ? `${projectName} — Overview` : 'Platform Overview'}</h1>
             <p>Welcome back, {user?.name || 'Operator'} — Live Socket: {isConnected ? 'Connected 🟢' : 'Connecting 🟡'}</p>
           </div>
         </div>

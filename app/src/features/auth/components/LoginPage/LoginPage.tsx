@@ -35,7 +35,7 @@ export default function LoginPage() {
     setIsShaking(false);
     try {
       await login(email, password);
-      router.push('/dashboard');
+      router.push('/projects');
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
       setIsShaking(true);
