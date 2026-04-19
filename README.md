@@ -1,6 +1,6 @@
 <div align="center">
   <br />
-  <h3>⚡ NEURAL ARCHITECT // API MONITOR</h3>
+  <h3>⚡ API NEST</h3>
   <p><strong>The modern, real-time observability platform for your backend services.</strong></p>
   <br />
 
