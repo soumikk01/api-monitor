@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import styles from './LoginPage.module.scss';
 
 /* ── Sparkle Background (mirrors LandingPage stars) ── */
@@ -79,7 +79,7 @@ export default function LoginPage() {
                 autoComplete="current-password"
               />
               <div style={{ textAlign: 'right', marginTop: '2px' }}>
-                <Link href="/login/forgot-password" className={styles.forgotLinkInline}>Forgot password?</Link>
+                <Link href="/forgot-password" className={styles.forgotLinkInline}>Forgot password?</Link>
               </div>
             </div>
 

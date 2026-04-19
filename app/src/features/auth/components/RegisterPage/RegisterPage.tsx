@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import styles from './RegisterPage.module.scss';
 
 /* ── Sparkle Background (mirrors LandingPage stars) ── */
