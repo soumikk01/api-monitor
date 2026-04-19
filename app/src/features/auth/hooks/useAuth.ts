@@ -93,6 +93,8 @@ export function useAuth() {
 
     localStorage.setItem('access_token', accessToken);
     if (refreshToken) localStorage.setItem('refresh_token', refreshToken);
+    // Clear any stale project from a previous session
+    localStorage.removeItem('activeProjectId');
 
     // FIX: Check /users/me response before using it
     const userRes = await fetch(`${API}/users/me`, {
@@ -108,6 +110,7 @@ export function useAuth() {
   const logout = useCallback(() => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('activeProjectId'); // clear stale project selection
     setState({ user: null, accessToken: null, isAuthenticated: false, isLoading: false });
   }, []);
 
