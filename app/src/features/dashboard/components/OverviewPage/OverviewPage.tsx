@@ -51,30 +51,30 @@ export default function OverviewPage() {
     const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
     if (!token) return;
 
-    if (paramId) {
-      fetch(`${API}/projects/${paramId}`, { headers: { Authorization: `Bearer ${token}` } })
-        .then(r => r.json())
-        .then((p: { id: string; name: string }) => {
+    void (async () => {
+      if (paramId) {
+        const r = await fetch(`${API}/projects/${paramId}`, { headers: { Authorization: `Bearer ${token}` } });
+        if (r.ok) {
+          const p = await r.json() as { id: string; name: string };
           setProjectId(p.id);
           setProjectName(p.name);
           localStorage.setItem('activeProjectId', p.id);
-        })
-        .catch(() => { setProjectId(paramId); });
-    } else {
-      // Fallback: use last active or first project
-      fetch(`${API}/projects`, { headers: { Authorization: `Bearer ${token}` } })
-        .then(r => r.json())
-        .then((projects: { id: string; name: string }[]) => {
-          const saved = localStorage.getItem('activeProjectId');
-          const active = projects.find(p => p.id === saved) ?? projects[0];
-          if (active) {
-            setProjectId(active.id);
-            setProjectName(active.name);
-            localStorage.setItem('activeProjectId', active.id);
-          }
-        })
-        .catch(() => { /* ignore */ });
-    }
+        } else {
+          setProjectId(paramId);
+        }
+      } else {
+        const r = await fetch(`${API}/projects`, { headers: { Authorization: `Bearer ${token}` } });
+        if (!r.ok) return;
+        const projects = await r.json() as { id: string; name: string }[];
+        const saved = localStorage.getItem('activeProjectId');
+        const active = projects.find(p => p.id === saved) ?? projects[0];
+        if (active) {
+          setProjectId(active.id);
+          setProjectName(active.name);
+          localStorage.setItem('activeProjectId', active.id);
+        }
+      }
+    })();
   }, [user, searchParams]);
 
   // ── Fetch real DB stats + recent call history when projectId is known ──
@@ -104,16 +104,17 @@ export default function OverviewPage() {
   // Merge live WebSocket events on top of the DB-seeded list (dedup by id)
   const mergedCalls: (DbCall | ApiCallEvent)[] = [
     ...liveEvents,
-    ...dbCalls.filter(
-      db => !liveEvents.some(
-        (live: ApiCallEvent) => String(live.id ?? '') === db.id,
-      ),
+    ...dbCalls.filter(db =>
+      !liveEvents.some((live: ApiCallEvent) => live.id != null && live.id === db.id),
     ),
   ].slice(0, 50);
 
   // ── Compute display stats — prefer live counts, fall back to DB stats ──
   const totalCalls = liveEvents.length > 0 ? liveEvents.length : (dbStats?.total ?? 0);
-  const liveErrors = liveEvents.filter((c: ApiCallEvent) => (c.statusCode ?? 200) >= 400).length;
+  // Unified error check: live events have status string; DB records also have status
+  const liveErrors = liveEvents.filter((c: ApiCallEvent) =>
+    c.status === 'CLIENT_ERROR' || c.status === 'SERVER_ERROR' || (c.statusCode != null && c.statusCode >= 400)
+  ).length;
   const errorCalls = liveEvents.length > 0 ? liveErrors : (dbStats?.errors ?? 0);
   const errorRate = totalCalls > 0 ? ((errorCalls / totalCalls) * 100).toFixed(1) : (dbStats?.errorRate?.toFixed(1) ?? '0.0');
   const avgLatency = dbStats?.avgLatency ?? 0;
@@ -180,7 +181,7 @@ export default function OverviewPage() {
             </svg>
             Getting Started
           </Link>
-          <Link href="#" className={styles.navItem}>
+          <Link href="/history" className={styles.navItem}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>

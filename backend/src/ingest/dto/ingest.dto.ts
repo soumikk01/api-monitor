@@ -1,4 +1,4 @@
-import { IsString, IsArray, ValidateNested, IsOptional, IsInt, IsDateString } from 'class-validator';
+import { IsString, IsNotEmpty, IsArray, ValidateNested, IsOptional, IsInt, Min, IsDateString } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class ApiCallEventDto {
@@ -36,6 +36,7 @@ export class ApiCallEventDto {
   responseSize?: number;
 
   @IsInt()
+  @Min(0)
   latency: number; // ms
 
   @IsDateString()
@@ -47,9 +48,11 @@ export class ApiCallEventDto {
 
 export class IngestDto {
   @IsString()
+  @IsNotEmpty()
   sdkToken: string;
 
   @IsString()
+  @IsNotEmpty()
   projectId: string;
 
   @IsArray()

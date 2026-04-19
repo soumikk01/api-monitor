@@ -10,7 +10,8 @@ const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
 export default function GettingStartedPage() {
   const { user } = useAuth();
   const [sdkToken, setSdkToken] = useState<string>('');
-  const [copied, setCopied] = useState(false);
+  const [sdkLoading, setSdkLoading] = useState(true);
+  const [copied, setCopied] = useState<string | null>(null); // tracks WHICH snippet is copied
   const [dark, setDark] = useState(false);
   const [pm, setPm] = useState<'npm' | 'yarn' | 'pnpm' | 'bun'>('npm');
 
@@ -28,20 +29,25 @@ export default function GettingStartedPage() {
     fetch(`${API}/users/me/command`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error('Failed');
+        return r.json();
+      })
       .then((d: { token?: string; command?: string }) => {
         if (d.token) setSdkToken(d.token);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setSdkLoading(false));
   }, [user]);
 
   const cliCommand = `${pmCmds.exec} api-nest-cli@latest init --token ${sdkToken || 'sdk_your_token_here'}`;
 
-  function copy(text: string) {
+  function copy(text: string, key: string) {
+    if (!text) return;
     navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
+      setCopied(key);
+      setTimeout(() => setCopied(null), 2000);
+    }).catch(() => {});
   }
 
   return (
@@ -141,12 +147,18 @@ export default function GettingStartedPage() {
               <div className={styles.tokenBox}>
                 <span className={styles.tokenLabel}>Your SDK Token</span>
                 <div className={styles.tokenRow}>
-                  <code className={styles.tokenValue}>{sdkToken || '— loading…'}</code>
-                  <button className={styles.copyBtn} onClick={() => copy(sdkToken)} disabled={!sdkToken}>
+                  <code className={styles.tokenValue}>
+                    {sdkLoading ? '— loading…' : (sdkToken || '— not available')}
+                  </code>
+                  <button
+                    className={styles.copyBtn}
+                    onClick={() => copy(sdkToken, 'token')}
+                    disabled={!sdkToken}
+                  >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
                       <rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                     </svg>
-                    Copy
+                    {copied === 'token' ? '✓ Copied!' : 'Copy'}
                   </button>
                 </div>
               </div>
@@ -172,7 +184,9 @@ export default function GettingStartedPage() {
                     <span className={styles.termDot} style={{ background: '#febc2e' }} />
                     <span className={styles.termDot} style={{ background: '#28c840' }} />
                     <span className={styles.termTitle}>Terminal</span>
-                    <button className={styles.termCopy} onClick={() => copy(`${pmCmds.install} api-nest-cli`)}>Copy</button>
+                    <button className={styles.termCopy} onClick={() => copy(`${pmCmds.install} api-nest-cli`, 'install')}>
+                      {copied === 'install' ? '✓ Copied!' : 'Copy'}
+                    </button>
                   </div>
                   <div className={styles.termBody}>
                     <span className={styles.prompt}>~/your-backend ❯ </span>
@@ -190,7 +204,7 @@ export default function GettingStartedPage() {
                     <span className={styles.termDot} style={{ background: '#febc2e' }} />
                     <span className={styles.termDot} style={{ background: '#28c840' }} />
                     <span className={styles.termTitle}>Terminal</span>
-                    <button className={styles.termCopy} onClick={() => copy(cliCommand)}>{copied ? '✓ Copied!' : 'Copy'}</button>
+                    <button className={styles.termCopy} onClick={() => copy(cliCommand, 'cli')}>{copied === 'cli' ? '✓ Copied!' : 'Copy'}</button>
                   </div>
                   <div className={styles.termBody}>
                     <span className={styles.prompt}>~/your-backend ❯ </span>
@@ -230,7 +244,9 @@ export default function GettingStartedPage() {
                   <span className={styles.termDot} style={{ background: '#febc2e' }} />
                   <span className={styles.termDot} style={{ background: '#28c840' }} />
                   <span className={styles.termTitle}>Terminal</span>
-                  <button className={styles.termCopy} onClick={() => copy('npm run dev')}>Copy</button>
+                  <button className={styles.termCopy} onClick={() => copy(pmCmds.run, 'run')}>
+                      {copied === 'run' ? '✓ Copied!' : 'Copy'}
+                    </button>
                 </div>
                 <div className={styles.termBody}>
                   <span className={styles.prompt}>~/your-backend ❯ </span>

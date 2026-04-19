@@ -40,6 +40,12 @@ export function useMonitorSocket({
   const [events, setEvents] = useState<ApiCallEvent[]>([]);
   const socketRef = useRef<IoSocket | null>(null);
 
+  // Store callbacks in refs so they never cause socket reconnections
+  const onApiCallRef = useRef(onApiCall);
+  const onStatsRef = useRef(onStats);
+  useEffect(() => { onApiCallRef.current = onApiCall; }, [onApiCall]);
+  useEffect(() => { onStatsRef.current = onStats; }, [onStats]);
+
   const connect = useCallback(function doConnect() {
     if (!projectId || typeof window === 'undefined') return;
 
@@ -48,8 +54,6 @@ export function useMonitorSocket({
 
     const token = localStorage.getItem('access_token') ?? '';
 
-    // Use Socket.io client — matches the NestJS WebSocketGateway
-    // Namespace is part of the URL, not the options object
     const socket = io(`${WS_URL}/ws`, {
       transports: ['websocket', 'polling'],
       auth: { token: `Bearer ${token}` },
@@ -59,7 +63,6 @@ export function useMonitorSocket({
 
     socket.on('connect', () => {
       setConnected(true);
-      // Join the specific project room
       socket.emit('join:project', { projectId, token: `Bearer ${token}` });
     });
 
@@ -67,15 +70,16 @@ export function useMonitorSocket({
 
     socket.on('api:call', (call: ApiCallEvent) => {
       setEvents(prev => [call, ...prev].slice(0, maxEvents));
-      onApiCall?.(call);
+      onApiCallRef.current?.(call);
     });
 
     socket.on('project:stats', (stats: ProjectStats) => {
-      onStats?.(stats);
+      onStatsRef.current?.(stats);
     });
 
     socketRef.current = socket;
-  }, [projectId, maxEvents, onApiCall, onStats]);
+  // Only reconnect when projectId or maxEvents changes — callbacks are stable via ref above
+  }, [projectId, maxEvents]);
 
   useEffect(() => {
     connect();

@@ -8,6 +8,7 @@ import {
   MessageBody,
   ConnectedSocket,
 } from '@nestjs/websockets';
+import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -20,7 +21,14 @@ interface JoinProjectPayload {
 
 @WebSocketGateway({
   namespace: '/ws',
-  cors: { origin: '*', credentials: true },
+  cors: {
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      process.env.FRONTEND_URL ?? 'http://localhost:3000',
+    ],
+    credentials: true,
+  },
 })
 export class EventsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -34,16 +42,18 @@ export class EventsGateway
     private config: ConfigService,
   ) {}
 
+  private readonly logger = new Logger(EventsGateway.name);
+
   afterInit(server: Server) {
     this.eventsService.setServer(server);
   }
 
   handleConnection(client: Socket) {
-    console.log(`WS client connected: ${client.id}`);
+    this.logger.debug(`WS client connected: ${client.id}`);
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`WS client disconnected: ${client.id}`);
+    this.logger.debug(`WS client disconnected: ${client.id}`);
   }
 
   /**
