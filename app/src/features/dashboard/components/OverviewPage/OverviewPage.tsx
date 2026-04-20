@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useMonitorSocket, ApiCallEvent } from '@/hooks/useMonitorSocket';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
@@ -37,7 +37,6 @@ interface DbCall {
 export default function OverviewPage() {
   const { dark } = useTheme();
   const { user } = useAuth();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [projectId, setProjectId] = useState('');
   const [projectName, setProjectName] = useState('');

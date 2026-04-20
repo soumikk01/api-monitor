@@ -24,15 +24,27 @@ export default function GettingStartedPanel() {
   const cliCommand = `${pmCmds.exec} api-nest-cli@latest init --token ${sdkToken || 'sdk_your_token_here'}`;
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (!token) { setSdkLoading(false); return; }
-    fetch(`${API}/users/me/command`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(r => { if (!r.ok) throw new Error('Failed'); return r.json(); })
-      .then((d: { token?: string }) => { if (d.token) setSdkToken(d.token); })
-      .catch(() => {})
-      .finally(() => setSdkLoading(false));
+    let cancelled = false;
+    (async () => {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        if (!cancelled) setSdkLoading(false);
+        return;
+      }
+      try {
+        const r = await fetch(`${API}/users/me/command`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!r.ok) throw new Error('Failed');
+        const d = await r.json() as { token?: string };
+        if (!cancelled && d.token) setSdkToken(d.token);
+      } catch {
+        // ignore
+      } finally {
+        if (!cancelled) setSdkLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
   }, [user]);
 
   function copy(text: string, key: string) {
