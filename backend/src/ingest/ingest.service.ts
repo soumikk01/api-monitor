@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { CacheService } from '../cache/cache.service';
 import { EventsService } from '../events/events.service';
 import { UsersService } from '../users/users.service';
 import { IngestDto, ApiCallEventDto } from './dto/ingest.dto';
@@ -32,6 +33,7 @@ function extractPath(url: string): string {
 export class IngestService {
   constructor(
     private prisma: PrismaService,
+    private cache: CacheService,
     private eventsService: EventsService,
     private usersService: UsersService,
   ) {}
@@ -83,8 +85,9 @@ export class IngestService {
       }
     }
 
-    // 4. Broadcast updated stats (fire-and-forget)
+    // 4. Broadcast updated stats + bust stale cache
     void this.broadcastStats(project.id);
+    void this.cache.del(`stats:${project.id}`, `calls:${project.id}:50`);
 
     return { received: saved.length, projectId: project.id };
   }
