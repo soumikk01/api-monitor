@@ -1,0 +1,419 @@
+// ════════════════════════════════════════════
+//  Top Navbar — Light Glassmorphic Style
+// ════════════════════════════════════════════
+
+$bg:        rgba(255, 255, 255, 0.72);
+$border:    rgba(0, 0, 0, 0.08);
+$border2:   rgba(0, 0, 0, 0.15);
+$text:      #1A1A1A;
+$muted:     #6B6B6B;
+$green:     #1ed760;
+$green-text: #16a34a;
+$orange:    #f97316;
+$r:         8px;
+$h:         46px;
+
+// ── Bar ──
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $h;
+  z-index: 1000;
+  background: $bg;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+}
+
+// ── Sides ──
+.left, .right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+// ── Separator ──
+.sep {
+  width: 1px;
+  height: 20px;
+  background: $border;
+  margin: 0 6px;
+  flex-shrink: 0;
+}
+
+// ════════════════════════════════════════════
+//  BRAND
+// ════════════════════════════════════════════
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  text-decoration: none;
+  color: $text;
+  padding: 4px 6px;
+  border-radius: $r;
+  transition: background 0.15s;
+  &:hover { background: rgba(0,0,0,0.04); }
+}
+
+.brandIcon {
+  width: 24px;
+  height: 24px;
+  background: rgba(168, 216, 255, 0.35);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text;
+  flex-shrink: 0;
+  svg polygon { stroke: $text; }
+  svg circle { fill: $text; }
+}
+
+.brandText {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: $text;
+}
+
+.freeBadge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  background: rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.08);
+  color: $muted;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+// ════════════════════════════════════════════
+//  SELECTOR BUTTONS (project / env)
+// ════════════════════════════════════════════
+.selectorBtn, .envBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: $text;
+  font-size: 0.85rem;
+  font-family: inherit;
+  font-weight: 600;
+  padding: 5px 8px;
+  border-radius: $r;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+  &:hover { background: rgba(0,0,0,0.04); }
+}
+
+.selectorLabel {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.caret {
+  transition: transform 0.2s;
+  flex-shrink: 0;
+  color: $muted;
+}
+.caretOpen { transform: rotate(180deg); }
+
+// ── PRODUCTION badge ──
+.prodBadge {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  background: rgba(249, 115, 22, 0.12);
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  color: #c2410c;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+// ── Connect button ──
+.connectBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #FFF;
+  border: 1px solid $border;
+  border-radius: $r;
+  color: $text;
+  font-size: 0.85rem;
+  font-family: inherit;
+  font-weight: 600;
+  padding: 5px 12px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  &:hover { background: #F9F9F9; border-color: $border2; transform: translateY(-1px); }
+  &:active { transform: translateY(0); box-shadow: none; }
+}
+
+// ════════════════════════════════════════════
+//  RIGHT SIDE
+// ════════════════════════════════════════════
+.ghostBtn {
+  background: transparent;
+  border: none;
+  color: $muted;
+  font-size: 0.85rem;
+  font-family: inherit;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: $r;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s;
+  &:hover { color: $text; background: rgba(0,0,0,0.04); }
+}
+
+// ── Search ──
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,0,0,0.03);
+  border: 1px solid $border;
+  border-radius: 100px; // pill shape match
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.25s;
+  width: 140px;
+  overflow: hidden;
+  &:hover { background: #FFF; border-color: rgba(0,0,0,0.15); box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+}
+
+.searchOpen {
+  width: 240px;
+  background: #FFF !important;
+  border-color: rgba(0,0,0,0.2) !important;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+}
+
+.searchIco { color: $muted; flex-shrink: 0; }
+
+.searchInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: $text;
+  font-size: 0.85rem;
+  font-family: inherit;
+  width: 100%;
+  &::placeholder { color: $muted; }
+}
+
+.kbdBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.kbd {
+  font-size: 0.65rem;
+  color: $muted;
+  background: rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+  user-select: none;
+}
+
+// ── Icon buttons ──
+.iconBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: $r;
+  color: $muted;
+  cursor: pointer;
+  transition: all 0.15s;
+  &:hover { background: rgba(0,0,0,0.05); color: $text; }
+}
+
+// ── Upgrade ──
+.upgradeBtn {
+  display: flex;
+  align-items: center;
+  background: $text;
+  color: #FFF;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.15s;
+  margin-left: 4px;
+  &:hover { background: #333; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+  &:active { transform: translateY(0); }
+}
+
+// ── Avatar ──
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #E8F5E9;
+  border: 1.5px solid #81C784;
+  color: #2E7D32;
+  font-size: 0.8rem;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  transition: all 0.15s;
+  &:hover { border-color: #4CAF50; transform: scale(1.05); }
+}
+
+// ════════════════════════════════════════════
+//  DROPDOWN (Light theme)
+// ════════════════════════════════════════════
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.dropWrap { position: relative; }
+
+.drop {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 220px;
+  background: #FFF;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+  z-index: 500;
+  animation: dropIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  padding: 6px;
+}
+
+.dropRight { left: auto; right: 0; }
+
+.dropHeader {
+  padding: 10px 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: $muted;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.dropUser {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $text;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-bottom: 2px;
+}
+
+.dropEmail {
+  font-size: 0.8rem;
+  color: $muted;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.dropDivider {
+  height: 1px;
+  background: rgba(0,0,0,0.06);
+  margin: 4px 0;
+}
+
+.dropEmpty {
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  color: $muted;
+}
+
+.dropItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: $text;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+  &:hover { background: rgba(0,0,0,0.04); }
+}
+
+.dropItemActive { color: $green-text; background: #F0FDF4; &:hover { background: #DCFCE7; } }
+
+.dropItemDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: $muted;
+  flex-shrink: 0;
+}
+
+.dropItemCheck { margin-left: auto; color: $green-text; }
+
+.dropItemDanger {
+  color: #ef4444;
+  &:hover { background: #FEF2F2; }
+}
+
+.dropAction {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: $text;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+  &:hover { background: rgba(0,0,0,0.04); }
+}

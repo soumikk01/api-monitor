@@ -1,4 +1,11 @@
-import { IsString, IsArray, ValidateNested, IsOptional, IsInt, IsDateString } from 'class-validator';
+import {
+  IsString,
+  IsArray,
+  ValidateNested,
+  IsOptional,
+  IsInt,
+  IsDateString,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class ApiCallEventDto {

@@ -30,7 +30,9 @@ async function bootstrap() {
 
   const port = process.env.PORT ?? 4000;
   await app.listen(port);
-  console.log(`\n🚀 API Nest backend running on http://localhost:${port}/api/v1`);
+  console.log(
+    `\n🚀 API Nest backend running on http://localhost:${port}/api/v1`,
+  );
   console.log(`📡 WebSocket gateway available at ws://localhost:${port}/ws\n`);
 }
 

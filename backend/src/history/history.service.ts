@@ -17,7 +17,8 @@ export class HistoryService {
     const project = await this.prisma.project.findFirst({
       where: { id: projectId, userId },
     });
-    if (!project) throw new ForbiddenException('Project not found or access denied');
+    if (!project)
+      throw new ForbiddenException('Project not found or access denied');
 
     const where: Record<string, unknown> = { projectId };
     if (status) where.status = status.toUpperCase();

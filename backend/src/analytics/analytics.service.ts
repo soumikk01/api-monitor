@@ -9,7 +9,8 @@ export class AnalyticsService {
     const project = await this.prisma.project.findFirst({
       where: { id: projectId, userId },
     });
-    if (!project) throw new ForbiddenException('Project not found or access denied');
+    if (!project)
+      throw new ForbiddenException('Project not found or access denied');
     return project;
   }
 
@@ -27,13 +28,13 @@ export class AnalyticsService {
     });
 
     const total = calls.length;
-    if (!total) return { total: 0, errorRate: 0, avgLatency: 0, successRate: 0 };
+    if (!total)
+      return { total: 0, errorRate: 0, avgLatency: 0, successRate: 0 };
 
     const errors = calls.filter(
       (c) => c.status === 'CLIENT_ERROR' || c.status === 'SERVER_ERROR',
     ).length;
-    const avgLatency =
-      calls.reduce((sum, c) => sum + c.latency, 0) / total;
+    const avgLatency = calls.reduce((sum, c) => sum + c.latency, 0) / total;
 
     return {
       total,
@@ -53,7 +54,13 @@ export class AnalyticsService {
 
     const calls = await this.prisma.apiCall.findMany({
       where: { projectId },
-      select: { method: true, path: true, host: true, status: true, latency: true },
+      select: {
+        method: true,
+        path: true,
+        host: true,
+        status: true,
+        latency: true,
+      },
     });
 
     // Group by method + path

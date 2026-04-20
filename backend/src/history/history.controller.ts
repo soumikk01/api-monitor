@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Query, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { HistoryService } from './history.service';
 import { QueryHistoryDto } from './dto/query-history.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';

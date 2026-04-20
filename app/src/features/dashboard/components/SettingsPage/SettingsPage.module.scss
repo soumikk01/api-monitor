@@ -1,0 +1,265 @@
+// ══════════════════════════════════════════════
+//  SETTINGS PAGE — mirrors ProjectsPage tokens
+// ══════════════════════════════════════════════
+$bg-top:     #F7F3EA;
+$bg-bot:     #F1ECE2;
+$text-main:  #1A1A1A;
+$text-muted: #6B6B6B;
+$white-glass: rgba(255, 255, 255, 0.72);
+$r-lg:   24px;
+$r-md:   16px;
+
+$dark-bg-top:    #16161A;
+$dark-bg-bot:    #0D0D0F;
+$dark-text-main: #FAFAFA;
+$dark-text-muted:#A1A1AA;
+$dark-glass:     rgba(30, 30, 35, 0.75);
+
+.page {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(160deg, $bg-top 0%, $bg-bot 100%);
+  color: $text-main;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  overflow: hidden;
+}
+
+.noiseOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.035;
+}
+
+.dotPattern {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.09) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+
+// ── Sidebar ──────────────────────────────────
+.sidebar {
+  position: fixed;
+  top: 46px;
+  left: 0;
+  width: 160px;
+  height: calc(100vh - 46px);
+  background: $white-glass;
+  backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 0.75rem;
+  z-index: 10;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.brandIcon {
+  width: 28px;
+  height: 28px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brandText {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: $text-main;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: $text-muted;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  &:hover { background: rgba(0, 0, 0, 0.05); color: $text-main; }
+  &.active { background: rgba(0, 0, 0, 0.07); color: $text-main; font-weight: 600; }
+}
+
+// ── Main content ─────────────────────────────
+.content {
+  flex: 1;
+  margin-left: 160px;
+  padding: 2.5rem 2rem;
+  position: relative;
+  z-index: 5;
+}
+
+.header {
+  margin-bottom: 2rem;
+  h1 { font-size: 1.6rem; font-weight: 700; color: $text-main; margin: 0; }
+  p  { font-size: 0.9rem; color: $text-muted; margin: 0.25rem 0 0; }
+}
+
+// ── Theme toggle ─────────────────────────────
+.themeToggle {
+  position: fixed;
+  top: 58px;
+  right: 1rem;
+  z-index: 20;
+  background: $white-glass;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $text-main;
+  transition: background 0.2s;
+  &:hover { background: rgba(255, 255, 255, 0.9); }
+}
+
+// ── Panels ───────────────────────────────────
+.panel {
+  background: $white-glass;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: $r-lg;
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $text-main;
+    margin: 0 0 0.5rem;
+  }
+
+  p {
+    font-size: 0.875rem;
+    color: $text-muted;
+    margin: 0;
+  }
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $text-muted;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .fieldValue {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: $text-main;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    margin: 1rem 0;
+  }
+}
+
+// ── Token code block ─────────────────────────
+.codeBlock {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: $r-md;
+  padding: 1rem 1.25rem;
+  position: relative;
+  overflow: hidden;
+
+  code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.85rem;
+    color: #0d6e44;
+    display: block;
+    word-break: break-all;
+  }
+}
+
+.copyBtn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: $text-main;
+  transition: background 0.15s;
+  &:hover { background: rgba(255, 255, 255, 1); }
+}
+
+.regenerateBtn {
+  padding: 0.55rem 1.25rem;
+  border-radius: 99px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: $text-main;
+  transition: background 0.15s, transform 0.15s;
+  &:hover { background: rgba(255, 255, 255, 0.95); transform: translateY(-1px); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+}
+
+.logoutBtn {
+  padding: 0.55rem 1.25rem;
+  border-radius: 99px;
+  border: none;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+  &:hover { background: #dc2626; transform: translateY(-1px); }
+}
+
+// ── Dark Mode ─────────────────────────────────
+.dark {
+  background: linear-gradient(160deg, $dark-bg-top 0%, $dark-bg-bot 100%);
+  color: $dark-text-main;
+
+  .dotPattern { background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px); }
+  .sidebar { background: $dark-glass; border-color: rgba(255,255,255,0.06); }
+  .brandText, .navItem { color: $dark-text-main; }
+  .navItem:hover { background: rgba(255,255,255,0.05); }
+  .navItem.active { background: rgba(255,255,255,0.08); }
+  .brandIcon { background: rgba(255,255,255,0.08); svg polygon { stroke: $dark-text-main; } svg circle { fill: $dark-text-main; } }
+  .themeToggle { background: $dark-glass; border-color: rgba(255,255,255,0.1); color: $dark-text-main; }
+  .panel { background: rgba(30,30,35,0.7); border-color: rgba(255,255,255,0.06); h3 { color: $dark-text-main; } }
+  .codeBlock { background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.08); code { color: #34d399; } }
+  .copyBtn { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); color: $dark-text-main; }
+  .regenerateBtn { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); color: $dark-text-main; }
+}
