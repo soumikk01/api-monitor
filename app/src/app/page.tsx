@@ -1,2 +1,2 @@
-import LandingPage from './_components/LandingPage';
+import LandingPage from '@/features/landing/components/LandingPage';
 export default LandingPage;

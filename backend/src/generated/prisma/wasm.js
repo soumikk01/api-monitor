@@ -100,15 +100,26 @@ exports.Prisma.ProjectScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
+  slug: 'slug',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EnvironmentScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  label: 'label',
+  color: 'color',
+  projectId: 'projectId',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.ApiCallScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
   userId: 'userId',
+  environmentId: 'environmentId',
   method: 'method',
   url: 'url',
   host: 'host',
@@ -125,6 +136,33 @@ exports.Prisma.ApiCallScalarFieldEnum = {
   startedAt: 'startedAt',
   endedAt: 'endedAt',
   status: 'status',
+  sdkVersion: 'sdkVersion',
+  hostname: 'hostname',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AlertRuleScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  userId: 'userId',
+  name: 'name',
+  metric: 'metric',
+  operator: 'operator',
+  threshold: 'threshold',
+  windowMin: 'windowMin',
+  enabled: 'enabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AuditLogScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  projectId: 'projectId',
+  action: 'action',
+  detail: 'detail',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
   createdAt: 'createdAt'
 };
 
@@ -142,7 +180,10 @@ exports.Prisma.QueryMode = {
 exports.Prisma.ModelName = {
   User: 'User',
   Project: 'Project',
-  ApiCall: 'ApiCall'
+  Environment: 'Environment',
+  ApiCall: 'ApiCall',
+  AlertRule: 'AlertRule',
+  AuditLog: 'AuditLog'
 };
 /**
  * Create the Client
@@ -155,7 +196,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\soumi\\api-nest\\backend\\src\\generated\\prisma",
+      "value": "C:\\Users\\soumi\\api-monitor\\backend\\src\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -169,11 +210,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\soumi\\api-nest\\backend\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\soumi\\api-monitor\\backend\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
@@ -183,7 +224,6 @@ const config = {
     "db"
   ],
   "activeProvider": "mongodb",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -192,13 +232,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id        String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  email     String   @unique\n  password  String\n  name      String?\n  sdkToken  String   @unique\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  projects Project[]\n  apiCalls ApiCall[]\n}\n\nmodel Project {\n  id          String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  name        String\n  description String?\n  userId      String   @db.ObjectId\n  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  apiCalls ApiCall[]\n}\n\nmodel ApiCall {\n  id        String  @id @default(auto()) @map(\"_id\") @db.ObjectId\n  projectId String  @db.ObjectId\n  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)\n  userId    String  @db.ObjectId\n  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  // Request\n  method         String\n  url            String\n  host           String\n  path           String\n  requestHeaders Json?\n  requestBody    Json?\n  queryParams    Json?\n\n  // Response\n  statusCode      Int?\n  statusText      String?\n  responseHeaders Json?\n  responseBody    Json?\n  responseSize    Int?\n\n  // Timing\n  latency   Int\n  startedAt DateTime\n  endedAt   DateTime\n\n  // SUCCESS | CLIENT_ERROR | SERVER_ERROR | TIMEOUT | PENDING\n  status String @default(\"PENDING\")\n\n  createdAt DateTime @default(now())\n\n  @@index([projectId])\n  @@index([userId])\n}\n",
-  "inlineSchemaHash": "4b59bdca04b452c8f95ba7fa622994d940a0940fb58b2dcba76948c0a29a31f9",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\n// ──────────────────────────────────────────────\n//  USER\n// ──────────────────────────────────────────────\nmodel User {\n  id        String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  email     String   @unique\n  password  String\n  name      String?\n  sdkToken  String   @unique\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  projects   Project[]\n  apiCalls   ApiCall[]\n  alertRules AlertRule[]\n  auditLogs  AuditLog[]\n}\n\n// ──────────────────────────────────────────────\n//  PROJECT\n// ──────────────────────────────────────────────\nmodel Project {\n  id          String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  name        String\n  description String?\n  slug        String? // URL-safe identifier derived from name\n  userId      String   @db.ObjectId\n  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  apiCalls     ApiCall[]\n  environments Environment[]\n  alertRules   AlertRule[]\n  auditLogs    AuditLog[]\n\n  @@index([userId])\n}\n\n// ──────────────────────────────────────────────\n//  ENVIRONMENT  (production / staging / dev / custom)\n// ──────────────────────────────────────────────\nmodel Environment {\n  id        String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  name      String // e.g. \"production\"\n  label     String // display label, e.g. \"Production\"\n  color     String   @default(\"#10b981\") // hex, shown in UI badge\n  projectId String   @db.ObjectId\n  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)\n  createdAt DateTime @default(now())\n\n  apiCalls ApiCall[]\n\n  @@index([projectId])\n}\n\n// ──────────────────────────────────────────────\n//  API CALL  (one record per intercepted request)\n// ──────────────────────────────────────────────\nmodel ApiCall {\n  id            String       @id @default(auto()) @map(\"_id\") @db.ObjectId\n  projectId     String       @db.ObjectId\n  project       Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)\n  userId        String       @db.ObjectId\n  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)\n  environmentId String?      @db.ObjectId\n  environment   Environment? @relation(fields: [environmentId], references: [id])\n\n  // Request\n  method         String\n  url            String\n  host           String\n  path           String\n  requestHeaders Json?\n  requestBody    Json?\n  queryParams    Json?\n\n  // Response\n  statusCode      Int?\n  statusText      String?\n  responseHeaders Json?\n  responseBody    Json?\n  responseSize    Int? // bytes\n\n  // Timing\n  latency   Int // milliseconds\n  startedAt DateTime\n  endedAt   DateTime\n\n  // Classification\n  // SUCCESS | CLIENT_ERROR | SERVER_ERROR | TIMEOUT | PENDING\n  status String @default(\"PENDING\")\n\n  // SDK / CLI metadata\n  sdkVersion String? // version of the CLI that sent this event\n  hostname   String? // machine hostname, helps debug multi-instance setups\n\n  createdAt DateTime @default(now())\n\n  @@index([projectId])\n  @@index([userId])\n  @@index([projectId, status]) // fast error-rate queries\n  @@index([projectId, createdAt]) // fast time-range queries\n  @@index([host]) // fast per-host analytics\n}\n\n// ──────────────────────────────────────────────\n//  ALERT RULE  (user-defined threshold alerts)\n// ──────────────────────────────────────────────\n// Example: \"Alert me if error rate > 5% in 5 min window\"\nmodel AlertRule {\n  id        String  @id @default(auto()) @map(\"_id\") @db.ObjectId\n  projectId String  @db.ObjectId\n  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)\n  userId    String  @db.ObjectId\n  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  name      String\n  metric    String // \"error_rate\" | \"latency_p95\" | \"total_calls\"\n  operator  String // \"gt\" | \"lt\" | \"gte\" | \"lte\"\n  threshold Float // the value to compare against\n  windowMin Int     @default(5) // rolling window in minutes\n  enabled   Boolean @default(true)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([projectId])\n  @@index([userId])\n}\n\n// ──────────────────────────────────────────────\n//  AUDIT LOG  (tracks user actions on projects)\n// ──────────────────────────────────────────────\nmodel AuditLog {\n  id        String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  userId    String   @db.ObjectId\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  projectId String?  @db.ObjectId\n  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)\n\n  action    String // \"PROJECT_CREATED\" | \"PROJECT_DELETED\" | \"TOKEN_REGENERATED\" etc.\n  detail    Json? // arbitrary context (e.g. { \"name\": \"my-api\" })\n  ipAddress String?\n  userAgent String?\n\n  createdAt DateTime @default(now())\n\n  @@index([userId])\n  @@index([projectId])\n  @@index([createdAt])\n}\n",
+  "inlineSchemaHash": "b835aac0b1156e17d416b5c9b48c88b8b9704f40af47cda09cf85d7c179c5568",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sdkToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"projects\",\"kind\":\"object\",\"type\":\"Project\",\"relationName\":\"ProjectToUser\"},{\"name\":\"apiCalls\",\"kind\":\"object\",\"type\":\"ApiCall\",\"relationName\":\"ApiCallToUser\"}],\"dbName\":null},\"Project\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ProjectToUser\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"apiCalls\",\"kind\":\"object\",\"type\":\"ApiCall\",\"relationName\":\"ApiCallToProject\"}],\"dbName\":null},\"ApiCall\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"projectId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"project\",\"kind\":\"object\",\"type\":\"Project\",\"relationName\":\"ApiCallToProject\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ApiCallToUser\"},{\"name\":\"method\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"url\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"host\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"path\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"requestHeaders\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"requestBody\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"queryParams\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"statusCode\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"statusText\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"responseHeaders\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"responseBody\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"responseSize\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"latency\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"startedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"endedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sdkToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"projects\",\"kind\":\"object\",\"type\":\"Project\",\"relationName\":\"ProjectToUser\"},{\"name\":\"apiCalls\",\"kind\":\"object\",\"type\":\"ApiCall\",\"relationName\":\"ApiCallToUser\"},{\"name\":\"alertRules\",\"kind\":\"object\",\"type\":\"AlertRule\",\"relationName\":\"AlertRuleToUser\"},{\"name\":\"auditLogs\",\"kind\":\"object\",\"type\":\"AuditLog\",\"relationName\":\"AuditLogToUser\"}],\"dbName\":null},\"Project\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ProjectToUser\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"apiCalls\",\"kind\":\"object\",\"type\":\"ApiCall\",\"relationName\":\"ApiCallToProject\"},{\"name\":\"environments\",\"kind\":\"object\",\"type\":\"Environment\",\"relationName\":\"EnvironmentToProject\"},{\"name\":\"alertRules\",\"kind\":\"object\",\"type\":\"AlertRule\",\"relationName\":\"AlertRuleToProject\"},{\"name\":\"auditLogs\",\"kind\":\"object\",\"type\":\"AuditLog\",\"relationName\":\"AuditLogToProject\"}],\"dbName\":null},\"Environment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"label\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"color\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"projectId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"project\",\"kind\":\"object\",\"type\":\"Project\",\"relationName\":\"EnvironmentToProject\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"apiCalls\",\"kind\":\"object\",\"type\":\"ApiCall\",\"relationName\":\"ApiCallToEnvironment\"}],\"dbName\":null},\"ApiCall\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"projectId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"project\",\"kind\":\"object\",\"type\":\"Project\",\"relationName\":\"ApiCallToProject\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ApiCallToUser\"},{\"name\":\"environmentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"environment\",\"kind\":\"object\",\"type\":\"Environment\",\"relationName\":\"ApiCallToEnvironment\"},{\"name\":\"method\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"url\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"host\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"path\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"requestHeaders\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"requestBody\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"queryParams\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"statusCode\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"statusText\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"responseHeaders\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"responseBody\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"responseSize\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"latency\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"startedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"endedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sdkVersion\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"hostname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"AlertRule\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"projectId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"project\",\"kind\":\"object\",\"type\":\"Project\",\"relationName\":\"AlertRuleToProject\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AlertRuleToUser\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metric\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"operator\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"threshold\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"windowMin\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"enabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"AuditLog\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AuditLogToUser\"},{\"name\":\"projectId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"project\",\"kind\":\"object\",\"type\":\"Project\",\"relationName\":\"AuditLogToProject\"},{\"name\":\"action\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"detail\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

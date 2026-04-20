@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 
 import { PrismaModule } from './prisma/prisma.module';
+import { CacheModule } from './cache/cache.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ProjectsModule } from './projects/projects.module';
@@ -21,6 +22,9 @@ import { AnalyticsModule } from './analytics/analytics.module';
 
     // Database
     PrismaModule,
+
+    // Redis cache (global — auto-available in all modules)
+    CacheModule,
 
     // Feature modules
     AuthModule,

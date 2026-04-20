@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards, Request, BadRequestException } from '@nestjs/common';
 import { AnalyticsService } from './analytics.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -18,6 +18,7 @@ export class AnalyticsController {
     @Query('projectId') projectId: string,
     @Query('range') range?: string,
   ) {
+    if (!projectId) throw new BadRequestException('projectId is required');
     return this.analyticsService.summary(req.user.userId, projectId, range);
   }
 
@@ -27,6 +28,7 @@ export class AnalyticsController {
     @Request() req: AuthRequest,
     @Query('projectId') projectId: string,
   ) {
+    if (!projectId) throw new BadRequestException('projectId is required');
     return this.analyticsService.endpoints(req.user.userId, projectId);
   }
 }

@@ -41,7 +41,7 @@ The project is structured as a tightly-integrated monorepo:
 | Package | Tech Stack | Description |
 | ------- | ---------- | ----------- |
 | **`/app`** | Next.js 16, React, SCSS | The gorgeous main observability dashboard and user portal. |
-| **`/admin`** | Next.js 16, React, Tailwind | Enterprise management panel for supervising users and active tokens. |
+| **`/api_nest.admin`** | Next.js 16, React, Tailwind | Enterprise management panel for supervising users and active tokens. |
 | **`/backend`** | NestJS, Prisma, MongoDB | The core engine processing socket events, auth, and telemetry storage. |
 | **`/cli`** | TypeScript | The NPM package that hooks into your target apps and dispatches telemetry. |
 
@@ -77,7 +77,7 @@ cd backend && bun run start:dev
 cd app && bun run dev
 
 # Terminal 3: Admin Panel (Port 3001)
-cd admin && bun run dev
+cd api_nest.admin && bun run dev
 ```
 
 <br />

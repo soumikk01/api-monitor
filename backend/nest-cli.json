@@ -6,10 +6,14 @@
     "deleteOutDir": false,
     "assets": [
       {
-        "include": "generated/**/*",
+        "include": "generated/prisma/*.dll.node",
         "outDir": "./dist",
-        "watchAssets": true,
-        "exclude": "generated/prisma/*.dll.node"
+        "watchAssets": false
+      },
+      {
+        "include": "generated/prisma/*.so.node",
+        "outDir": "./dist",
+        "watchAssets": false
       }
     ]
   }

@@ -1,2 +1,2 @@
-import RegisterPage from './_components/RegisterPage';
+import RegisterPage from '@/features/auth/components/RegisterPage/RegisterPage';
 export default RegisterPage;

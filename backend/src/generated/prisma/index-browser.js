@@ -128,15 +128,26 @@ exports.Prisma.ProjectScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
+  slug: 'slug',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EnvironmentScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  label: 'label',
+  color: 'color',
+  projectId: 'projectId',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.ApiCallScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
   userId: 'userId',
+  environmentId: 'environmentId',
   method: 'method',
   url: 'url',
   host: 'host',
@@ -153,6 +164,33 @@ exports.Prisma.ApiCallScalarFieldEnum = {
   startedAt: 'startedAt',
   endedAt: 'endedAt',
   status: 'status',
+  sdkVersion: 'sdkVersion',
+  hostname: 'hostname',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AlertRuleScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  userId: 'userId',
+  name: 'name',
+  metric: 'metric',
+  operator: 'operator',
+  threshold: 'threshold',
+  windowMin: 'windowMin',
+  enabled: 'enabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AuditLogScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  projectId: 'projectId',
+  action: 'action',
+  detail: 'detail',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
   createdAt: 'createdAt'
 };
 
@@ -170,7 +208,10 @@ exports.Prisma.QueryMode = {
 exports.Prisma.ModelName = {
   User: 'User',
   Project: 'Project',
-  ApiCall: 'ApiCall'
+  Environment: 'Environment',
+  ApiCall: 'ApiCall',
+  AlertRule: 'AlertRule',
+  AuditLog: 'AuditLog'
 };
 
 /**

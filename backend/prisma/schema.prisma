@@ -8,6 +8,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ──────────────────────────────────────────────
+//  USER
+// ──────────────────────────────────────────────
 model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   email     String   @unique
@@ -17,28 +20,61 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  projects Project[]
-  apiCalls ApiCall[]
+  projects    Project[]
+  apiCalls    ApiCall[]
+  alertRules  AlertRule[]
+  auditLogs   AuditLog[]
 }
 
+// ──────────────────────────────────────────────
+//  PROJECT
+// ──────────────────────────────────────────────
 model Project {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String?
+  slug        String?  // URL-safe identifier derived from name
   userId      String   @db.ObjectId
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  apiCalls ApiCall[]
+  apiCalls     ApiCall[]
+  environments Environment[]
+  alertRules   AlertRule[]
+  auditLogs    AuditLog[]
+
+  @@index([userId])
 }
 
+// ──────────────────────────────────────────────
+//  ENVIRONMENT  (production / staging / dev / custom)
+// ──────────────────────────────────────────────
+model Environment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String                        // e.g. "production"
+  label     String                        // display label, e.g. "Production"
+  color     String   @default("#10b981") // hex, shown in UI badge
+  projectId String   @db.ObjectId
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  apiCalls ApiCall[]
+
+  @@index([projectId])
+}
+
+// ──────────────────────────────────────────────
+//  API CALL  (one record per intercepted request)
+// ──────────────────────────────────────────────
 model ApiCall {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  projectId String  @db.ObjectId
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  userId    String  @db.ObjectId
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  projectId     String       @db.ObjectId
+  project       Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId        String       @db.ObjectId
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  environmentId String?      @db.ObjectId
+  environment   Environment? @relation(fields: [environmentId], references: [id])
 
   // Request
   method         String
@@ -54,18 +90,73 @@ model ApiCall {
   statusText      String?
   responseHeaders Json?
   responseBody    Json?
-  responseSize    Int?
+  responseSize    Int?     // bytes
 
   // Timing
-  latency   Int
+  latency   Int      // milliseconds
   startedAt DateTime
   endedAt   DateTime
 
+  // Classification
   // SUCCESS | CLIENT_ERROR | SERVER_ERROR | TIMEOUT | PENDING
   status String @default("PENDING")
+
+  // SDK / CLI metadata
+  sdkVersion String? // version of the CLI that sent this event
+  hostname   String? // machine hostname, helps debug multi-instance setups
 
   createdAt DateTime @default(now())
 
   @@index([projectId])
   @@index([userId])
+  @@index([projectId, status])      // fast error-rate queries
+  @@index([projectId, createdAt])   // fast time-range queries
+  @@index([host])                   // fast per-host analytics
+}
+
+// ──────────────────────────────────────────────
+//  ALERT RULE  (user-defined threshold alerts)
+// ──────────────────────────────────────────────
+// Example: "Alert me if error rate > 5% in 5 min window"
+model AlertRule {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  projectId String   @db.ObjectId
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name      String
+  metric    String   // "error_rate" | "latency_p95" | "total_calls"
+  operator  String   // "gt" | "lt" | "gte" | "lte"
+  threshold Float    // the value to compare against
+  windowMin Int      @default(5)  // rolling window in minutes
+  enabled   Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([userId])
+}
+
+// ──────────────────────────────────────────────
+//  AUDIT LOG  (tracks user actions on projects)
+// ──────────────────────────────────────────────
+model AuditLog {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String?  @db.ObjectId
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  action    String   // "PROJECT_CREATED" | "PROJECT_DELETED" | "TOKEN_REGENERATED" etc.
+  detail    Json?    // arbitrary context (e.g. { "name": "my-api" })
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([projectId])
+  @@index([createdAt])
 }
