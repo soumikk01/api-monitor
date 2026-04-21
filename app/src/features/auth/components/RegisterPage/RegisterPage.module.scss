@@ -208,12 +208,6 @@ $r-lg:   24px;
 .card {
   width: 100%;
   max-width: 420px;
-  background: $white-glass;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  border-radius: $r-lg;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
   padding: 2.8rem 2.4rem;
   animation: slideUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -278,7 +272,10 @@ $r-lg:   24px;
   padding: 0.75rem 1rem;
   border-radius: 12px;
   border: 1px solid rgba(26, 26, 26, 0.1);
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.6) url('/login_pattern.png');
+  background-size: 800px;
+  background-position: center;
+  background-blend-mode: saturation;
   font-family: 'Inter', sans-serif;
   font-size: 0.95rem;
   color: $text-main;
@@ -322,12 +319,49 @@ $r-lg:   24px;
   font-size: 0.95rem;
   font-weight: 600;
   text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s;
+  position: relative;
+  overflow: hidden;
 
-  &:hover {
+  &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
   }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 2px 5px rgba(26, 26, 26, 0.1);
+  }
+
+  &.loadingBtn {
+    opacity: 0.85;
+    cursor: default;
+    transform: scale(0.98);
+  }
+}
+
+.loaderContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  animation: pulseOpacity 1.5s infinite ease-in-out;
+}
+
+.spinnerIcon {
+  width: 1.15rem;
+  height: 1.15rem;
+  animation: rotateSpinner 1s linear infinite;
+}
+
+@keyframes rotateSpinner {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulseOpacity {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
 // ── Bottom links ───────────────────────────────
@@ -478,9 +512,9 @@ $dm-glass:  rgba(22, 22, 28, 0.82);
   }
 
   .card {
-    background: $dm-glass;
-    border-color: $dm-border;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
   }
 
   .cardTitle { color: $dm-text; }
@@ -488,13 +522,20 @@ $dm-glass:  rgba(22, 22, 28, 0.82);
   .label     { color: $dm-muted; }
 
   .input {
-    background: rgba(255, 255, 255, 0.04);
+    background-color: transparent;
+    background-image: linear-gradient(rgba(22, 22, 28, 0.9), rgba(22, 22, 28, 0.9)), url('/login_pattern.png');
+    background-size: auto, 800px;
+    background-position: center, center;
+    background-blend-mode: normal;
     border-color: $dm-border;
     color: $dm-text;
     &::placeholder { color: rgba(136, 136, 152, 0.5); }
     &:focus {
       border-color: rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.07);
+      background-image: linear-gradient(rgba(32, 32, 40, 0.85), rgba(32, 32, 40, 0.85)), url('/login_pattern.png');
+      background-size: auto, 800px;
+      background-position: center, center;
+      background-blend-mode: normal;
       box-shadow: 0 0 0 3px rgba(255,255,255,0.04);
     }
   }

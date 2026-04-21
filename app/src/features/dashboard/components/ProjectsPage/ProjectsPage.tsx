@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { Folders } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import styles from './ProjectsPage.module.scss';
@@ -192,13 +193,11 @@ export default function ProjectsPage() {
 
   const initials = (name: string) => name.slice(0, 2).toUpperCase();
 
-  if (authLoading || (!user && !authLoading)) {
-    return (
-      <div className={styles.loadingScreen}>
-        <div className={styles.spinner} />
-      </div>
-    );
+  if (!user && !authLoading) {
+    return null; // Let the useEffect handle the redirect without flashing UI
   }
+
+  const isInitialLoading = authLoading || loading;
 
   return (
     <div className={`${styles.page}${dark ? ' ' + styles.dark : ''}`}>
@@ -210,7 +209,10 @@ export default function ProjectsPage() {
       <main className={styles.content}>
         {/* Header */}
         <div className={styles.header}>
-          <h1 className={styles.title}>Projects</h1>
+          <div className={styles.titleWrapper}>
+            <Folders className={styles.titleIcon} size={28} strokeWidth={2} />
+            <h1 className={styles.title}>Projects</h1>
+          </div>
           <div className={styles.headerActions}>
             {/* Search */}
             <div className={styles.searchWrap}>
@@ -258,10 +260,20 @@ export default function ProjectsPage() {
         </div>
 
         {/* Project cards */}
-        {loading ? (
-          <div className={styles.emptyState}>
-            <div className={styles.spinner} />
-            <p>Loading projects…</p>
+        {isInitialLoading ? (
+          <div className={`${styles.grid} ${view === 'list' ? styles.gridList : ''}`}>
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className={`${styles.card} ${styles.skeletonCard}`}>
+                <div className={styles.cardHeader}>
+                  <div className={`${styles.skeletonText} ${styles.skeletonTitle}`} />
+                </div>
+                <div className={`${styles.skeletonText} ${styles.skeletonDesc}`} />
+                <div className={styles.cardFooter}>
+                  <div className={`${styles.skeletonText} ${styles.skeletonDate}`} />
+                  <div className={`${styles.skeletonText} ${styles.skeletonBadge}`} />
+                </div>
+              </div>
+            ))}
           </div>
         ) : filtered.length === 0 ? (
           <div className={styles.emptyState}>

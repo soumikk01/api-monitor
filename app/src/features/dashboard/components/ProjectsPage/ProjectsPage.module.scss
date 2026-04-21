@@ -157,6 +157,9 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
     border-color: rgba(255, 255, 255, 0.1);
     color: $dark-text-main;
   }
+  .titleWrapper, .titleIcon {
+    color: $dark-text-main;
+  }
 
   .searchInput:focus, .fieldInput:focus, .fieldTextarea:focus {
     border-color: rgba(255, 255, 255, 0.25);
@@ -300,10 +303,21 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   gap: 16px;
 }
 
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.titleIcon {
+  color: $text-main;
+}
+
 .title {
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  color: $text-main;
+  letter-spacing: -0.02em;
   margin: 0;
 }
 
@@ -439,6 +453,42 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   grid-template-columns: 1fr;
   max-width: 900px;
 }
+
+// ── Skeleton Loader ──
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.skeletonCard {
+  pointer-events: none;
+  animation: none;
+}
+
+.skeletonText {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+  
+  .dark & {
+    background: rgba(255, 255, 255, 0.06);
+    &::after { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent); }
+  }
+}
+
+.skeletonTitle { width: 60%; height: 20px; }
+.skeletonDesc { width: 90%; height: 14px; margin-top: 14px; }
+.skeletonDate { width: 40%; height: 12px; }
+.skeletonBadge { width: 60px; height: 22px; border-radius: 12px; }
 
 // ── Card ──
 @keyframes cardIn {
