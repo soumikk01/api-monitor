@@ -440,6 +440,42 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   max-width: 900px;
 }
 
+// ── Skeleton Loader ──
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.skeletonCard {
+  pointer-events: none;
+  animation: none;
+}
+
+.skeletonText {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+  
+  .dark & {
+    background: rgba(255, 255, 255, 0.06);
+    &::after { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent); }
+  }
+}
+
+.skeletonTitle { width: 60%; height: 20px; }
+.skeletonDesc { width: 90%; height: 14px; margin-top: 14px; }
+.skeletonDate { width: 40%; height: 12px; }
+.skeletonBadge { width: 60px; height: 22px; border-radius: 12px; }
+
 // ── Card ──
 @keyframes cardIn {
   from { opacity: 0; transform: translateY(12px); }

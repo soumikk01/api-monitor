@@ -319,12 +319,49 @@ $r-lg:   24px;
   font-size: 0.95rem;
   font-weight: 600;
   text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s;
+  position: relative;
+  overflow: hidden;
 
-  &:hover {
+  &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
   }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 2px 5px rgba(26, 26, 26, 0.1);
+  }
+
+  &.loadingBtn {
+    opacity: 0.85;
+    cursor: default;
+    transform: scale(0.98);
+  }
+}
+
+.loaderContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  animation: pulseOpacity 1.5s infinite ease-in-out;
+}
+
+.spinnerIcon {
+  width: 1.15rem;
+  height: 1.15rem;
+  animation: rotateSpinner 1s linear infinite;
+}
+
+@keyframes rotateSpinner {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulseOpacity {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
 // ── Bottom links ───────────────────────────────
