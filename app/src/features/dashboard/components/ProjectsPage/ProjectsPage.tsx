@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { Folders } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import styles from './ProjectsPage.module.scss';
@@ -208,7 +209,10 @@ export default function ProjectsPage() {
       <main className={styles.content}>
         {/* Header */}
         <div className={styles.header}>
-          <h1 className={styles.title}>Projects</h1>
+          <div className={styles.titleWrapper}>
+            <Folders className={styles.titleIcon} size={28} strokeWidth={2} />
+            <h1 className={styles.title}>Projects</h1>
+          </div>
           <div className={styles.headerActions}>
             {/* Search */}
             <div className={styles.searchWrap}>

@@ -157,6 +157,9 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
     border-color: rgba(255, 255, 255, 0.1);
     color: $dark-text-main;
   }
+  .titleWrapper, .titleIcon {
+    color: $dark-text-main;
+  }
 
   .searchInput:focus, .fieldInput:focus, .fieldTextarea:focus {
     border-color: rgba(255, 255, 255, 0.25);
@@ -300,10 +303,21 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   gap: 16px;
 }
 
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.titleIcon {
+  color: $text-main;
+}
+
 .title {
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  color: $text-main;
+  letter-spacing: -0.02em;
   margin: 0;
 }
 
