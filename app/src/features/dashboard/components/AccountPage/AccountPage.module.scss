@@ -60,35 +60,20 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   z-index: 10;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.brandIcon {
-  width: 28px;
-  height: 28px;
-  background: rgba(0, 0, 0, 0.06);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.brandText {
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: $text-main;
-}
-
 .nav {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+}
+
+.navGroupLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $text-muted;
+  margin: 0.5rem 0.5rem 0.25rem 0.75rem;
+  opacity: 0.8;
 }
 
 .navItem {
@@ -103,17 +88,16 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
   &:hover { background: rgba(0, 0, 0, 0.05); color: $text-main; }
-  &.active { background: rgba(99, 102, 241, 0.1); color: $accent; font-weight: 600; }
 }
 
 // ── Main content ─────────────────────────────
 .content {
-  flex: 1;
-  margin-left: 160px;
-  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 780px;
+  margin: 46px auto 0; // Account for the 46px TopNavbar
+  padding: 3.5rem 2rem;
   position: relative;
   z-index: 5;
-  max-width: 780px;
 }
 
 .header {
@@ -272,8 +256,6 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   margin-top: 1.25rem;
 }
 
-.field {}
-
 .fieldValue {
   font-size: 0.95rem;
   font-weight: 600;
@@ -357,9 +339,9 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 
   .dotPattern { background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px); }
   .sidebar { background: $dark-glass; border-color: rgba(255,255,255,0.06); }
-  .brandText { color: $dark-text-main; }
-  .navItem { color: $dark-text-muted; &:hover { background: rgba(255,255,255,0.05); color: $dark-text-main; } &.active { background: rgba(99,102,241,0.15); color: #a5b4fc; } }
-  .brandIcon { background: rgba(255,255,255,0.08); svg polygon { stroke: $dark-text-main; } svg circle { fill: $dark-text-main; } }
+  .navItem { color: $dark-text-muted; &:hover { background: rgba(255,255,255,0.05); color: $dark-text-main; } }
+  .navGroupLabel { color: $dark-text-muted; }
+  .navDivider { background: rgba(255, 255, 255, 0.06) !important; }
   .heroCard { background: rgba(30,30,35,0.85); border-color: rgba(255,255,255,0.06); }
   .heroName { color: $dark-text-main; }
   .heroEmail { color: $dark-text-muted; }

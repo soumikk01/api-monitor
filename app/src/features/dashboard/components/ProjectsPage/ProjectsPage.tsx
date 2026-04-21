@@ -62,7 +62,7 @@ const CloseIcon = () => (
 
 export default function ProjectsPage() {
   const router = useRouter();
-  const { user, isLoading: authLoading } = useAuth();
+  const { isLoading: authLoading } = useAuth();
   
   const { dark } = useTheme();
   const [projects, setProjects] = useState<Project[]>([]);

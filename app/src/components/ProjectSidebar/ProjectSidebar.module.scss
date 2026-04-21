@@ -1,0 +1,75 @@
+// ProjectSidebar — shared project navigation sidebar
+$text-main:  #1A1A1A;
+$text-muted: #6B6B6B;
+$border:     rgba(0, 0, 0, 0.08);
+
+.sidebar {
+  position: fixed;
+  top: 46px;
+  left: 0;
+  width: 200px;
+  height: calc(100vh - 46px);
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 0.75rem;
+  z-index: 10;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: $text-muted;
+  text-decoration: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  opacity: 0.75;
+  transition: color 0.15s, opacity 0.15s;
+
+  &:hover {
+    color: $text-main;
+    opacity: 1;
+  }
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $text-muted;
+  text-decoration: none;
+  transition: background 0.12s, color 0.12s;
+  white-space: nowrap;
+
+  svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: $text-main;
+    svg { opacity: 1; }
+  }
+
+  &.active {
+    background: rgba(0, 0, 0, 0.07);
+    color: $text-main;
+    font-weight: 600;
+    svg { opacity: 1; }
+  }
+}

@@ -1,19 +1,21 @@
 // ══════════════════════════════════════════════
-//  SETTINGS PAGE — mirrors ProjectsPage tokens
+//  SETTINGS PAGE — mirrors Vercel Project Settings
 // ══════════════════════════════════════════════
 $bg-top:     #F7F3EA;
 $bg-bot:     #F1ECE2;
 $text-main:  #1A1A1A;
 $text-muted: #6B6B6B;
 $white-glass: rgba(255, 255, 255, 0.72);
-$r-lg:   24px;
-$r-md:   16px;
+$border-color: rgba(0, 0, 0, 0.08);
+$r-lg:   12px;
+$r-md:   8px;
 
 $dark-bg-top:    #16161A;
 $dark-bg-bot:    #0D0D0F;
 $dark-text-main: #FAFAFA;
 $dark-text-muted:#A1A1AA;
 $dark-glass:     rgba(30, 30, 35, 0.75);
+$dark-border:    rgba(255, 255, 255, 0.1);
 
 .page {
   position: relative;
@@ -48,40 +50,17 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   position: fixed;
   top: 46px;
   left: 0;
-  width: 160px;
+  width: 220px;
   height: calc(100vh - 46px);
-  background: $white-glass;
-  backdrop-filter: blur(12px);
-  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  background: transparent;
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 0.75rem;
+  padding: 2.5rem 1rem;
   z-index: 10;
 }
 
 .brand {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.brandIcon {
-  width: 28px;
-  height: 28px;
-  background: rgba(0, 0, 0, 0.06);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.brandText {
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: $text-main;
+  display: none; // Hidden if you prefer, keeping for structure
 }
 
 .nav {
@@ -93,173 +72,344 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 .navItem {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 10px;
-  font-size: 0.82rem;
+  gap: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
   font-weight: 500;
   color: $text-muted;
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
+  svg { opacity: 0.8; }
   &:hover { background: rgba(0, 0, 0, 0.05); color: $text-main; }
-  &.active { background: rgba(0, 0, 0, 0.07); color: $text-main; font-weight: 600; }
+  &.active { background: rgba(0, 0, 0, 0.07); color: $text-main; font-weight: 600; svg { opacity: 1; color: #111; } }
 }
 
 // ── Main content ─────────────────────────────
 .content {
   flex: 1;
-  margin-left: 160px;
-  padding: 2.5rem 2rem;
+  margin-left: 200px;
+  max-width: 800px;
+  padding: 2.5rem 3rem;
   position: relative;
   z-index: 5;
 }
 
 .header {
   margin-bottom: 2rem;
-  h1 { font-size: 1.6rem; font-weight: 700; color: $text-main; margin: 0; }
-  p  { font-size: 0.9rem; color: $text-muted; margin: 0.25rem 0 0; }
+  h1 { font-size: 1.8rem; font-weight: 700; color: $text-main; margin: 0; letter-spacing: -0.03em; }
+  p  { font-size: 0.9rem; color: $text-muted; margin: 0.5rem 0 0; }
 }
 
-// ── Theme toggle ─────────────────────────────
-.themeToggle {
-  position: fixed;
-  top: 58px;
-  right: 1rem;
-  z-index: 20;
-  background: $white-glass;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: $text-main;
-  transition: background 0.2s;
-  &:hover { background: rgba(255, 255, 255, 0.9); }
-}
-
-// ── Panels ───────────────────────────────────
+// ── Panels (Vercel Style) ────────────────────
 .panel {
-  background: $white-glass;
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 0, 0, 0.07);
+  background: #fff;
+  border: 1px solid $border-color;
   border-radius: $r-lg;
-  padding: 1.75rem;
   margin-bottom: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
 
-  h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: $text-main;
-    margin: 0 0 0.5rem;
-  }
+  h3 { font-size: 1.25rem; font-weight: 600; color: $text-main; margin: 0; }
+  h4 { font-size: 0.95rem; font-weight: 600; color: $text-main; margin: 0 0 0.25rem 0; }
+  p  { font-size: 0.875rem; color: $text-muted; margin: 0; line-height: 1.5; }
+}
 
-  p {
-    font-size: 0.875rem;
-    color: $text-muted;
-    margin: 0;
-  }
+.panelHeader {
+  padding: 1.5rem 1.5rem 0 1.5rem;
+}
+
+.panelBody {
+  padding: 1.5rem;
+  flex: 1;
+}
+
+.panelFooter {
+  background: #fafafa;
+  border-top: 1px solid $border-color;
+  padding: 0.875rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+// ── Form Elements ────────────────────────────
+.formGroup {
+  margin-bottom: 1.25rem;
+  &:last-child { margin-bottom: 0; }
 
   label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: $text-muted;
     display: block;
-    margin-bottom: 0.4rem;
-  }
-
-  .fieldValue {
-    font-size: 0.95rem;
-    font-weight: 600;
+    font-size: 0.875rem;
+    font-weight: 500;
     color: $text-main;
-  }
-
-  .divider {
-    border: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-    margin: 1rem 0;
+    margin-bottom: 0.5rem;
   }
 }
 
-// ── Token code block ─────────────────────────
-.codeBlock {
-  background: rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.07);
-  border-radius: $r-md;
-  padding: 1rem 1.25rem;
-  position: relative;
-  overflow: hidden;
-
-  code {
-    font-family: 'JetBrains Mono', 'Fira Code', monospace;
-    font-size: 0.85rem;
-    color: #0d6e44;
-    display: block;
-    word-break: break-all;
-  }
-}
-
-.copyBtn {
-  position: absolute;
-  right: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  padding: 0.3rem 0.8rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
+.input {
+  width: 100%;
+  max-width: 320px;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
   color: $text-main;
-  transition: background 0.15s;
-  &:hover { background: rgba(255, 255, 255, 1); }
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  font-family: inherit;
+
+  &:focus {
+    border-color: #000;
+    box-shadow: 0 0 0 1px #000;
+  }
+
+  &.readOnly {
+    background: #f9fafb;
+    color: $text-muted;
+    cursor: default;
+    &:focus { box-shadow: none; border-color: #d1d5db; }
+  }
 }
 
-.regenerateBtn {
-  padding: 0.55rem 1.25rem;
-  border-radius: 99px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  background: rgba(255, 255, 255, 0.7);
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  color: $text-main;
-  transition: background 0.15s, transform 0.15s;
-  &:hover { background: rgba(255, 255, 255, 0.95); transform: translateY(-1px); }
-  &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.helperText {
+  font-size: 0.8125rem !important;
+  color: #6b7280 !important;
+  margin-top: 0.35rem !important;
 }
 
-.logoutBtn {
-  padding: 0.55rem 1.25rem;
-  border-radius: 99px;
-  border: none;
-  background: #ef4444;
+// ── Buttons ──────────────────────────────────
+.primaryBtn {
+  background: #000;
   color: #fff;
-  font-size: 0.85rem;
-  font-weight: 600;
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.15s, transform 0.15s;
-  &:hover { background: #dc2626; transform: translateY(-1px); }
+  transition: background 0.15s;
+  
+  &:hover:not(:disabled) { background: #333; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
+
+.secondaryBtn {
+  background: #fff;
+  color: $text-main;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+
+  &:hover { background: #f9fafb; border-color: #d1d5db; }
+}
+
+.dangerBtn {
+  @extend .primaryBtn;
+  background: #ef4444;
+  border-color: #ef4444;
+  &:hover:not(:disabled) { background: #dc2626; border-color: #dc2626; }
+}
+
+// ── Custom Layouts inside Panels ─────────────
+.actionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid $border-color;
+  margin: 1.5rem 0;
+}
+
+.infoBox {
+  background: #fafafa;
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  padding: 1.25rem;
+}
+
+.dangerPanel {
+  border-color: #fca5a5;
+  .panelHeader h3 { color: #ef4444; }
+}
+.dangerFooter {
+  background: #fef2f2;
+  border-top-color: #fca5a5;
+}
+
+// ── Tables ───────────────────────────────────
+.tableBlock {
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.tableHeader, .tableRow {
+  display: flex;
+  padding: 0.75rem 1rem;
+}
+
+.tableHeader {
+  background: #fafafa;
+  border-bottom: 1px solid $border-color;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: $text-muted;
+  letter-spacing: 0.05em;
+}
+
+.tableRow {
+  background: #fff;
+  border-bottom: 1px solid $border-color;
+  font-size: 0.875rem;
+  align-items: center;
+  &:last-child { border-bottom: none; }
+}
+
+.colName { flex: 1; }
+.colRole { width: 100px; text-align: right; color: $text-muted; }
 
 // ── Dark Mode ─────────────────────────────────
 .dark {
   background: linear-gradient(160deg, $dark-bg-top 0%, $dark-bg-bot 100%);
   color: $dark-text-main;
 
-  .dotPattern { background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px); }
-  .sidebar { background: $dark-glass; border-color: rgba(255,255,255,0.06); }
-  .brandText, .navItem { color: $dark-text-main; }
-  .navItem:hover { background: rgba(255,255,255,0.05); }
-  .navItem.active { background: rgba(255,255,255,0.08); }
-  .brandIcon { background: rgba(255,255,255,0.08); svg polygon { stroke: $dark-text-main; } svg circle { fill: $dark-text-main; } }
-  .themeToggle { background: $dark-glass; border-color: rgba(255,255,255,0.1); color: $dark-text-main; }
-  .panel { background: rgba(30,30,35,0.7); border-color: rgba(255,255,255,0.06); h3 { color: $dark-text-main; } }
-  .codeBlock { background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.08); code { color: #34d399; } }
-  .copyBtn { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); color: $dark-text-main; }
-  .regenerateBtn { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); color: $dark-text-main; }
+  .navItem {
+    color: $dark-text-muted;
+    &:hover { background: rgba(255,255,255,0.05); color: $dark-text-main; }
+    &.active { background: rgba(255,255,255,0.08); color: $dark-text-main; svg { color: #fff; } }
+  }
+
+  .header { h1, p { color: $dark-text-main; } }
+
+  .panel {
+    background: #000;
+    border-color: #333;
+    h3, h4 { color: $dark-text-main; }
+    p { color: $dark-text-muted; }
+  }
+
+  .panelFooter { background: #111; border-color: #333; }
+
+  .input {
+    background: #000; border-color: #333; color: $dark-text-main;
+    &:focus { border-color: #fff; box-shadow: 0 0 0 1px #fff; }
+    &.readOnly { background: #111; color: $dark-text-muted; border-color: #333; }
+  }
+
+  .helperText { color: #9ca3af !important; }
+  .formGroup label { color: $dark-text-main; }
+
+  .primaryBtn { background: #fff; color: #000; border-color: #fff; &:hover:not(:disabled) { background: #e5e5e5; } }
+  .secondaryBtn { background: #000; color: #fff; border-color: #333; &:hover { background: #111; border-color: #444; } }
+  
+  .dangerPanel { border-color: #7f1d1d; }
+  .dangerFooter { background: #450a0a; border-top-color: #7f1d1d; }
+  .dangerBtn { background: #ef4444; color: #fff; border-color: #ef4444; }
+
+  .divider { border-color: #333; }
+  .infoBox { background: #111; border-color: #333; }
+  
+  .tableBlock { border-color: #333; }
+  .tableHeader { background: #111; border-color: #333; color: $dark-text-muted; }
+  .tableRow { background: #000; border-color: #333; }
+  .colRole { color: $dark-text-muted; }
+}
+
+// ── Skeleton Loader ────────────────────────────
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+
+%skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 6px;
+}
+
+.skeletonTitle {
+  @extend %skeleton;
+  height: 28px;
+  width: 220px;
+  margin-bottom: 0.5rem;
+}
+
+.skeletonSub {
+  @extend %skeleton;
+  height: 16px;
+  width: 320px;
+}
+
+.skeletonBlock {
+  @extend %skeleton;
+  height: 48px;
+  width: 100%;
+}
+
+// ── Empty State ────────────────────────────────
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6rem 2rem;
+  max-width: 480px;
+  margin: 0 auto;
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $text-main;
+    margin: 1.25rem 0 0.5rem;
+  }
+
+  p {
+    font-size: 0.875rem;
+    color: $text-muted;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+.emptyIcon {
+  width: 72px;
+  height: 72px;
+  background: #f3f4f6;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+}
+
+.emptyBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding: 0.6rem 1.25rem;
+  background: #000;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s;
+
+  &:hover { background: #333; }
 }
