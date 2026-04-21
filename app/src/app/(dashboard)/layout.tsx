@@ -1,10 +1,11 @@
 import React, { Suspense } from 'react';
 import TopNavbar from '@/components/TopNavbar/TopNavbar';
 import ConnectPanel from '@/components/ConnectPanel/ConnectPanel';
+import AuthGuard from '@/components/AuthGuard/AuthGuard';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <AuthGuard>
       <Suspense fallback={<div style={{ height: '46px' }} />}>
         <TopNavbar />
       </Suspense>
@@ -14,6 +15,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
       {/* Right-side Getting Started panel — shown when ?panel=getting-started */}
       <ConnectPanel />
-    </>
+    </AuthGuard>
   );
 }

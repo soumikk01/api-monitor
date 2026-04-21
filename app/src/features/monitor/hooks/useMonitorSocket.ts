@@ -1,4 +1,5 @@
 'use client';
+import { authStorage } from '@/lib/fetchWithAuth';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { io, Socket as IoSocket } from 'socket.io-client';
 
@@ -52,7 +53,7 @@ export function useMonitorSocket({
     // Disconnect existing socket if any
     socketRef.current?.disconnect();
 
-    const token = localStorage.getItem('access_token') ?? '';
+    const token = authStorage.getAccessToken() ?? '';
 
     const socket = io(`${WS_URL}/ws`, {
       transports: ['websocket', 'polling'],

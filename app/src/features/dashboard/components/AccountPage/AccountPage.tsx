@@ -1,4 +1,5 @@
 'use client';
+import { authStorage } from '@/lib/fetchWithAuth';
 
 import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
@@ -29,7 +30,7 @@ export default function AccountPage() {
 
   const loadData = useCallback(async () => {
     if (!user) return;
-    const token = localStorage.getItem('access_token');
+    const token = authStorage.getAccessToken();
     try {
       // load projects count
       const pRes = await fetch(`${API}/projects`, { headers: { Authorization: `Bearer ${token}` } });
@@ -59,7 +60,7 @@ export default function AccountPage() {
 
   const handleRegenerate = async () => {
     setRegenerating(true);
-    const token = localStorage.getItem('access_token');
+    const token = authStorage.getAccessToken();
     try {
       const res = await fetch(`${API}/users/me/regenerate-token`, {
         method: 'POST',

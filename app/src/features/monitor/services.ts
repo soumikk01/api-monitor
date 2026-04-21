@@ -1,9 +1,10 @@
+import { authStorage } from '@/lib/fetchWithAuth';
 // Monitor service — fetch API endpoint statuses from backend
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
 
 function getToken(): string {
-  return typeof window !== 'undefined' ? localStorage.getItem('access_token') ?? '' : '';
+  return typeof window !== 'undefined' ? authStorage.getAccessToken() ?? '' : '';
 }
 
 function authHeaders() {

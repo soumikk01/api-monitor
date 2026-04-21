@@ -1,4 +1,5 @@
 'use client';
+import { authStorage } from '@/lib/fetchWithAuth';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
@@ -32,7 +33,7 @@ export default function TopNavbar() {
 
   /* ── fetch projects ── */
   const fetchProjects = useCallback(async () => {
-    const token = localStorage.getItem('access_token');
+    const token = authStorage.getAccessToken();
     if (!token) return;
     try {
       const res = await fetch(`${API}/projects`, {

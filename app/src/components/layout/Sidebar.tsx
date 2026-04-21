@@ -1,1 +1,1 @@
-﻿export default function Sidebar() { return <aside />; }
+export default function Sidebar() { return <aside />; }

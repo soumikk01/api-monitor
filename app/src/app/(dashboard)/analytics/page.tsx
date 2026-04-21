@@ -1,1 +1,1 @@
-﻿export default function AnalyticsPage() { return <main><h1>Analytics</h1></main>; }
+export default function AnalyticsPage() { return <main><h1>Analytics</h1></main>; }

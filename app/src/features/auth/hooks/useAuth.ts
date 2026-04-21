@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchWithAuth, ensureValidToken } from '@/lib/fetchWithAuth';
+import { fetchWithAuth, ensureValidToken, authStorage } from '@/lib/fetchWithAuth';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
 
@@ -25,12 +25,12 @@ export function useAuth() {
     isLoading: true,
   });
 
-  // ── On mount: restore session, auto-refresh if token expired ──────────
+  // ── On mount: restore session from sessionStorage (per-tab) ───────────
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
-      // ensureValidToken: validates current token, silently refreshes if 401
+      // ensureValidToken reads from sessionStorage — empty in a new tab
       const validToken = await ensureValidToken();
 
       if (!validToken) {
@@ -51,8 +51,7 @@ export function useAuth() {
         }
       } catch {
         if (!cancelled) {
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
+          authStorage.clear();
           setState({ user: null, accessToken: null, isAuthenticated: false, isLoading: false });
         }
       }
@@ -79,8 +78,9 @@ export function useAuth() {
     const refreshToken = data.refreshToken;
     if (!accessToken) throw new Error('Server did not return an access token');
 
-    localStorage.setItem('access_token', accessToken);
-    if (refreshToken) localStorage.setItem('refresh_token', refreshToken);
+    // Store in sessionStorage — isolated to this tab only
+    authStorage.setAccessToken(accessToken);
+    if (refreshToken) authStorage.setRefreshToken(refreshToken);
 
     const userRes = await fetchWithAuth(`${API}/users/me`);
     if (!userRes.ok) throw new Error('Failed to load user profile after login');
@@ -108,9 +108,8 @@ export function useAuth() {
     const refreshToken = data.refreshToken;
     if (!accessToken) throw new Error('Server did not return an access token');
 
-    localStorage.setItem('access_token', accessToken);
-    if (refreshToken) localStorage.setItem('refresh_token', refreshToken);
-    localStorage.removeItem('activeProjectId');
+    authStorage.setAccessToken(accessToken);
+    if (refreshToken) authStorage.setRefreshToken(refreshToken);
 
     const userRes = await fetchWithAuth(`${API}/users/me`);
     if (!userRes.ok) throw new Error('Failed to load user profile after registration');
@@ -122,9 +121,7 @@ export function useAuth() {
 
   // ── Logout ─────────────────────────────────────────────────────────────
   const logout = useCallback(() => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('activeProjectId');
+    authStorage.clear();
     setState({ user: null, accessToken: null, isAuthenticated: false, isLoading: false });
   }, []);
 

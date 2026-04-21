@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Folders } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
+import { authStorage } from '@/lib/fetchWithAuth';
 import styles from './ProjectsPage.module.scss';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
@@ -84,14 +85,10 @@ export default function ProjectsPage() {
   const [editing, setEditing] = useState(false);
   const [editError, setEditError] = useState('');
 
-  /* ── redirect if not authenticated ── */
-  useEffect(() => {
-    if (!authLoading && !user) router.push('/login');
-  }, [authLoading, user, router]);
 
   /* ── fetch projects ── */
   const fetchProjects = useCallback(async () => {
-    const token = localStorage.getItem('access_token');
+    const token = authStorage.getAccessToken();
     if (!token) return;
     try {
       const res = await fetch(`${API}/projects`, {
@@ -122,7 +119,7 @@ export default function ProjectsPage() {
     if (!newName.trim()) return;
     setCreating(true);
     setCreateError('');
-    const token = localStorage.getItem('access_token');
+    const token = authStorage.getAccessToken();
     try {
       const res = await fetch(`${API}/projects`, {
         method: 'POST',
@@ -146,7 +143,7 @@ export default function ProjectsPage() {
 
   /* ── delete project ── */
   const handleDelete = async (id: string) => {
-    const token = localStorage.getItem('access_token');
+    const token = authStorage.getAccessToken();
     try {
       await fetch(`${API}/projects/${id}`, {
         method: 'DELETE',
@@ -163,7 +160,7 @@ export default function ProjectsPage() {
     if (!editTarget || !editName.trim()) return;
     setEditing(true);
     setEditError('');
-    const token = localStorage.getItem('access_token');
+    const token = authStorage.getAccessToken();
     try {
       const res = await fetch(`${API}/projects/${editTarget.id}`, {
         method: 'PATCH',
@@ -192,10 +189,6 @@ export default function ProjectsPage() {
     });
 
   const initials = (name: string) => name.slice(0, 2).toUpperCase();
-
-  if (!user && !authLoading) {
-    return null; // Let the useEffect handle the redirect without flashing UI
-  }
 
   const isInitialLoading = authLoading || loading;
 

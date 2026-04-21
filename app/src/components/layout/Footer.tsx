@@ -1,1 +1,1 @@
-﻿export default function Footer() { return <footer />; }
+export default function Footer() { return <footer />; }

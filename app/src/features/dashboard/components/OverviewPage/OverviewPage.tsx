@@ -1,4 +1,5 @@
 'use client';
+import { authStorage } from '@/lib/fetchWithAuth';
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
@@ -49,7 +50,7 @@ export default function OverviewPage() {
   // ── Resolve active project from URL or first project ──
   useEffect(() => {
     const paramId = searchParams.get('projectId');
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    const token = authStorage.getAccessToken();
     if (!token) return;
 
     void (async () => {
@@ -81,7 +82,7 @@ export default function OverviewPage() {
   // ── Fetch real DB stats + recent call history when projectId is known ──
   const fetchDashboard = useCallback(async () => {
     if (!projectId) return;
-    const token = localStorage.getItem('access_token');
+    const token = authStorage.getAccessToken();
     if (!token) return;
     setStatsLoading(true);
     try {

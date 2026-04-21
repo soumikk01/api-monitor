@@ -1,10 +1,11 @@
 'use client';
+import { authStorage } from '@/lib/fetchWithAuth';
 import { useState, useEffect, useCallback } from 'react';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
 
 function getToken(): string {
-  return typeof window !== 'undefined' ? localStorage.getItem('access_token') ?? '' : '';
+  return typeof window !== 'undefined' ? authStorage.getAccessToken() ?? '' : '';
 }
 
 interface FetchState<T> {

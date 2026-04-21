@@ -1,4 +1,5 @@
 'use client';
+import { authStorage } from '@/lib/fetchWithAuth';
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
@@ -39,7 +40,7 @@ export default function SettingsPage() {
   /** Rotate SDK token via PATCH /users/me/regenerate-token, then reload the command */
   const handleRegenerate = async () => {
     setRegenerating(true);
-    const token = localStorage.getItem('access_token');
+    const token = authStorage.getAccessToken();
     try {
       const res = await fetch(`${API}/users/me/regenerate-token`, {
         method: 'POST',

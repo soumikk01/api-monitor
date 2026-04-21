@@ -1,4 +1,5 @@
 'use client';
+import { authStorage } from '@/lib/fetchWithAuth';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -26,7 +27,7 @@ export default function GettingStartedPanel() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const token = localStorage.getItem('access_token');
+      const token = authStorage.getAccessToken();
       if (!token) {
         if (!cancelled) setSdkLoading(false);
         return;

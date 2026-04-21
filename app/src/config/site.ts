@@ -1,4 +1,4 @@
-﻿export const siteConfig = {
+export const siteConfig = {
   name: 'API Nest',
   description: 'Monitor your APIs with neural precision.',
   url: 'https://api-nest.dev',
