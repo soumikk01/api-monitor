@@ -32,7 +32,7 @@ export default function SettingsPage() {
 
     void (async () => {
       setLoadState('loading');
-      let targetId = paramId ?? localStorage.getItem('activeProjectId');
+      const targetId = paramId ?? localStorage.getItem('activeProjectId');
 
       if (targetId) {
         try {
