@@ -11,6 +11,7 @@ import { IngestModule } from './ingest/ingest.module';
 import { EventsModule } from './events/events.module';
 import { HistoryModule } from './history/history.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { AuditModule } from './audit/audit.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     EventsModule,
     HistoryModule,
     AnalyticsModule,
+    AuditModule,
   ],
 })
 export class AppModule {}
