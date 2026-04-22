@@ -218,7 +218,7 @@ export default function GettingStartedPanel() {
               Make any HTTP request to your server (open your app, hit an endpoint, call your API).
               Every request will appear in the Overview dashboard in real-time — method, path, status, latency.
             </div>
-            <Link href="/overview" className={styles.dashBtn}>
+            <Link href="/dashboard" className={styles.dashBtn}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
                 <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
                 <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>

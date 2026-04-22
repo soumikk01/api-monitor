@@ -4,7 +4,7 @@ import { authStorage } from '@/lib/fetchWithAuth';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { Moon, Sun, LogOut, User } from 'lucide-react';
+import { Moon, Sun, LogOut, User, ClipboardList } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import styles from './TopNavbar.module.scss';
@@ -21,6 +21,8 @@ export default function TopNavbar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isProjectsPage = pathname === '/projects';
+  const isAccountPage = pathname.startsWith('/projects/account');
+  const isAuditPage = pathname === '/projects/account/audit';
   const { user, logout } = useAuth();
   const { dark, toggleTheme } = useTheme();
 
@@ -103,17 +105,17 @@ export default function TopNavbar() {
           <span className={styles.brandText}>API NEST</span>
         </Link>
 
-        {!isProjectsPage && (
+        {!isProjectsPage && !isAccountPage && (
           <>
             <span className={styles.sep} />
 
-            {/* Active project name — static display only */}
-            <span className={styles.selectorBtn} style={{ cursor: 'default', pointerEvents: 'none' }}>
+            {/* Active project name — Click to go to projects */}
+            <Link href="/projects" className={styles.selectorBtn} title="Back to Projects">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="14" height="14">
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
               </svg>
               <span className={styles.selectorLabel}>{activeProject?.name ?? 'No project'}</span>
-            </span>
+            </Link>
 
             <span className={styles.sep} />
 
@@ -147,6 +149,26 @@ export default function TopNavbar() {
               </svg>
               Connect
             </button>
+          </>
+        )}
+
+        {isAccountPage && (
+          <>
+            <span className={styles.sep} />
+            <span className={styles.selectorBtn} style={{ cursor: 'default', pointerEvents: 'none' }}>
+              <User size={14} style={{ marginRight: '6px', opacity: 0.8 }} />
+              <span className={styles.selectorLabel}>Account</span>
+            </span>
+            
+            {isAuditPage && (
+              <>
+                <span className={styles.sep} />
+                <span className={styles.selectorBtn} style={{ cursor: 'default', pointerEvents: 'none' }}>
+                  <ClipboardList size={14} style={{ marginRight: '6px', opacity: 0.8 }} />
+                  <span className={styles.selectorLabel}>Audit</span>
+                </span>
+              </>
+            )}
           </>
         )}
       </div>

@@ -64,7 +64,7 @@ export default function GettingStartedPage() {
 
       {/* Sidebar */}
       <aside className={styles.sidebar}>
-        <Link href="/overview" className={styles.brand}>
+        <Link href="/dashboard" className={styles.brand}>
           <div className={styles.brandIcon}>
             <svg viewBox="0 0 20 20" fill="none" width="18" height="18">
               <polygon points="10,1 19,6 19,14 10,19 1,14 1,6" stroke="currentColor" strokeWidth="1.5" fill="none" />
@@ -75,7 +75,7 @@ export default function GettingStartedPage() {
         </Link>
 
         <nav className={styles.nav}>
-          <Link href="/overview" className={styles.navItem}>
+          <Link href="/dashboard" className={styles.navItem}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="17" height="17">
               <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
               <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
@@ -269,7 +269,7 @@ export default function GettingStartedPage() {
                 Make any HTTP request to your server (open your app, hit an endpoint, call your API).
                 Every request will appear in the Overview dashboard in real-time — method, path, status, latency.
               </div>
-              <Link href="/overview" className={styles.dashBtn}>
+              <Link href="/dashboard" className={styles.dashBtn}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
                   <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
                   <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />

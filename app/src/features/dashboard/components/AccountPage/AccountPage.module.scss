@@ -333,27 +333,66 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 }
 
 // ── Dark Mode ─────────────────────────────────
+// .dark is applied to the <main> (.content) element itself
 .dark {
-  background: linear-gradient(160deg, $dark-bg-top 0%, $dark-bg-bot 100%);
   color: $dark-text-main;
 
-  .dotPattern { background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px); }
-  .sidebar { background: $dark-glass; border-color: rgba(255,255,255,0.06); }
-  .navItem { color: $dark-text-muted; &:hover { background: rgba(255,255,255,0.05); color: $dark-text-main; } }
-  .navGroupLabel { color: $dark-text-muted; }
-  .navDivider { background: rgba(255, 255, 255, 0.06) !important; }
-  .heroCard { background: rgba(30,30,35,0.85); border-color: rgba(255,255,255,0.06); }
-  .heroName { color: $dark-text-main; }
-  .heroEmail { color: $dark-text-muted; }
-  .heroStats { border-color: rgba(255,255,255,0.08); }
-  .statNum { color: $dark-text-main; }
-  .statLabel { color: $dark-text-muted; }
-  .header { h1 { color: $dark-text-main; } p { color: $dark-text-muted; } }
-  .panel { background: rgba(30,30,35,0.7); border-color: rgba(255,255,255,0.06); h3 { color: $dark-text-main; } }
-  .dangerPanel { background: rgba(40,20,20,0.7); border-color: rgba(239,68,68,0.25); }
+  // Header
+  .header {
+    h1 { color: $dark-text-main; }
+    p  { color: $dark-text-muted; }
+  }
+
+  // Hero card
+  .heroCard {
+    background: rgba(30, 30, 35, 0.85);
+    border-color: rgba(255, 255, 255, 0.07);
+  }
+  .heroName   { color: $dark-text-main; }
+  .heroEmail  { color: $dark-text-muted; }
+  .heroStats  { border-color: rgba(255, 255, 255, 0.08); }
+  .statNum    { color: $dark-text-main; }
+  .statLabel  { color: $dark-text-muted; }
+  .statDivider { background: rgba(255, 255, 255, 0.08); }
+
+  // Panels
+  .panel {
+    background: rgba(30, 30, 35, 0.75);
+    border-color: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(14px);
+
+    h3    { color: $dark-text-main; }
+    p     { color: $dark-text-muted; }
+    label { color: $dark-text-muted; }
+  }
+
+  .dangerPanel {
+    background: rgba(50, 20, 20, 0.75);
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+
+  // Fields
   .fieldValue { color: $dark-text-main; }
-  .mono { color: $dark-text-muted; }
-  .codeBlock { background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.08); code { color: #34d399; } }
-  .copyBtn { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); color: $dark-text-main; }
-  .regenerateBtn { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); color: $dark-text-main; }
+  .mono       { color: $dark-text-muted; }
+
+  // Code block
+  .codeBlock {
+    background: rgba(0, 0, 0, 0.35);
+    border-color: rgba(255, 255, 255, 0.08);
+    code { color: #34d399; }
+  }
+
+  // Buttons
+  .copyBtn {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: $dark-text-main;
+    &:hover { background: rgba(255, 255, 255, 0.18); }
+  }
+  .regenerateBtn {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.14);
+    color: $dark-text-main;
+    &:hover { background: rgba(255, 255, 255, 0.13); }
+  }
 }

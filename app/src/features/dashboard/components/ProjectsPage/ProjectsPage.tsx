@@ -285,10 +285,10 @@ export default function ProjectsPage() {
               <div
                 key={project.id}
                 className={styles.card}
-                onClick={() => router.push(`/overview?projectId=${project.id}`)}
+                onClick={() => router.push(`/dashboard?projectId=${project.id}`)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={e => e.key === 'Enter' && router.push(`/overview?projectId=${project.id}`)}
+                onKeyDown={e => e.key === 'Enter' && router.push(`/dashboard?projectId=${project.id}`)}
               >
                 <div className={styles.cardHeader}>
                   <span className={styles.cardName}>{project.name}</span>
@@ -303,7 +303,7 @@ export default function ProjectsPage() {
                     <div className={styles.dropdown} onClick={e => e.stopPropagation()}>
                       <button
                         className={styles.dropItem}
-                        onClick={() => { setOpenMenu(null); router.push(`/overview?projectId=${project.id}`); }}
+                        onClick={() => { setOpenMenu(null); router.push(`/dashboard?projectId=${project.id}`); }}
                       >
                         Open project
                       </button>

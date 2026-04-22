@@ -1,0 +1,229 @@
+$text-main:  #1A1A1A;
+$text-muted: #6B6B6B;
+$white-glass: rgba(255, 255, 255, 0.72);
+$accent:     #6366f1;
+$r-lg:       24px;
+$r-md:       16px;
+
+$dark-text-main: #FAFAFA;
+$dark-text-muted:#A1A1AA;
+$dark-bg-glass: rgba(30, 30, 35, 0.75);
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.content {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3.5rem 2rem;
+  position: relative;
+  z-index: 5;
+}
+
+.header {
+  margin-bottom: 2rem;
+  h1 { font-size: 1.6rem; font-weight: 700; color: $text-main; margin: 0; }
+  p  { font-size: 0.9rem; color: $text-muted; margin: 0.25rem 0 0; }
+}
+
+.panel {
+  background: $white-glass;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: $r-lg;
+  padding: 1.75rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filterSelect {
+  padding: 0.5rem 1rem;
+  border-radius: 99px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #fff;
+  font-size: 0.85rem;
+  color: $text-main;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  &:focus {
+    border-color: $accent;
+  }
+}
+
+.filterText {
+  font-size: 0.85rem;
+  color: $text-muted;
+  font-weight: 500;
+}
+
+.refreshBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 99px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: transparent;
+  color: $text-muted;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: $text-main;
+  }
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  border-radius: $r-md;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: #fff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  
+  th {
+    padding: 1rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: $text-muted;
+    background: rgba(0, 0, 0, 0.02);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    letter-spacing: 0.03em;
+  }
+
+  td {
+    padding: 1rem;
+    font-size: 0.85rem;
+    color: $text-main;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    vertical-align: top;
+  }
+  
+  tbody tr {
+    transition: background 0.15s;
+    &:hover {
+      background: rgba(0, 0, 0, 0.015);
+    }
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.actionCell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  strong {
+    font-weight: 600;
+    color: $text-main;
+  }
+  .viewDetails {
+    font-size: 0.75rem;
+    color: $accent;
+    font-weight: 600;
+    cursor: default;
+    opacity: 0.7;
+  }
+}
+
+.targetCell {
+  color: $text-muted;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.8rem;
+}
+
+.dateCell {
+  color: $text-muted;
+  white-space: nowrap;
+}
+
+.emptyState {
+  padding: 3rem;
+  text-align: center;
+  color: $text-muted;
+  font-size: 0.9rem;
+}
+
+// ── Dark Mode ─────────────────────────────────
+// .dark is applied directly to .content element
+.dark {
+  .header h1 { color: $dark-text-main; }
+  .header p  { color: $dark-text-muted; }
+
+  .panel {
+    background: $dark-bg-glass;
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .filterSelect {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: $dark-text-main;
+    option { background: #1a1a1a; }
+  }
+
+  .filterText { color: $dark-text-muted; }
+
+  .refreshBtn {
+    color: $dark-text-muted;
+    border-color: rgba(255, 255, 255, 0.1);
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: $dark-text-main;
+    }
+  }
+
+  .tableWrapper {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .table {
+    th {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.05);
+      color: $dark-text-muted;
+    }
+    td {
+      border-color: rgba(255, 255, 255, 0.03);
+      color: $dark-text-main;
+    }
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+  }
+
+  .actionCell strong { color: $dark-text-main; }
+  .targetCell        { color: rgba(255, 255, 255, 0.6); }
+  .dateCell          { color: $dark-text-muted; }
+  .emptyState        { color: $dark-text-muted; }
+}
