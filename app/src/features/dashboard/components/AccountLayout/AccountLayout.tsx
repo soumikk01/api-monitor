@@ -19,10 +19,10 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
       <aside className={styles.sidebar}>
         <nav className={styles.nav}>
           <Link href="/projects" className={styles.navItem}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15">
               <polyline points="15 18 9 12 15 6" />
             </svg>
-            Back to Projects
+            Back
           </Link>
 
           <div style={{ margin: '12px 0 6px', height: '1px', background: 'rgba(0,0,0,0.06)' }} className={styles.navDivider} />
@@ -33,12 +33,12 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             href="/projects/account"
             className={`${styles.navItem} ${pathname === '/projects/account' ? styles.activeNavItem : ''}`}
           >
-            <Key size={15} />
+            <Key size={14} />
             Profile & Tokens
           </Link>
 
           <Link href="#" className={styles.navItem}>
-            <Shield size={15} />
+            <Shield size={14} />
             Security
           </Link>
 
@@ -48,7 +48,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             href="/projects/account/audit"
             className={`${styles.navItem} ${pathname === '/projects/account/audit' ? styles.activeNavItem : ''}`}
           >
-            <ClipboardList size={15} />
+            <ClipboardList size={14} />
             Audit
           </Link>
         </nav>

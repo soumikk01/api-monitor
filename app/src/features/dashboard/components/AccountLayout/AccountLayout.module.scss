@@ -43,14 +43,14 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   position: fixed;
   top: 46px;
   left: 0;
-  width: 160px;
+  width: 200px;
   height: calc(100vh - 46px);
   background: $white-glass;
   backdrop-filter: blur(12px);
   border-right: 1px solid rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 0.75rem;
+  padding: 1.25rem 0.65rem;
   z-index: 10;
 }
 
@@ -61,22 +61,22 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 }
 
 .navGroupLabel {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: $text-muted;
-  margin: 0.5rem 0.5rem 0.25rem 0.75rem;
+  margin: 0.5rem 0.5rem 0.25rem 0.65rem;
   opacity: 0.8;
 }
 
 .navItem {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 10px;
-  font-size: 0.82rem;
+  gap: 0.4rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
   font-weight: 500;
   color: $text-muted;
   text-decoration: none;
@@ -93,7 +93,7 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 // ── Main Content Area ────────────────────────
 .mainArea {
   flex: 1;
-  margin-left: 160px; // account for sidebar
+  margin-left: 150px; // account for sidebar
   height: calc(100vh - 46px);
   overflow-y: auto;
   position: relative;
