@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import styles from './ProjectSettingsSidebar.module.scss';
 
 interface Props {
@@ -12,7 +11,6 @@ interface Props {
 }
 
 export default function ProjectSettingsSidebar({ projectId, activeSection: propActiveSection, onSectionChange }: Props) {
-  const pathname = usePathname();
   const [localActiveSection, setLocalActiveSection] = useState('general');
   const activeSection = propActiveSection ?? localActiveSection;
 

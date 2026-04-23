@@ -150,9 +150,9 @@ export default function SettingsPage() {
         setInviteInput('');
         await fetchMembers(projectId, token!);
       } else {
-        let data: any;
+        let data: { message?: string };
         try {
-          data = await res.json();
+          data = await res.json() as { message?: string };
         } catch {
           data = { message: 'Server error occurred' };
         }
