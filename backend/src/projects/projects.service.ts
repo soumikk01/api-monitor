@@ -9,8 +9,8 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 
 // TTLs
-const STATS_TTL   = 30;  // seconds — stats refresh every 30s
-const CALLS_TTL   = 15;  // seconds — recent calls list
+const STATS_TTL = 30; // seconds — stats refresh every 30s
+const CALLS_TTL = 15; // seconds — recent calls list
 const PROJECT_TTL = 120; // seconds — single project metadata
 
 @Injectable()
@@ -44,7 +44,14 @@ export class ProjectsService {
   /** Get a single project (ownership verified, cached) */
   async findOne(projectId: string, userId: string) {
     const cacheKey = `project:${projectId}`;
-    const cached = await this.cache.get<{ id: string; userId: string; name: string; description: string | null; createdAt: Date; updatedAt: Date }>(cacheKey);
+    const cached = await this.cache.get<{
+      id: string;
+      userId: string;
+      name: string;
+      description: string | null;
+      createdAt: Date;
+      updatedAt: Date;
+    }>(cacheKey);
     if (cached) {
       if (cached.userId !== userId) throw new ForbiddenException();
       return cached;
@@ -106,7 +113,14 @@ export class ProjectsService {
 
     const total = calls.length;
     if (total === 0) {
-      const result = { total: 0, errors: 0, errorRate: 0, avgLatency: 0, successRate: 100, activeInstances: 0 };
+      const result = {
+        total: 0,
+        errors: 0,
+        errorRate: 0,
+        avgLatency: 0,
+        successRate: 100,
+        activeInstances: 0,
+      };
       await this.cache.set(cacheKey, result, STATS_TTL);
       return result;
     }

@@ -26,7 +26,7 @@ export class AuditController {
   ) {
     const page = pageStr ? parseInt(pageStr, 10) : 1;
     const limit = limitStr ? parseInt(limitStr, 10) : 50;
-    
+
     return this.auditService.findAll(req.user.userId, {
       page: isNaN(page) ? 1 : page,
       limit: isNaN(limit) ? 50 : limit,

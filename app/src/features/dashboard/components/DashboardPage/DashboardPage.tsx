@@ -244,12 +244,12 @@ export default function DashboardPage() {
                   const el = e.currentTarget.parentElement;
                   if (el) {
                     el.style.animation = 'none';
-                    el.offsetHeight; /* trigger reflow */
+                    void el.offsetHeight; /* trigger reflow */
                     el.style.animation = '';
-                    const bars = el.querySelectorAll('path[class*="graphStroke"], path[class*="graphFill"]');
-                    bars.forEach((b: any) => {
+                    const bars = el.querySelectorAll<SVGPathElement>('path[class*="graphStroke"], path[class*="graphFill"]');
+                    bars.forEach((b) => {
                       b.style.animation = 'none';
-                      b.offsetHeight;
+                      void b.getBoundingClientRect(); // trigger reflow for SVG elements
                       b.style.animation = '';
                     });
                   }

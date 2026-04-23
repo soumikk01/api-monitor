@@ -21,11 +21,12 @@ export class AuditService {
       const project = await this.prisma.project.findFirst({
         where: { id: projectId, userId },
       });
-      if (!project) throw new ForbiddenException('Project not found or access denied');
+      if (!project)
+        throw new ForbiddenException('Project not found or access denied');
     }
 
     const where: Record<string, unknown> = { userId };
-    
+
     if (projectId) {
       where.projectId = projectId;
     }
@@ -49,9 +50,9 @@ export class AuditService {
         take: limit,
         include: {
           project: {
-            select: { name: true, id: true }
-          }
-        }
+            select: { name: true, id: true },
+          },
+        },
       }),
     ]);
 
@@ -68,9 +69,9 @@ export class AuditService {
 
   // A helper method for other services to log audit events
   async logAction(
-    userId: string, 
-    action: string, 
-    detail: any = null, 
+    userId: string,
+    action: string,
+    detail: any = null,
     projectId: string | null = null,
     ipAddress: string | null = null,
     userAgent: string | null = null,
@@ -82,8 +83,8 @@ export class AuditService {
         action,
         detail,
         ipAddress,
-        userAgent
-      }
+        userAgent,
+      },
     });
   }
 }
