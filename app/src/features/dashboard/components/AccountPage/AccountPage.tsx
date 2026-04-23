@@ -44,8 +44,6 @@ export default function AccountPage() {
     setShowAvatarPicker(false);
   };
 
-  const userInitial = (user?.name || user?.email || 'U').charAt(0).toUpperCase();
-
   const loadData = useCallback(async () => {
     if (!user) return;
     setIsLoading(true);
