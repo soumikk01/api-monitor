@@ -2,6 +2,10 @@
 //  Top Navbar — Light Glassmorphic Style
 // ════════════════════════════════════════════
 
+
+
+
+
 $bg:        rgba(255, 255, 255, 0.72);
 $border:    rgba(0, 0, 0, 0.08);
 $border2:   rgba(0, 0, 0, 0.15);
@@ -150,20 +154,31 @@ $h:         46px;
   display: flex;
   align-items: center;
   gap: 5px;
-  background: #FFF;
-  border: 1px solid $border;
+  background: #fff;
+  border: 1px solid rgba(99, 102, 241, 0.3);
   border-radius: $r;
-  color: $text;
+  color: #4f46e5;
   font-size: 0.85rem;
   font-family: inherit;
   font-weight: 600;
   padding: 5px 12px;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.15s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  &:hover { background: #F9F9F9; border-color: $border2; transform: translateY(-1px); }
-  &:active { transform: translateY(0); box-shadow: none; }
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(99, 102, 241, 0.08);
+
+  &:hover {
+    background: #f5f3ff;
+    border-color: rgba(99, 102, 241, 0.6);
+    color: #3730a3;
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+    animation: none;
+  }
+
+  &:active {
+    box-shadow: 0 1px 4px rgba(99, 102, 241, 0.12);
+  }
 }
 
 // ════════════════════════════════════════════
@@ -283,19 +298,24 @@ $h:         46px;
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: #E8F5E9;
-  border: 1.5px solid #81C784;
-  color: #2E7D32;
-  font-size: 0.8rem;
-  font-weight: 800;
-  font-family: inherit;
+  background: #f4f4f5;
+  border: 1.5px solid rgba(0,0,0,0.1);
+  color: #1a1a1a;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-left: 6px;
+  padding: 0;
+  overflow: hidden;
   transition: all 0.15s;
-  &:hover { border-color: #4CAF50; transform: scale(1.05); }
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  &:hover { border-color: rgba(0,0,0,0.25); transform: scale(1.05); }
 }
 
 // ════════════════════════════════════════════
@@ -337,22 +357,22 @@ $h:         46px;
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(145deg, #6366f1 0%, #8b5cf6 100%);
+  background: #f4f4f5;
+  border: 1px solid rgba(0,0,0,0.08);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 10px;
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
-}
+  color: #1a1a1a;
 
-.dropAvatarSvg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  svg {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .dropUser {
@@ -486,8 +506,13 @@ $h:         46px;
   }
 
   .userBtn { border-color: rgba(255,255,255,0.15); }
-  .userAvatar { color: #111; }
-  .userAvatarEmpty { background: #333; color: #fff; border-color: #444; }
+  
+  .avatar {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.1);
+    color: #fff;
+    &:hover { border-color: rgba(255,255,255,0.25); }
+  }
 
   .drop {
     background: #18181b;
@@ -498,6 +523,13 @@ $h:         46px;
   .dropHeader {
     .dropUser { color: #fff; }
     .dropEmail { color: #a1a1aa; }
+  }
+
+  .dropAvatar {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.1);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
   }
   
   .dropEmpty { color: #a1a1aa; }

@@ -1,31 +1,49 @@
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(100%); }
-  to   { opacity: 1; transform: translateX(0); }
+/* ── Backdrop fade + blur ────────── */
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Modal spring entrance ───────── */
+@keyframes modalIn {
+  0%   { opacity: 0;   transform: translate(-50%, -50%) scale(0.88) translateY(20px); filter: blur(6px); }
+  55%  { opacity: 1;   transform: translate(-50%, -50%) scale(1.025) translateY(-3px); filter: blur(0); }
+  75%  { transform: translate(-50%, -50%) scale(0.99) translateY(1px); }
+  100% { transform: translate(-50%, -50%) scale(1) translateY(0); }
 }
 
 .backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.32);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background: rgba(0, 0, 0, 0.52);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 1998;
+  animation: backdropIn 0.2s ease forwards;
 }
 
 .drawer {
   position: fixed;
-  top: 46px;        /* sits just below the TopNavbar */
-  right: 0;
-  bottom: 0;
-  width: 780px;     /* wider so terminal lines don't wrap */
-  max-width: 96vw;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 780px;
+  max-width: 94vw;
+  max-height: 88vh;
   background: #fff;
-  box-shadow: -8px 0 48px rgba(0, 0, 0, 0.16);
+  border-radius: 20px;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.04),
+    0 20px 48px rgba(0, 0, 0, 0.18),
+    0 56px 120px rgba(0, 0, 0, 0.14),
+    0 0 0 1px rgba(0, 0, 0, 0.06);
   z-index: 1999;
   display: flex;
   flex-direction: column;
-  animation: slideInRight 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: modalIn 0.44s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  will-change: transform, opacity, filter;
 }
 
 /* ── Header ─────────────────── */
@@ -38,6 +56,7 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   background: linear-gradient(90deg, #f8f6ff 0%, #f0f4ff 100%);
   flex-shrink: 0;
+  border-radius: 20px 20px 0 0;
 }
 
 .headerTitle {
@@ -57,12 +76,17 @@
   display: flex;
   align-items: center;
   padding: 6px;
-  border-radius: 7px;
-  transition: background 0.15s, color 0.15s;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.07);
+    background: rgba(0, 0, 0, 0.08);
     color: #1a1a1a;
+    transform: scale(1.12) rotate(6deg);
+  }
+
+  &:active {
+    transform: scale(0.9);
   }
 }
 
@@ -72,6 +96,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   background: linear-gradient(160deg, #F7F3EA 0%, #F1ECE2 100%);
+  border-radius: 0 0 20px 20px;
 
   /* Scrollbar styling */
   &::-webkit-scrollbar        { width: 6px; }

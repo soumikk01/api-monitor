@@ -7,6 +7,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Moon, Sun, LogOut, User, ClipboardList } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
+import { AVATARS } from '@/features/dashboard/components/AccountPage/avatars';
 import styles from './TopNavbar.module.scss';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
@@ -30,9 +31,28 @@ export default function TopNavbar() {
   const [showUserDrop, setShowUserDrop] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchVal, setSearchVal] = useState('');
+  const [avatarIndex, setAvatarIndex] = useState<number>(0);
 
   const userRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const getAvatar = () => parseInt(localStorage.getItem('userAvatarIndex') ?? '0', 10);
+      setAvatarIndex(getAvatar());
+
+      const handleStorage = () => setAvatarIndex(getAvatar());
+      window.addEventListener('storage', handleStorage);
+      window.addEventListener('avatarChanged', handleStorage);
+      return () => {
+        window.removeEventListener('storage', handleStorage);
+        window.removeEventListener('avatarChanged', handleStorage);
+      };
+    }
+  }, []);
+
+  const currentAvatar = AVATARS[avatarIndex] ?? AVATARS[0];
+
 
   /* ── fetch projects ── */
   const fetchProjects = useCallback(async () => {
@@ -87,8 +107,6 @@ export default function TopNavbar() {
     logout();
     router.push('/login');
   };
-
-  const userInitial = (user?.name || user?.email || 'U').slice(0, 1).toUpperCase();
 
   return (
     <nav className={`${styles.navbar}${dark ? ' ' + styles.dark : ''}`} id="top-navbar">
@@ -236,19 +254,14 @@ export default function TopNavbar() {
             onClick={() => setShowUserDrop(s => !s)}
             title={user?.name || user?.email}
           >
-            {userInitial}
+            {currentAvatar.svg}
           </button>
 
           {showUserDrop && (
             <div className={`${styles.drop} ${styles.dropRight}`}>
               <div className={styles.dropHeader}>
                 <div className={styles.dropAvatar}>
-                  <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className={styles.dropAvatarSvg}>
-                    {/* head */}
-                    <circle cx="32" cy="22" r="12" fill="rgba(255,255,255,0.9)"/>
-                    {/* shoulders / body */}
-                    <path d="M8 68c0-13.255 10.745-24 24-24s24 10.745 24 24" fill="rgba(255,255,255,0.75)"/>
-                  </svg>
+                  {currentAvatar.svg}
                 </div>
                 <div className={styles.dropUser}>{user?.name || 'Account'}</div>
                 <div className={styles.dropEmail}>{user?.email}</div>

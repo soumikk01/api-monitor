@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import { Shimmer, ShimmerBlock, ShimmerRow } from '@/components/Shimmer/Shimmer';
+import { AVATARS } from './avatars';
 import styles from './AccountPage.module.scss';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
@@ -26,6 +27,22 @@ export default function AccountPage() {
   const [copied, setCopied] = useState(false);
   const [regenerating, setRegenerating] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      return parseInt(localStorage.getItem('userAvatarIndex') ?? '0', 10);
+    }
+    return 0;
+  });
+
+  const currentAvatar = AVATARS[selectedAvatar] ?? AVATARS[0];
+
+  const handleSelectAvatar = (index: number) => {
+    setSelectedAvatar(index);
+    localStorage.setItem('userAvatarIndex', String(index));
+    window.dispatchEvent(new Event('avatarChanged'));
+    setShowAvatarPicker(false);
+  };
 
   const userInitial = (user?.name || user?.email || 'U').charAt(0).toUpperCase();
 
@@ -119,7 +136,23 @@ export default function AccountPage() {
 
       {/* ── PROFILE HERO ── */}
       <div className={styles.heroCard}>
-        <div className={styles.avatarCircle}>{userInitial}</div>
+        {/* Avatar with edit icon */}
+        <div className={styles.avatarWrap}>
+          <div className={styles.avatarCircle}>
+            {currentAvatar.svg}
+          </div>
+          <button
+            className={styles.avatarEditBtn}
+            onClick={() => setShowAvatarPicker(true)}
+            title="Change avatar"
+            aria-label="Change profile photo"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+        </div>
         <div className={styles.heroInfo}>
           <div className={styles.heroName}>{user?.name || 'Anonymous'}</div>
           <div className={styles.heroEmail}>{user?.email}</div>
@@ -197,6 +230,44 @@ export default function AccountPage() {
           </button>
         </div>
       </div>
+
+      {/* ── AVATAR PICKER MODAL ── */}
+      {showAvatarPicker && (
+        <div className={styles.pickerBackdrop} onClick={() => setShowAvatarPicker(false)}>
+          <div className={styles.pickerModal} onClick={e => e.stopPropagation()}>
+            <div className={styles.pickerHeader}>
+              <span>Choose your avatar</span>
+              <button className={styles.pickerClose} onClick={() => setShowAvatarPicker(false)}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+            <p className={styles.pickerSub}>
+              unique avatars to match your personality
+            </p>
+            <div className={styles.pickerGrid}>
+              {AVATARS.map((av, i) => (
+                <button
+                  key={i}
+                  className={`${styles.pickerItem} ${selectedAvatar === i ? styles.pickerItemSelected : ''}`}
+                  onClick={() => handleSelectAvatar(i)}
+                >
+                  {av.svg}
+                  <span className={styles.avatarTooltip}>{av.label}</span>
+                  {selectedAvatar === i && (
+                     <span className={styles.pickerCheck}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="10" height="10">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

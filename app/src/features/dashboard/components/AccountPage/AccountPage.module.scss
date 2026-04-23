@@ -94,7 +94,7 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 .content {
   width: 100%;
   max-width: 780px;
-  margin: 46px auto 0; // Account for the 46px TopNavbar
+  margin: 0 auto;
   padding: 3.5rem 2rem;
   position: relative;
   z-index: 5;
@@ -132,20 +132,264 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   }
 }
 
+@keyframes pickerIn {
+  from { opacity: 0; transform: scale(0.92) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.avatarWrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+
+  &:hover .avatarEditBtn { opacity: 1; transform: scale(1); }
+}
+
 .avatarCircle {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: linear-gradient(135deg, $accent 0%, #8b5cf6 100%);
-  color: #fff;
-  font-size: 1.75rem;
-  font-weight: 700;
+  background: #f4f4f5;
+  border: 2px solid rgba(0,0,0,0.1);
+  color: #1a1a1a;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+  transition: filter 0.2s, border-color 0.2s;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+
+  .avatarWrap:hover & {
+    filter: brightness(0.93);
+    border-color: rgba(0,0,0,0.2);
+  }
 }
+
+.avatarEditBtn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid rgba(0,0,0,0.08);
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.16);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.18s, transform 0.18s;
+
+  &:hover {
+    background: #6366f1;
+    color: #fff;
+    border-color: #6366f1;
+  }
+}
+
+// ── Avatar Picker Modal ────────────────────────
+.pickerBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pickerModal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 1.75rem;
+  width: 480px;
+  max-width: 94vw;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06);
+  animation: pickerIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pickerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+
+  span {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+}
+
+.pickerClose {
+  background: transparent;
+  border: none;
+  color: #6b6b6b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border-radius: 8px;
+  transition: background 0.15s, transform 0.15s;
+
+  &:hover {
+    background: rgba(0,0,0,0.07);
+    transform: rotate(8deg) scale(1.1);
+  }
+}
+
+.pickerSub {
+  font-size: 0.82rem;
+  color: #6b6b6b;
+  margin: 0 0 1.25rem;
+  min-height: 1.2rem; // keep height stable when switching text
+}
+
+.hoverName {
+  font-weight: 700;
+  color: #6366f1; // accent color
+  letter-spacing: 0.02em;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pickerGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.85rem;
+  max-height: 380px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 44px 16px 16px 16px; // L/R padding creates space for tooltip bleed, top for scaled tooltip
+  margin: -28px -10px 0 -10px; // Offset the padding visually
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
+}
+
+.avatarTooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px) scale(0.95);
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 100;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 4px;
+    border-style: solid;
+    border-color: #1a1a1a transparent transparent transparent;
+  }
+}
+
+.pickerItem {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.08);
+  background: #f4f4f5;
+  color: #1a1a1a;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), border-color 0.15s, box-shadow 0.15s;
+  font-family: 'Inter', sans-serif;
+
+  &:hover {
+    transform: scale(1.12);
+    border-color: #1a1a1a;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+
+    .avatarTooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+  }
+
+  // Edge protection: First column
+  &:nth-child(6n + 1) {
+    .avatarTooltip {
+      left: -8px;
+      transform: translateX(0) translateY(4px) scale(0.95);
+      &::after {
+        left: 32px;
+        transform: translateX(-50%);
+      }
+    }
+    &:hover .avatarTooltip {
+      transform: translateX(0) translateY(0) scale(1);
+    }
+  }
+
+  // Edge protection: Last column
+  &:nth-child(6n) {
+    .avatarTooltip {
+      left: auto;
+      right: -8px;
+      transform: translateX(0) translateY(4px) scale(0.95);
+      &::after {
+        left: auto;
+        right: 32px;
+        transform: translateX(50%);
+      }
+    }
+    &:hover .avatarTooltip {
+      transform: translateX(0) translateY(0) scale(1);
+    }
+  }
+}
+
+.pickerItemSelected {
+  transform: scale(1.08);
+  border-color: #1a1a1a !important;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.12) !important;
+}
+
+.pickerCheck {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 18px;
+  height: 18px;
+  background: #10b981;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
 
 .heroInfo {
   flex: 1;
@@ -394,5 +638,64 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
     border-color: rgba(255, 255, 255, 0.14);
     color: $dark-text-main;
     &:hover { background: rgba(255, 255, 255, 0.13); }
+  }
+
+  // Avatar Circle & Edit Button
+  .avatarCircle {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.1);
+    color: $dark-text-main;
+  }
+  .avatarEditBtn {
+    background: #2a2a2e;
+    border-color: rgba(255,255,255,0.15);
+    color: $dark-text-main;
+    &:hover {
+      background: #6366f1;
+      border-color: #6366f1;
+      color: #fff;
+    }
+  }
+
+  // Picker Modal
+  .pickerModal {
+    background: #1e1e22;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
+  }
+  .pickerHeader span {
+    color: $dark-text-main;
+  }
+  .pickerSub {
+    color: $dark-text-muted;
+  }
+  .hoverName {
+    color: #818cf8; // lighter accent for dark mode
+  }
+  .pickerClose {
+    color: $dark-text-muted;
+    &:hover { background: rgba(255,255,255,0.1); }
+  }
+  .pickerGrid {
+    &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); }
+  }
+  .pickerItem {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.08);
+    color: $dark-text-main;
+    &:hover {
+      border-color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.1);
+    }
+  }
+  .pickerItemSelected {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.25) !important;
+  }
+  .avatarTooltip {
+    background: #e4e4e7;
+    color: #1a1a1a;
+    &::after {
+      border-top-color: #e4e4e7;
+    }
   }
 }

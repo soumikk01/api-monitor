@@ -12,7 +12,7 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 
 .layout {
   position: relative;
-  min-height: 100vh;
+  min-height: 100%;
   background-image: linear-gradient(rgba(247, 243, 234, 0.7), rgba(241, 236, 226, 0.8)), url('/account_bg.png');
   background-size: cover;
   background-position: center;
@@ -87,12 +87,9 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 // ── Main Content Area ────────────────────────
 .mainArea {
   flex: 1;
-  margin-left: 150px; // account for sidebar
-  height: calc(100vh - 46px);
-  overflow-y: auto;
+  margin-left: 200px; // account for sidebar
   position: relative;
   z-index: 5;
-  margin-top: 46px; // Account for the 46px TopNavbar
 }
 
 // ── Dark Mode ─────────────────────────────────
