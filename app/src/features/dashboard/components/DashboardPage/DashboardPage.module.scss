@@ -47,7 +47,6 @@ $bg-bot:     #F1ECE2;
   }
 }
 
-
 .content {
   flex: 1;
   padding: 3rem 2rem;
@@ -93,6 +92,8 @@ $bg-bot:     #F1ECE2;
   display: flex;
   flex-direction: column;
   gap: 3rem;
+  padding-top: 7rem;
+  padding-left: 2rem;
 }
 
 .header {
@@ -241,119 +242,214 @@ $bg-bot:     #F1ECE2;
   justify-content: flex-end;
 }
 
-.networkBox {
-  width: 100%;
-  max-width: 500px;
-  height: 350px;
-  background: #fdfdfd;
-  border: 1px solid rgba(0,0,0,0.05);
-  border-radius: 8px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .dark & {
-    background: #111;
-    border-color: rgba(255,255,255,0.05);
-  }
-
-  .aqua & {
-    background: var(--aqua-glass);
-    border-color: var(--aqua-glass-border);
-  }
-}
-
-.networkDotPattern {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, #ccc 1px, transparent 1px);
-  background-size: 20px 20px;
-  opacity: 0.4;
-  pointer-events: none;
-
-  .dark & {
-    background-image: radial-gradient(circle, #333 1px, transparent 1px);
-    opacity: 0.6;
-  }
-
-  .aqua & {
-    background-image: radial-gradient(circle, rgba(0,200,255,0.2) 1px, transparent 1px);
-    opacity: 0.3;
-  }
-}
-
-.dbNode {
+/* ── SCHEMA PER TENANT ANIMATED CARD ── */
+.schemaCard {
   position: relative;
   z-index: 2;
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.1);
-  padding: 1rem;
+  background: $bg-top;
+  border: 1px solid rgba(0,0,0,0.08);
   border-radius: 8px;
+  width: 100%;
+  max-width: 900px;
+  padding: 2.75rem;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  box-shadow: none;
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  flex-direction: column;
+  gap: 1.25rem;
+  animation: boxFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0s;
 
   .dark & {
-    background: #1C1C1C;
-    border-color: rgba(255,255,255,0.05);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    background: #121214;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
   }
 
   .aqua & {
-    background: var(--aqua-surface);
-    border-color: rgba(0, 200, 255, 0.2);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    background: #071020;
+    backdrop-filter: none;
+    border-color: rgba(0, 200, 255, 0.15);
+    box-shadow: none;
   }
 }
 
-.dbIcon {
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
-  background: #24B47E;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@keyframes cardFadeIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-.dbInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
+@keyframes boxFadeIn {
+  0% { opacity: 0; transform: translateY(14px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-.dbTitle {
+.schemaHeader {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+}
+
+.schemaTitle {
+  color: #e55e3c;
   font-size: 0.85rem;
   font-weight: 500;
-  color: #1a1a1a;
+  letter-spacing: 0.05em;
 
-  .dark & { color: #fff; }
-  .aqua & { color: var(--aqua-text-main); }
+  .dark &, .aqua & { color: #ff6b4a; }
 }
 
-.flag {
-  font-size: 0.8rem;
+.schemaLine {
+  flex: 1;
+  height: 1px;
+  background: #ff6b4a;
+  opacity: 0.4;
 }
 
-.dbRegion {
+.clusterBox {
+  background: $bg-bot;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: boxFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.15s;
+
+  .dark & { background: #1a1a1a; border-color: #333; }
+  .aqua & { background: #0a1628; border-color: rgba(0, 200, 255, 0.15); }
+}
+
+.clusterHeader, .logicalHeader, .tenantHeader, .tableHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 0.75rem;
-  color: #666;
-
-  .dark & { color: #aaa; }
-  .aqua & { color: var(--aqua-text-muted); }
 }
 
-.dbSub {
-  font-size: 0.7rem;
+.clusterName, .logicalName, .tableName {
+  color: #111;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+
+  .dark & { color: #eee; }
+  .aqua & { color: #E8F4FF; }
+}
+
+.clusterLabel, .logicalLabel, .tenantLabel, .tableLabel {
   color: #888;
-  margin-top: 0.2rem;
-  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.7rem;
 
   .dark & { color: #666; }
-  .aqua & { color: var(--aqua-text-muted); opacity: 0.7; }
+  .aqua & { color: rgba(232,244,255,0.4); }
+}
+
+.logicalBox {
+  background: $bg-top;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 6px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: boxFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.3s;
+
+  .dark & { background: #141414; border-color: #2a2a2a; }
+  .aqua & { background: #071020; border-color: rgba(0, 200, 255, 0.1); }
+}
+
+.tenantBox {
+  border: 1px solid rgba(0,0,0,0.05);
+  background: $bg-bot;
+  border-radius: 6px;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  animation: boxFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.45s;
+
+  &:nth-child(2) {
+    animation-delay: 0.6s;
+  }
+
+  .dark & {
+    background: #1c1c1c;
+    border-color: #222;
+  }
+
+  .aqua & {
+    background: #0a1628;
+    border-color: rgba(0, 200, 255, 0.08);
+  }
+}
+
+.tenantUk { color: #3b82f6; font-weight: 600; font-size: 0.85rem; }
+.tenantDe { color: #22c55e; font-weight: 600; font-size: 0.85rem; }
+
+.tableBox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.graphContainer {
+  margin-top: 4px;
+  width: 100%;
+  height: 40px;
+}
+
+.graphStrokeUk, .graphStrokeDe {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: drawGraphLine 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.graphFillUk, .graphFillDe {
+  opacity: 0;
+  animation: fadeGraphFill 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.graphStrokeUk { animation-delay: 0.8s; }
+.graphFillUk { animation-delay: 1.2s; }
+
+.graphStrokeDe { animation-delay: 1.0s; }
+.graphFillDe { animation-delay: 1.4s; }
+
+@keyframes drawGraphLine {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes fadeGraphFill {
+  to { opacity: 1; }
+}
+
+.replayBox {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  color: #ff6b4a;
+  font-size: 0.7rem;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s, transform 0.2s;
+  user-select: none;
+  
+  &:hover { 
+    opacity: 1; 
+    .replayIcon { transform: rotate(-45deg); }
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  .replayIcon {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
 }

@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import ProjectSidebar from '@/components/ProjectSidebar/ProjectSidebar';
 import styles from './DashboardPage.module.scss';
-import { ChevronDown, Database, GitBranch, Box } from 'lucide-react';
+import { ChevronDown, Database, GitBranch, Box, RotateCw } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
 
@@ -149,23 +149,93 @@ export default function DashboardPage() {
 
           {/* Right Column */}
           <div className={styles.rightCol}>
-            <div className={styles.networkBox}>
-              <div className={styles.networkDotPattern} />
-              
-              <div className={styles.dbNode}>
-                <div className={styles.dbIcon}>
-                  <Database size={16} color="#fff" />
+            <div className={styles.schemaCard}>
+              <div className={styles.schemaHeader}>
+                  <span className={styles.schemaTitle}>Schema-per-tenant</span>
+                  <div className={styles.schemaLine} />
                 </div>
-                <div className={styles.dbInfo}>
-                  <div className={styles.dbTitle}>
-                    <span>Primary Database</span>
-                    <span className={styles.flag}>🇮🇳</span>
+
+                <div className={styles.clusterBox}>
+                  <div className={styles.clusterHeader}>
+                    <span className={styles.clusterName}>PS-5 (US-EAST-1)</span>
+                    <span className={styles.clusterLabel}>DATABASE CLUSTER</span>
                   </div>
-                  <div className={styles.dbRegion}>South Asia (Mumbai)</div>
-                  <div className={styles.dbSub}>ap-south-1 · t4g.nano</div>
+                  
+                  <div className={styles.logicalBox}>
+                    <div className={styles.logicalHeader}>
+                      <span className={styles.logicalName}>POSTGRES</span>
+                      <span className={styles.logicalLabel}>LOGICAL DATABASE</span>
+                    </div>
+
+                    <div className={styles.tenantBox}>
+                      <div className={styles.tenantHeader}>
+                        <span className={styles.tenantUk}>UK</span>
+                        <span className={styles.tenantLabel}>SCHEMA</span>
+                      </div>
+                      <div className={styles.tableBox}>
+                        <div className={styles.tableHeader}>
+                          <span className={styles.tableName}>ORDERS</span>
+                          <span className={styles.tableLabel}>TABLE</span>
+                        </div>
+                        <div className={styles.graphContainer}>
+                          <svg width="100%" height="40" viewBox="0 0 200 40" preserveAspectRatio="none">
+                            <defs>
+                              <linearGradient id="gradientUk" x1="0" x2="0" y1="0" y2="1">
+                                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3" />
+                                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+                              </linearGradient>
+                            </defs>
+                            <path className={styles.graphFillUk} d="M 0 35 C 30 15, 60 40, 100 20 C 140 0, 170 30, 200 10 L 200 40 L 0 40 Z" fill="url(#gradientUk)" />
+                            <path className={styles.graphStrokeUk} pathLength="100" d="M 0 35 C 30 15, 60 40, 100 20 C 140 0, 170 30, 200 10" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={styles.tenantBox}>
+                      <div className={styles.tenantHeader}>
+                        <span className={styles.tenantDe}>DE</span>
+                        <span className={styles.tenantLabel}>SCHEMA</span>
+                      </div>
+                      <div className={styles.tableBox}>
+                        <div className={styles.tableHeader}>
+                          <span className={styles.tableName}>ORDERS</span>
+                          <span className={styles.tableLabel}>TABLE</span>
+                        </div>
+                        <div className={styles.graphContainer}>
+                          <svg width="100%" height="40" viewBox="0 0 200 40" preserveAspectRatio="none">
+                            <defs>
+                              <linearGradient id="gradientDe" x1="0" x2="0" y1="0" y2="1">
+                                <stop offset="0%" stopColor="#22c55e" stopOpacity="0.3" />
+                                <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
+                              </linearGradient>
+                            </defs>
+                            <path className={styles.graphFillDe} d="M 0 25 C 40 5, 80 35, 130 15 C 160 5, 180 25, 200 5 L 200 40 L 0 40 Z" fill="url(#gradientDe)" />
+                            <path className={styles.graphStrokeDe} pathLength="100" d="M 0 25 C 40 5, 80 35, 130 15 C 160 5, 180 25, 200 5" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className={styles.replayBox} onClick={(e) => {
+                  const el = e.currentTarget.parentElement;
+                  if (el) {
+                    el.style.animation = 'none';
+                    el.offsetHeight; /* trigger reflow */
+                    el.style.animation = '';
+                    const bars = el.querySelectorAll('path[class*="graphStroke"], path[class*="graphFill"]');
+                    bars.forEach((b: any) => {
+                      b.style.animation = 'none';
+                      b.offsetHeight;
+                      b.style.animation = '';
+                    });
+                  }
+                }}>
+                  <RotateCw size={12} className={styles.replayIcon} /> Replay
                 </div>
               </div>
-            </div>
           </div>
         </div>
       </main>
