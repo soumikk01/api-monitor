@@ -8,6 +8,7 @@ import { useMonitorSocket, ApiCallEvent } from '@/hooks/useMonitorSocket';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import ProjectSidebar from '@/components/ProjectSidebar/ProjectSidebar';
+import { Shimmer, ShimmerBlock, ShimmerRow } from '@/components/Shimmer/Shimmer';
 import styles from './OverviewPage.module.scss';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
@@ -128,7 +129,6 @@ export default function OverviewPage() {
   const errorRate = totalCalls > 0 ? ((errorCalls / totalCalls) * 100).toFixed(1) : (dbStats?.errorRate?.toFixed(1) ?? '0.0');
   const avgLatency = dbStats?.avgLatency ?? 0;
 
-  // ── Loading skeleton ──
   if (loadState === 'loading') {
     return (
       <div className={`${styles.page}${dark ? ' ' + styles.dark : ''}`}>
@@ -136,27 +136,26 @@ export default function OverviewPage() {
         <div className={styles.dotPattern} />
         <ProjectSidebar projectId={undefined} />
         <main className={styles.content}>
-          <div className={styles.header}>
-            <div className={styles.skeletonTitle} />
-            <div className={styles.skeletonSub} />
-          </div>
-          <div className={styles.statsGrid}>
-            <div className={styles.statCard} style={{ height: 120 }}>
-              <div className={styles.skeletonSub} style={{ width: '60%' }} />
-              <div className={styles.skeletonBlock} style={{ width: '40%', height: 32, marginTop: 12 }} />
+          <ShimmerBlock>
+            {/* Header: title + refresh button */}
+            <ShimmerRow>
+              <Shimmer width="50%" height={36} borderRadius={6} delay={1} />
+              <Shimmer width={96} height={34} borderRadius={8} delay={1} style={{ marginLeft: 'auto' }} />
+            </ShimmerRow>
+            <Shimmer width="32%" height={18} borderRadius={4} delay={2} />
+            {/* 3-col stat cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }}>
+              <Shimmer height={110} borderRadius={10} delay={2} />
+              <Shimmer height={110} borderRadius={10} delay={3} />
+              <Shimmer height={110} borderRadius={10} delay={4} />
             </div>
-            <div className={styles.statCard} style={{ height: 120 }}>
-              <div className={styles.skeletonSub} style={{ width: '60%' }} />
-              <div className={styles.skeletonBlock} style={{ width: '40%', height: 32, marginTop: 12 }} />
-            </div>
-            <div className={styles.statCard} style={{ height: 120 }}>
-              <div className={styles.skeletonSub} style={{ width: '60%' }} />
-              <div className={styles.skeletonBlock} style={{ width: '40%', height: 32, marginTop: 12 }} />
-            </div>
-          </div>
-          <div className={styles.panel} style={{ marginTop: '2rem' }}>
-            <div className={styles.skeletonBlock} style={{ height: 200 }} />
-          </div>
+            {/* Traffic feed panel */}
+            <Shimmer height={28} width="40%" borderRadius={6} delay={3} />
+            <Shimmer height={52} borderRadius={8} delay={4} />
+            <Shimmer height={52} borderRadius={8} delay={4} />
+            <Shimmer height={52} borderRadius={8} delay={5} />
+            <Shimmer height={52} borderRadius={8} delay={5} />
+          </ShimmerBlock>
         </main>
       </div>
     );

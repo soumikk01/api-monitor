@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import ProjectSidebar from '@/components/ProjectSidebar/ProjectSidebar';
 import styles from './DashboardPage.module.scss';
+import { Shimmer, ShimmerBlock, ShimmerRow } from '@/components/Shimmer/Shimmer';
 import { ChevronDown, Database, GitBranch, Box, RotateCw } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
@@ -63,7 +64,27 @@ export default function DashboardPage() {
         <div className={styles.dotPattern} />
         <ProjectSidebar projectId={undefined} />
         <main className={styles.content}>
-          <div className={styles.skeletonBlock} style={{ height: 400 }} />
+          <ShimmerBlock>
+            {/* Page title + badge */}
+            <ShimmerRow>
+              <Shimmer width="38%" height={32} borderRadius={6} delay={1} />
+              <Shimmer width={48} height={22} borderRadius={4} delay={1} style={{ alignSelf: 'center' }} />
+            </ShimmerRow>
+            {/* URL row */}
+            <ShimmerRow>
+              <Shimmer width="55%" height={18} borderRadius={4} delay={2} />
+              <Shimmer width={72} height={22} borderRadius={4} delay={2} />
+            </ShimmerRow>
+            {/* 2x2 stat cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginTop: '0.5rem' }}>
+              <Shimmer height={80} borderRadius={10} delay={2} />
+              <Shimmer height={80} borderRadius={10} delay={3} />
+              <Shimmer height={80} borderRadius={10} delay={3} />
+              <Shimmer height={80} borderRadius={10} delay={4} />
+            </div>
+            {/* Schema card */}
+            <Shimmer height={340} borderRadius={12} delay={4} />
+          </ShimmerBlock>
         </main>
       </div>
     );

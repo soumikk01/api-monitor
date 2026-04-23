@@ -1,0 +1,84 @@
+/* ── Shimmer.module.scss ──────────────────────────────────────────────────── */
+
+/* Base token — base bone color */
+$bone-light: #e4dfd4;
+$bone-dark:  #252528;
+$highlight-light: rgba(255, 255, 255, 0.72);
+$highlight-dark:  rgba(255, 255, 255, 0.07);
+
+/* ── Wrapper that fades the entire skeleton in on mount ── */
+.shimmerPage {
+  animation: skeletonFadeIn 0.35s ease both;
+}
+
+/* ── Individual shimmer bone ── */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  background: $bone-light;
+  will-change: transform; /* promote to GPU layer */
+
+  /* sweeping highlight — uses translateX (GPU-composited) */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0 -100%;   /* start fully to the left */
+    background: linear-gradient(
+      105deg,
+      transparent      30%,
+      $highlight-light 50%,
+      transparent      70%
+    );
+    animation: shimmerSweep 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    will-change: transform;
+  }
+
+  /* ── dark mode ── */
+  :global(.dark) & {
+    background: $bone-dark;
+    &::after {
+      background: linear-gradient(
+        105deg,
+        transparent     30%,
+        $highlight-dark 50%,
+        transparent     70%
+      );
+    }
+  }
+}
+
+/* Stagger delay helpers */
+.d1  { animation-delay: 0.10s; }
+.d2  { animation-delay: 0.20s; }
+.d3  { animation-delay: 0.30s; }
+.d4  { animation-delay: 0.40s; }
+.d5  { animation-delay: 0.50s; }
+
+/* ── ShimmerBlock container ── */
+.shimmerBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+/* ── Row helper ── */
+.shimmerRow {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+/* ── Keyframes ── */
+
+/* Page-level fade-in so the skeleton doesn't just "pop" */
+@keyframes skeletonFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Shimmer sweep — translateX is GPU-composited, no layout/paint */
+@keyframes shimmerSweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}

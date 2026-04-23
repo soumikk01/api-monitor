@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import ProjectSidebar from '@/components/ProjectSidebar/ProjectSidebar';
+import { Shimmer, ShimmerBlock } from '@/components/Shimmer/Shimmer';
 import styles from './SettingsPage.module.scss';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
@@ -113,14 +114,22 @@ export default function SettingsPage() {
         <div className={styles.dotPattern} />
         <ProjectSidebar projectId={undefined} />
         <main className={styles.content}>
-          <div className={styles.header}>
-            <div className={styles.skeletonTitle} />
-            <div className={styles.skeletonSub} />
-          </div>
-          <div className={styles.panel}>
-            <div className={styles.panelHeader}><div className={styles.skeletonBlock} /></div>
-            <div className={styles.panelBody}><div className={styles.skeletonBlock} style={{ height: 80 }} /></div>
-          </div>
+          <ShimmerBlock>
+            {/* Page header */}
+            <Shimmer width="30%" height={34} borderRadius={6} delay={1} />
+            <Shimmer width="52%" height={16} borderRadius={4} delay={1} />
+            {/* General Settings panel */}
+            <Shimmer height={48} borderRadius={8} delay={2} style={{ marginTop: '0.75rem' }} />
+            <Shimmer height={56} borderRadius={8} delay={2} />
+            <Shimmer height={56} borderRadius={8} delay={3} />
+            <Shimmer width="20%" height={36} borderRadius={8} delay={3} style={{ alignSelf: 'flex-end' }} />
+            {/* Project Access panel */}
+            <Shimmer height={48} borderRadius={8} delay={3} style={{ marginTop: '0.75rem' }} />
+            <Shimmer height={100} borderRadius={8} delay={4} />
+            {/* Project Availability panel */}
+            <Shimmer height={48} borderRadius={8} delay={4} style={{ marginTop: '0.75rem' }} />
+            <Shimmer height={80} borderRadius={8} delay={5} />
+          </ShimmerBlock>
         </main>
       </div>
     );

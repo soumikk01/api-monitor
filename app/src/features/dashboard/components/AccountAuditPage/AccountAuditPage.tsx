@@ -4,6 +4,7 @@ import { authStorage } from '@/lib/fetchWithAuth';
 import { RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
 import { useTheme } from '@/hooks/useTheme';
+import { Shimmer } from '@/components/Shimmer/Shimmer';
 import styles from './AccountAuditPage.module.scss';
 
 
@@ -122,9 +123,19 @@ export default function AccountAuditPage() {
             </thead>
             <tbody>
               {loading && logs.length === 0 ? (
-                <tr>
-                  <td colSpan={3} className={styles.emptyState}>Loading logs...</td>
-                </tr>
+                Array.from({ length: 6 }).map((_, i) => (
+                  <tr key={i} style={{ borderBottom: 'none' }}>
+                    <td style={{ padding: '0.75rem 1rem' }}>
+                      <Shimmer width="60%" height={16} borderRadius={4} delay={(Math.min(i + 1, 5)) as 1|2|3|4|5} />
+                    </td>
+                    <td style={{ padding: '0.75rem 1rem' }}>
+                      <Shimmer width="75%" height={16} borderRadius={4} delay={(Math.min(i + 1, 5)) as 1|2|3|4|5} />
+                    </td>
+                    <td style={{ padding: '0.75rem 1rem' }}>
+                      <Shimmer width="55%" height={16} borderRadius={4} delay={(Math.min(i + 1, 5)) as 1|2|3|4|5} />
+                    </td>
+                  </tr>
+                ))
               ) : logs.length === 0 ? (
                 <tr>
                   <td colSpan={3} className={styles.emptyState}>No audit logs found.</td>
