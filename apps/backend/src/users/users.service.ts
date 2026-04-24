@@ -45,4 +45,14 @@ export class UsersService {
       token: user.sdkToken,
     };
   }
+
+  /** Update user's avatar index */
+  async updateAvatar(userId: string, avatar: number) {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { avatar },
+    });
+    const { password: _pw, ...safe } = user;
+    return safe;
+  }
 }

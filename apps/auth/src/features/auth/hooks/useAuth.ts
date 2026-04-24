@@ -8,6 +8,7 @@ interface AuthUser {
   email: string;
   name?: string;
   sdkToken: string;
+  avatar: number;
 }
 
 interface AuthState {

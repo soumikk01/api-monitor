@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, UseGuards, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -31,5 +31,11 @@ export class UsersController {
   @Post('me/regenerate-token')
   regenerateToken(@Request() req: AuthRequest) {
     return this.usersService.regenerateSdkToken(req.user.userId);
+  }
+
+  /** PATCH /users/me/avatar — update user avatar */
+  @Patch('me/avatar')
+  updateAvatar(@Request() req: AuthRequest, @Body('avatar') avatar: number) {
+    return this.usersService.updateAvatar(req.user.userId, avatar);
   }
 }

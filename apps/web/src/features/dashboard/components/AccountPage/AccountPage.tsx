@@ -35,13 +35,41 @@ export default function AccountPage() {
     return 0;
   });
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const handleStorage = () => {
+        setSelectedAvatar(parseInt(localStorage.getItem('userAvatarIndex') ?? '0', 10));
+      };
+      window.addEventListener('storage', handleStorage);
+      window.addEventListener('avatarChanged', handleStorage);
+      return () => {
+        window.removeEventListener('storage', handleStorage);
+        window.removeEventListener('avatarChanged', handleStorage);
+      };
+    }
+  }, []);
+
   const currentAvatar = AVATARS[selectedAvatar] ?? AVATARS[0];
 
-  const handleSelectAvatar = (index: number) => {
+  const handleSelectAvatar = async (index: number) => {
     setSelectedAvatar(index);
     localStorage.setItem('userAvatarIndex', String(index));
     window.dispatchEvent(new Event('avatarChanged'));
     setShowAvatarPicker(false);
+
+    const token = authStorage.getAccessToken();
+    try {
+      await fetch(`${API}/users/me/avatar`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ avatar: index })
+      });
+    } catch(err) {
+      console.error('Failed to update avatar in DB', err);
+    }
   };
 
   const loadData = useCallback(async () => {

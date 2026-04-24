@@ -8,6 +8,7 @@ interface AuthUser {
   email: string;
   name?: string;
   sdkToken: string;
+  avatar: number;
 }
 
 interface AuthState {
@@ -64,6 +65,10 @@ export function useAuth() {
         });
         if (!res.ok) throw new Error('Failed to load profile');
         const user = await res.json() as AuthUser;
+        if (typeof window !== 'undefined' && user.avatar !== undefined) {
+           localStorage.setItem('userAvatarIndex', String(user.avatar));
+           window.dispatchEvent(new Event('avatarChanged'));
+        }
         if (!cancelled) {
           setState({ user, accessToken: validToken, isAuthenticated: true, isLoading: false });
         }
@@ -103,6 +108,11 @@ export function useAuth() {
     const userRes = await fetchWithAuth(`${API}/users/me`);
     if (!userRes.ok) throw new Error('Failed to load user profile after login');
     const user = await userRes.json() as AuthUser;
+    
+    if (typeof window !== 'undefined' && user.avatar !== undefined) {
+      localStorage.setItem('userAvatarIndex', String(user.avatar));
+      window.dispatchEvent(new Event('avatarChanged'));
+    }
 
     setState({ user, accessToken, isAuthenticated: true, isLoading: false });
     return user;
@@ -132,6 +142,11 @@ export function useAuth() {
     const userRes = await fetchWithAuth(`${API}/users/me`);
     if (!userRes.ok) throw new Error('Failed to load user profile after registration');
     const user = await userRes.json() as AuthUser;
+    
+    if (typeof window !== 'undefined' && user.avatar !== undefined) {
+      localStorage.setItem('userAvatarIndex', String(user.avatar));
+      window.dispatchEvent(new Event('avatarChanged'));
+    }
 
     setState({ user, accessToken, isAuthenticated: true, isLoading: false });
     return user;

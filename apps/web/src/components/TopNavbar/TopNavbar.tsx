@@ -40,7 +40,6 @@ export default function TopNavbar() {
     if (typeof window !== 'undefined') {
       const getAvatar = () => parseInt(localStorage.getItem('userAvatarIndex') ?? '0', 10);
       
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       setAvatarIndex(getAvatar());
 
       const handleStorage = () => setAvatarIndex(getAvatar());
