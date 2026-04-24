@@ -19,7 +19,7 @@ interface Stats {
 
 export default function AccountPage() {
   const { dark } = useTheme();
-  const { user, logout, getCliCommand } = useAuth();
+  const { user, logoutWithTransition, getCliCommand } = useAuth();
   const router = useRouter();
 
   const [stats, setStats] = useState<Stats>({ totalProjects: 0, totalCalls: 0 });
@@ -64,7 +64,7 @@ export default function AccountPage() {
 
   useEffect(() => { void loadData(); }, [loadData]);
 
-  const handleLogout = () => { logout(); router.push('/login'); };
+  const handleLogout = () => { logoutWithTransition(router); };
 
   const copyToClipboard = async () => {
     if (cliCommand) {

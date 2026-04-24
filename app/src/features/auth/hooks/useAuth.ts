@@ -125,6 +125,19 @@ export function useAuth() {
     setState({ user: null, accessToken: null, isAuthenticated: false, isLoading: false });
   }, []);
 
+  const logoutWithTransition = useCallback((router: { push: (url: string) => void }) => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('show-logout-transition'));
+      setTimeout(() => {
+        logout();
+        router.push('/');
+      }, 1200); // Wait for the animation to play
+    } else {
+      logout();
+      router.push('/');
+    }
+  }, [logout]);
+
   // ── Get CLI command (uses auto-refresh) ───────────────────────────────
   const getCliCommand = useCallback(async () => {
     const res = await fetchWithAuth(`${API}/users/me/command`);
@@ -132,5 +145,5 @@ export function useAuth() {
     return res.json() as Promise<{ command: string; token: string; instructions: string }>;
   }, []);
 
-  return { ...state, login, register, logout, getCliCommand };
+  return { ...state, login, register, logout, logoutWithTransition, getCliCommand };
 }
