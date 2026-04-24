@@ -34,9 +34,16 @@ async function bootstrap() {
   // ── CORS ──────────────────────────────────────────────────────────────
   app.enableCors({
     origin: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      process.env.FRONTEND_URL ?? 'http://localhost:3000',
+      // ── Local dev: one origin per app ──────────────────────────────────
+      'http://localhost:3000',  // apps/web   (dashboard)
+      'http://localhost:3001',  // apps/auth  (auth)
+      'http://localhost:3002',  // apps/docs  (docs)
+      'http://localhost:3003',  // apps/admin (admin)
+      // ── Env-override for production/staging ────────────────────────────
+      process.env.FRONTEND_URL    ?? 'http://localhost:3000',
+      process.env.AUTH_URL        ?? 'http://localhost:3001',
+      process.env.DOCS_URL        ?? 'http://localhost:3002',
+      process.env.ADMIN_URL       ?? 'http://localhost:3003',
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

@@ -6,22 +6,32 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "prisma generate && nest build",
-    "build:clean": "node -e \"const fs=require('fs');const path=require('path');const walk=(d)=>{if(!fs.existsSync(d))return;for(const f of fs.readdirSync(d)){const p=path.join(d,f);if(fs.statSync(p).isDirectory())walk(p);else if(!p.endsWith('.dll.node'))fs.rmSync(p);}}; walk('./dist');\" && prisma generate && nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
-    "start:dev": "node -e \"const fs=require('fs');const src='src/generated/prisma';const dst='dist/generated/prisma';if(!fs.existsSync(dst))fs.mkdirSync(dst,{recursive:true});for(const f of fs.readdirSync(src)){if(f.endsWith('.node')){try{fs.copyFileSync(src+'/'+f,dst+'/'+f)}catch{}}}\" && nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
-    "start:prod:bun": "bun run dist/main",
-    "worker:prod": "node dist/worker",
-    "worker:bun": "bun run dist/worker",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "build":             "prisma generate && nest build",
+    "build:clean":       "node -e \"const fs=require('fs');const path=require('path');const walk=(d)=>{if(!fs.existsSync(d))return;for(const f of fs.readdirSync(d)){const p=path.join(d,f);if(fs.statSync(p).isDirectory())walk(p);else if(!p.endsWith('.dll.node'))fs.rmSync(p);}}; walk('./dist');\" && prisma generate && nest build",
+    "format":            "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+
+    "dev":               "nest start --watch",
+    "dev:worker":        "nest build --watch & node -e \"setTimeout(()=>{},2000)\" && bun run dist/worker",
+
+    "start":             "nest start",
+    "start:dev":         "node -e \"const fs=require('fs');const src='src/generated/prisma';const dst='dist/generated/prisma';if(!fs.existsSync(dst))fs.mkdirSync(dst,{recursive:true});for(const f of fs.readdirSync(src)){if(f.endsWith('.node')){try{fs.copyFileSync(src+'/'+f,dst+'/'+f)}catch{}}}\" && nest start --watch",
+    "start:debug":       "nest start --debug --watch",
+
+    "start:prod":        "node dist/main",
+    "start:prod:bun":    "bun run dist/main",
+
+    "start:prod2":       "PORT=4001 node dist/main",
+    "start:prod2:bun":   "PORT=4001 bun run dist/main",
+
+    "worker:prod":       "node dist/worker",
+    "worker:bun":        "bun run dist/worker",
+
+    "lint":              "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test":              "jest",
+    "test:watch":        "jest --watch",
+    "test:cov":          "jest --coverage",
+    "test:debug":        "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e":          "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/bullmq": "^11.0.4",
