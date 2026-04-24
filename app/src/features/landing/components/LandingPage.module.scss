@@ -98,17 +98,25 @@ $r-md:        16px;
 // ══════════════════════════════════════════════
 //  PAGE & BACKGROUND
 // ══════════════════════════════════════════════
-.page {
-  position: relative;
-  min-height: 100vh;
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
   color: $text-main;
   font-family: $body;
+  background: linear-gradient(160deg, $bg-top 0%, $bg-bot 100%);
+  transition: background 0.5s ease, color 0.4s ease;
+}
+
+.pageContent {
+  position: relative;
+  flex: 1;
+  overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(160deg, $bg-top 0%, $bg-bot 100%);
-  transition: background 0.5s ease, color 0.4s ease;
 }
 
 .noiseOverlay {
@@ -168,26 +176,29 @@ $r-md:        16px;
 //  NAVBAR
 // ══════════════════════════════════════════════
 .navWrap {
-  position: fixed;
-  top: 0; left: 0; right: 0;
+  position: relative;
+  flex-shrink: 0;
   z-index: 100;
   display: flex;
   justify-content: center;
-  padding: 24px 1.5rem;
-  pointer-events: none;
-  > * { pointer-events: auto; }
+  padding: 0;
+  pointer-events: auto;
 }
 
 .nav {
-  display: inline-flex;
+  position: relative;
+  display: flex;
+  justify-content: center;
   align-items: center;
   gap: 0;
-  padding: 6px 6px 6px 12px;
-  height: 54px;
-  border-radius: $pill;
+  padding: 0;
+  width: 100%;
+  height: 64px;
+  border-radius: 0;
   background: $white-glass;
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
   transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
@@ -275,8 +286,27 @@ $r-md:        16px;
   &:hover::after { width: 60%; }
 }
 
+.navRight {
+  position: absolute;
+  right: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  @media (max-width: 720px) {
+    right: 1.25rem;
+  }
+}
+
+.navDivider {
+  width: 1px;
+  height: 24px;
+  background: rgba(128, 128, 128, 0.3);
+}
+
 .navPill {
-  margin-left: 12px;
+  position: relative;
+  margin-left: 0;
   padding: 0 20px;
   height: 40px;
   border-radius: $pill;
@@ -290,7 +320,6 @@ $r-md:        16px;
   align-items: center;
   white-space: nowrap;
   flex-shrink: 0;
-  position: relative;
   overflow: hidden;
   transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
               box-shadow 0.25s ease,
@@ -476,6 +505,118 @@ $r-md:        16px;
     svg { transform: translateX(3px); }
   }
   &:active { transform: translateY(0); box-shadow: none; }
+}
+
+// ══════════════════════════════════════════════
+//  INTEGRATION LOGOS
+// ══════════════════════════════════════════════
+.integrationRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+  padding: 2rem 0 5rem;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.integrationText {
+  font-family: $head;
+  font-size: 1.5rem;
+  color: $text-muted;
+  line-height: 1.35;
+  text-align: left;
+  letter-spacing: -0.02em;
+
+  span {
+    color: $text-main;
+    font-weight: 600;
+  }
+}
+
+.integrationSubtext {
+  font-family: $body;
+  font-size: 0.9rem;
+  color: $text-muted;
+  margin-top: 0.5rem;
+  letter-spacing: 0;
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+.integrationIcons {
+  display: flex;
+  align-items: center;
+  gap: 3.5rem;
+}
+
+.logoWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: none; // Hides default cursor!
+  color: $text-muted;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    color: $text-main;
+    transform: translateY(-4px) scale(1.05);
+  }
+}
+
+.goIconAdjust {
+  transform: translateY(-2px);
+  display: flex;
+  cursor: none;
+}
+
+// Custom Figma-style Cursor
+.customCursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  opacity: 0;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+  
+  &.visible {
+    opacity: 1;
+  }
+
+  .cursorArrow {
+    position: relative;
+    top: 0;
+    left: -2px;
+    fill: rgba(34, 34, 40, 0.95);
+    stroke: rgba(255, 255, 255, 0.85);
+    stroke-width: 1.5px;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+  }
+
+  .cursorTag {
+    margin-top: 2px;
+    margin-left: 14px;
+    background: rgba(34, 34, 40, 0.95);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 0.35rem 0.85rem;
+    font-family: $body;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    letter-spacing: 0.01em;
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -797,9 +938,6 @@ $r-md:        16px;
 //  THEME TOGGLE
 // ══════════════════════════════════════════════
 .themeToggle {
-  position: fixed;
-  top: 20px; right: 24px;
-  z-index: 200;
   width: 42px; height: 42px;
   border-radius: 50%;
   border: 1px solid rgba(26, 26, 26, 0.12);
@@ -839,6 +977,7 @@ $dm-border:  rgba(255, 255, 255, 0.08);
 .dark {
   background: $dm-bg;
   color: $dm-text;
+  color-scheme: dark;
 
   &::before {
     content: '';
@@ -917,6 +1056,29 @@ $dm-border:  rgba(255, 255, 255, 0.08);
   }
   .statVal { color: $dm-text; }
   .statLbl { color: $dm-muted; }
+  .integrationText {
+    color: $dm-muted;
+    span { color: $dm-text; }
+  }
+  .integrationSubtext {
+    color: $dm-muted;
+  }
+  .logoWrapper {
+    color: $dm-muted;
+    &:hover { color: $dm-text; }
+  }
+  
+  .customCursor {
+    .cursorArrow {
+      fill: rgba(250, 250, 250, 0.95);
+      stroke: rgba(0, 0, 0, 0.5);
+    }
+    .cursorTag {
+      background: rgba(250, 250, 250, 0.95);
+      color: #000;
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+  }
 
   .footer { border-top-color: $dm-border; }
   .footerCopy, .footerLink { color: $dm-muted; &:hover { color: $dm-text; } }

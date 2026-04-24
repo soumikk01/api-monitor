@@ -65,11 +65,11 @@
   --color-inverse-on-surface: #565554;
   --color-inverse-primary: #006f16;
 
-  --font-headline: "Space Grotesk", sans-serif;
-  --font-body: "Inter", sans-serif;
-  --font-label: "Public Sans", "Space Grotesk", sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", monospace;
-  --font-display: "Space Grotesk", sans-serif;
+  --font-headline: var(--font-space-grotesk), sans-serif;
+  --font-body: var(--font-inter), sans-serif;
+  --font-label: var(--font-space-grotesk), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), var(--font-fira-code), monospace;
+  --font-display: var(--font-space-grotesk), sans-serif;
 }
 
 /* Global Base */
@@ -83,7 +83,7 @@ body {
   background-color: #F5F1E8;
   background-image: linear-gradient(to bottom, #F7F3EA, #F1ECE2);
   color: #1A1A1A;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-inter), sans-serif;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
 }

@@ -2,7 +2,19 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+import { AlertTriangle, FileLock, Layers, Workflow, CheckCircle, Database } from 'lucide-react';
+import { SiNodedotjs, SiPython, SiGo } from "react-icons/si";
+import { FaJava } from "react-icons/fa6";
 import styles from './LandingPage.module.scss';
+import { ArchitectureDiagram } from './ArchitectureDiagram';
+
+// Lazy load TerminalDemo — it starts setInterval timers immediately on mount.
+// Deferring it prevents timer overhead during the critical render path.
+const TerminalDemo = dynamic(() => import('./TerminalDemo'), {
+  ssr: false,
+  loading: () => <div className={styles.terminal} style={{ minHeight: 200 }} />,
+});
 
 /* ─────────────────────────────────────────────
    Scroll-reveal hook
@@ -92,75 +104,7 @@ function useCounter(target: string, running: boolean) {
   return display;
 }
 
-/* ─────────────────────────────────────────────
-   Terminal demo
-───────────────────────────────────────────── */
-const TERMINAL_LINES = [
-  { delay: 0,    type: 'cmd',     text: 'narch init --project=my-api' },
-  { delay: 600,  type: 'success', text: '✓  Project initialised  (id: proj_k2x9a)' },
-  { delay: 1000, type: 'cmd',     text: 'narch watch --env=production' },
-  { delay: 1500, type: 'info',    text: 'Watching 14 endpoints across 3 regions…' },
-  { delay: 2200, type: 'ok',      text: '[200]  GET  /api/v1/users          42 ms' },
-  { delay: 2700, type: 'ok',      text: '[200]  POST /api/v1/events         18 ms' },
-  { delay: 3200, type: 'warn',    text: '[429]  GET  /api/v1/feed           rate-limited' },
-  { delay: 3800, type: 'ok',      text: '[200]  GET  /api/v1/health         3 ms' },
-  { delay: 4400, type: 'error',   text: '[503]  POST /api/v1/payments       ← ALERT sent' },
-  { delay: 5000, type: 'info',    text: 'Incident #INS-041 opened  ·  PagerDuty notified' },
-  { delay: 5600, type: 'ok',      text: '[200]  GET  /api/v1/status         12 ms' },
-  { delay: 6200, type: 'muted',   text: '↻  uptime 99.98%  ·  p99 latency 61 ms' },
-];
-
-function TerminalDemo() {
-  const [visibleCount, setVisibleCount] = useState(0);
-  const bodyRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let timeouts: ReturnType<typeof setTimeout>[] = [];
-    const CYCLE = 7500;
-
-    const schedule = () => {
-      setVisibleCount(0);
-      TERMINAL_LINES.forEach((line, i) => {
-        const t = setTimeout(() => setVisibleCount(i + 1), line.delay);
-        timeouts.push(t);
-      });
-      const loop = setTimeout(() => {
-        timeouts.forEach(clearTimeout);
-        timeouts = [];
-        schedule();
-      }, CYCLE);
-      timeouts.push(loop);
-    };
-
-    schedule();
-    return () => timeouts.forEach(clearTimeout);
-  }, []);
-
-  // Auto-scroll terminal body as lines appear
-  useEffect(() => {
-    if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
-  }, [visibleCount]);
-
-  return (
-    <div className={styles.terminal}>
-      <div className={styles.termHeader}>
-        <span className={`${styles.termDot} ${styles.termRed}`} />
-        <span className={`${styles.termDot} ${styles.termYellow}`} />
-        <span className={`${styles.termDot} ${styles.termGreen}`} />
-        <span className={styles.termTitle}>narch — production</span>
-      </div>
-      <div className={styles.termBody} ref={bodyRef}>
-        {TERMINAL_LINES.slice(0, visibleCount).map((line, i) => (
-          <div key={i} className={`${styles.termLine} ${styles[`term_${line.type}`]}`}>
-            {line.type === 'cmd' && <span className={styles.termPrompt}>❯</span>}
-            <span>{line.text}</span>
-          </div>
-        ))}
-        <span className={styles.termCursor}>▋</span>
-      </div>
-    </div>
-  );
-}
+/* TerminalDemo is now in TerminalDemo.tsx and lazy-loaded above */
 
 /* ─────────────────────────────────────────────
    Spring background (unchanged)
@@ -274,6 +218,28 @@ function StatItem({ v, l }: { v: string; l: string }) {
 ───────────────────────────────────────────── */
 export default function LandingPage() {
   const [dark, setDark] = useState(false);
+  
+  // Custom Cursor State
+  const [cursorText, setCursorText] = useState('');
+  const cursorRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (cursorRef.current) {
+      cursorRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+    }
+  }, []);
+
+  const handleMouseEnterIcon = (e: React.MouseEvent, text: string) => {
+    setCursorText(text);
+    if (cursorRef.current) {
+      cursorRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+    }
+  };
+
+  const handleMouseLeaveIcon = () => {
+    setCursorText('');
+  };
+
   // Magnetic refs for CTA buttons
   const magPrimary   = useMagnetic(0.25);
   const magSecondary = useMagnetic(0.25);
@@ -290,35 +256,7 @@ export default function LandingPage() {
   const { ref: footerRef, visible: footerVisible } = useInView(0.1);
 
   return (
-    <div className={`${styles.page}${dark ? ' ' + styles.dark : ''}`}>
-      <div className={styles.noiseOverlay} />
-      <SpringBackground />
-
-      {/* ── THEME TOGGLE ── */}
-      <button
-        id="theme-toggle"
-        ref={magToggle as React.RefObject<HTMLButtonElement>}
-        className={styles.themeToggle}
-        onClick={() => setDark((d) => !d)}
-        aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-        title={dark ? 'Light mode' : 'Dark mode'}
-      >
-        {dark ? (
-          <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-            <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="2"/>
-            {[0,60,120,180,240,300].map((deg) => (
-              <line key={deg} x1="12" y1="2" x2="12" y2="5"
-                stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-                transform={`rotate(${deg} 12 12)`}/>
-            ))}
-          </svg>
-        ) : (
-          <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        )}
-      </button>
-
+    <div className={`${styles.layout}${dark ? ' ' + styles.dark : ''}`}>
       {/* ── NAVBAR ── */}
       <header className={styles.navWrap}>
         <div className={styles.logoAbsolute}>
@@ -338,9 +276,39 @@ export default function LandingPage() {
               </Link>
             ))}
           </div>
-          <Link href="/login" className={styles.navPill}>Try for free</Link>
+          <div className={styles.navRight}>
+            <Link href="/login" className={styles.navPill}>Try for free</Link>
+            <div className={styles.navDivider} />
+            <button
+              id="theme-toggle"
+              ref={magToggle as React.RefObject<HTMLButtonElement>}
+              className={styles.themeToggle}
+              onClick={() => setDark((d) => !d)}
+              aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={dark ? 'Light mode' : 'Dark mode'}
+            >
+              {dark ? (
+                <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                  <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="2"/>
+                  {[0,60,120,180,240,300].map((deg) => (
+                    <line key={deg} x1="12" y1="2" x2="12" y2="5"
+                      stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                      transform={`rotate(${deg} 12 12)`}/>
+                  ))}
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </button>
+          </div>
         </nav>
       </header>
+
+      <div className={styles.pageContent}>
+        <div className={styles.noiseOverlay} />
+        <SpringBackground />
 
       {/* ── HERO ── */}
       <main className={styles.hero}>
@@ -416,6 +384,63 @@ export default function LandingPage() {
           </a>
         </div>
 
+        {/* Architecture Diagram */}
+        <div
+          className={`${styles.diagramWrap} ${terminalVisible ? styles.fadeUp : styles.hidden}`}
+          style={{ animationDelay: '0.45s', marginBottom: '40px', width: '100%', maxWidth: '1200px', display: 'flex', justifyContent: 'center' }}
+        >
+          <ArchitectureDiagram dark={dark} isVisible={terminalVisible} />
+        </div>
+
+        {/* Integration Frameworks */}
+        <div
+          className={`${styles.integrationRow} ${terminalVisible ? styles.fadeUp : styles.hidden}`}
+          style={{ animationDelay: '0.6s' }}
+        >
+          <div className={styles.integrationText}>
+            Works Across All Major Backend<br />
+            <span>Languages & Frameworks</span>
+            <div className={styles.integrationSubtext}>
+              More agents coming soon (PHP, Rust, .NET...)
+            </div>
+          </div>
+          <div 
+            className={styles.integrationIcons}
+            onMouseMove={handleMouseMove}
+          >
+            <div 
+              className={styles.logoWrapper} 
+              onMouseEnter={(e) => handleMouseEnterIcon(e, "Node Agent")}
+              onMouseLeave={handleMouseLeaveIcon}
+            >
+              <SiNodedotjs size={48} aria-label="Node.js" />
+            </div>
+            <div 
+              className={styles.logoWrapper} 
+              onMouseEnter={(e) => handleMouseEnterIcon(e, "Python Agent")}
+              onMouseLeave={handleMouseLeaveIcon}
+            >
+              <SiPython size={48} aria-label="Python" />
+            </div>
+            <div 
+              className={styles.logoWrapper} 
+              onMouseEnter={(e) => handleMouseEnterIcon(e, "Java Agent")}
+              onMouseLeave={handleMouseLeaveIcon}
+            >
+              <FaJava size={48} aria-label="Java" />
+            </div>
+            <div 
+              className={styles.logoWrapper} 
+              onMouseEnter={(e) => handleMouseEnterIcon(e, "Go Agent")}
+              onMouseLeave={handleMouseLeaveIcon}
+            >
+              <div className={styles.goIconAdjust}>
+                <SiGo size={56} aria-label="Go" />
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Terminal */}
         <div
           id="terminal-demo"
@@ -479,6 +504,18 @@ export default function LandingPage() {
           <Link href="/login" className={styles.footerCta}>Initialize Session →</Link>
         </div>
       </footer>
+
+      {/* Custom Figma-Style Cursor for Logos */}
+      <div 
+        ref={cursorRef}
+        className={`${styles.customCursor} ${cursorText ? styles.visible : ''}`}
+      >
+        <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg" className={styles.cursorArrow}>
+          <path d="M0 0L16.4 7.27a.5.5 0 0 1 .08.9l-5.35 2.37a.5.5 0 0 0-.25.25L8.51 16.14a.5.5 0 0 1-.9-.08L0 0z" />
+        </svg>
+        <div className={styles.cursorTag}>{cursorText}</div>
+      </div>
+      </div>
     </div>
   );
 }

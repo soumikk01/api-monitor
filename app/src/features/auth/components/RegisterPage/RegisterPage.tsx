@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import ButtonLogoSpinner from '@/components/ButtonLogoSpinner/ButtonLogoSpinner';
 import styles from './RegisterPage.module.scss';
 
 /* ── Sparkle Background (mirrors LandingPage stars) ── */
@@ -28,6 +29,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isShaking, setIsShaking] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInvalid = () => {
     setIsShaking(true);
@@ -51,11 +53,13 @@ export default function RegisterPage() {
       setTimeout(() => setIsShaking(false), 600);
       return;
     }
+    setIsSubmitting(true);
     try {
       await register(email, password, name);
       router.push('/projects');
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
+      setIsSubmitting(false);
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 600);
     }
@@ -161,13 +165,10 @@ export default function RegisterPage() {
                   </div>
                 )}
 
-                <button type="submit" className={`${styles.submitBtn} ${isLoading ? styles.loadingBtn : ''}`} disabled={isLoading}>
-                  {isLoading ? (
+                <button type="submit" className={`${styles.submitBtn} ${isSubmitting ? styles.loadingBtn : ''}`} disabled={isSubmitting}>
+                  {isSubmitting ? (
                     <span className={styles.loaderContent}>
-                      <svg className={styles.spinnerIcon} viewBox="0 0 24 24">
-                        <circle opacity="0.25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                        <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
+                      <ButtonLogoSpinner />
                       Creating account...
                     </span>
                   ) : 'Create Account'}

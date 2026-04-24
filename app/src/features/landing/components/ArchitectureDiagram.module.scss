@@ -1,0 +1,251 @@
+.diagramWindow {
+  display: flex;
+  justify-content: space-between;
+  padding: 40px 32px;
+  gap: 80px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.title {
+  color: #F05F35;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.4;
+  height: 56px; /* Fixed height to align the diagrams below */
+}
+
+.illustration {
+  display: flex;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.ringWrapper {
+  width: 100%;
+  max-width: 240px;
+  aspect-ratio: 1;
+}
+
+.ringWrapperSide {
+  width: 50%;
+  aspect-ratio: 0.7;
+}
+
+.ring {
+  border: 1.5px solid rgba(0, 0, 0, 0.6);
+  transition: border-color 0.4s ease;
+  border-radius: 24px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px; /* Spacing between rings */
+  will-change: transform, opacity; /* GPU layer promotion for entrance animation */
+}
+
+.ringSmall {
+  border: 1.5px solid rgba(0, 0, 0, 0.6);
+  transition: border-color 0.4s ease;
+  border-radius: 18px;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  will-change: transform, opacity; /* GPU layer promotion for entrance animation */
+}
+
+.ringHollow {
+  border: 3px solid rgba(0, 0, 0, 0.6);
+  transition: border-color 0.4s ease;
+  border-radius: 12px;
+  width: 45px;
+  height: 90px;
+  will-change: transform, opacity; /* GPU layer promotion for entrance animation */
+}
+
+.dark .ring,
+.dark .ringSmall {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.dark .ringHollow {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.stackContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+}
+
+.sideBySideContainer {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.barContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.barBlue {
+  height: 12px;
+  background-color: #4EA4F2;
+  border-radius: 5px;
+  width: 100%;
+  will-change: transform, opacity; /* GPU layer promotion for entrance animation */
+}
+
+.barGreen {
+  height: 12px;
+  background-color: #4CAF50;
+  border-radius: 5px;
+  width: 100%;
+  will-change: transform, opacity; /* GPU layer promotion for entrance animation */
+}
+
+/* Add responsive behavior */
+@media (max-width: 768px) {
+  .diagramWindow {
+    flex-direction: column;
+    padding: 24px;
+  }
+  .title {
+    height: auto;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   COOL STAGGERED ENTRANCE ANIMATION
+───────────────────────────────────────────── */
+@keyframes popScaleUp {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animateInner .ring,
+.animateInner .ringSmall,
+.animateInner .ringHollow,
+.animateInner .barBlue,
+.animateInner .barGreen {
+  opacity: 0;
+  animation: popScaleUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Col 1: Row-level */
+.animateInner .column:nth-child(1) > .illustration > .ringWrapper > .ring { animation-delay: 0.1s; }
+.animateInner .column:nth-child(1) .ring > .ring { animation-delay: 0.2s; }
+.animateInner .column:nth-child(1) .ring > .ring > .ring { animation-delay: 0.3s; }
+.animateInner .column:nth-child(1) .ring > .ring > .ring > .ring { animation-delay: 0.4s; }
+.animateInner .column:nth-child(1) .barBlue:nth-child(1) { animation-delay: 0.5s; }
+.animateInner .column:nth-child(1) .barGreen:nth-child(2) { animation-delay: 0.6s; }
+.animateInner .column:nth-child(1) .barBlue:nth-child(3) { animation-delay: 0.7s; }
+.animateInner .column:nth-child(1) .barGreen:nth-child(4) { animation-delay: 0.8s; }
+
+/* Col 2: Schema-per-tenant */
+.animateInner .column:nth-child(2) > .illustration > .ringWrapper > .ring { animation-delay: 0.3s; }
+.animateInner .column:nth-child(2) .ring > .ring { animation-delay: 0.4s; }
+
+.animateInner .column:nth-child(2) .stackContainer > .ringSmall:nth-child(1) { animation-delay: 0.5s; }
+.animateInner .column:nth-child(2) .stackContainer > .ringSmall:nth-child(1) > .ringSmall { animation-delay: 0.6s; }
+.animateInner .column:nth-child(2) .stackContainer > .ringSmall:nth-child(1) .barContainer > .barBlue:nth-child(1) { animation-delay: 0.7s; }
+.animateInner .column:nth-child(2) .stackContainer > .ringSmall:nth-child(1) .barContainer > .barBlue:nth-child(2) { animation-delay: 0.8s; }
+
+.animateInner .column:nth-child(2) .stackContainer > .ringSmall:nth-child(2) { animation-delay: 0.7s; }
+.animateInner .column:nth-child(2) .stackContainer > .ringSmall:nth-child(2) > .ringSmall { animation-delay: 0.8s; }
+.animateInner .column:nth-child(2) .stackContainer > .ringSmall:nth-child(2) .barContainer > .barGreen:nth-child(1) { animation-delay: 0.9s; }
+.animateInner .column:nth-child(2) .stackContainer > .ringSmall:nth-child(2) .barContainer > .barGreen:nth-child(2) { animation-delay: 1.0s; }
+
+/* Col 3: Database-per-tenant */
+.animateInner .column:nth-child(3) .ringWrapperSide:nth-child(1) > .ring { animation-delay: 0.5s; }
+.animateInner .column:nth-child(3) .ringWrapperSide:nth-child(1) .ring > .ring { animation-delay: 0.6s; }
+.animateInner .column:nth-child(3) .ringWrapperSide:nth-child(1) .ring > .ring > .ring { animation-delay: 0.7s; }
+.animateInner .column:nth-child(3) .ringWrapperSide:nth-child(1) .ringHollow { animation-delay: 0.8s; }
+
+.animateInner .column:nth-child(3) .ringWrapperSide:nth-child(2) > .ring { animation-delay: 0.7s; }
+.animateInner .column:nth-child(3) .ringWrapperSide:nth-child(2) .ring > .ring { animation-delay: 0.8s; }
+.animateInner .column:nth-child(3) .ringWrapperSide:nth-child(2) .ring > .ring > .ring { animation-delay: 0.9s; }
+.animateInner .column:nth-child(3) .ringWrapperSide:nth-child(2) .ringHollow { animation-delay: 1.0s; }
+
+/* ─────────────────────────────────────────────
+   HOVER RE-ANIMATION
+───────────────────────────────────────────── */
+@keyframes popScaleUpHover {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Trigger animation on hover over the column */
+.column:hover .ring,
+.column:hover .ringSmall,
+.column:hover .ringHollow,
+.column:hover .barBlue,
+.column:hover .barGreen {
+  animation: popScaleUpHover 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Reset delays for hover so it starts immediately */
+.column:hover > .illustration > .ringWrapper > .ring { animation-delay: 0s; }
+.column:hover .ring > .ring { animation-delay: 0.1s; }
+
+/* Col 1 hover delays */
+.column:nth-child(1):hover .ring > .ring > .ring { animation-delay: 0.2s; }
+.column:nth-child(1):hover .ring > .ring > .ring > .ring { animation-delay: 0.3s; }
+.column:nth-child(1):hover .barBlue:nth-child(1) { animation-delay: 0.4s; }
+.column:nth-child(1):hover .barGreen:nth-child(2) { animation-delay: 0.5s; }
+.column:nth-child(1):hover .barBlue:nth-child(3) { animation-delay: 0.6s; }
+.column:nth-child(1):hover .barGreen:nth-child(4) { animation-delay: 0.7s; }
+
+/* Col 2 hover delays */
+.column:nth-child(2):hover .stackContainer > .ringSmall:nth-child(1) { animation-delay: 0.2s; }
+.column:nth-child(2):hover .stackContainer > .ringSmall:nth-child(1) > .ringSmall { animation-delay: 0.3s; }
+.column:nth-child(2):hover .stackContainer > .ringSmall:nth-child(1) .barContainer > .barBlue:nth-child(1) { animation-delay: 0.4s; }
+.column:nth-child(2):hover .stackContainer > .ringSmall:nth-child(1) .barContainer > .barBlue:nth-child(2) { animation-delay: 0.5s; }
+
+.column:nth-child(2):hover .stackContainer > .ringSmall:nth-child(2) { animation-delay: 0.4s; }
+.column:nth-child(2):hover .stackContainer > .ringSmall:nth-child(2) > .ringSmall { animation-delay: 0.5s; }
+.column:nth-child(2):hover .stackContainer > .ringSmall:nth-child(2) .barContainer > .barGreen:nth-child(1) { animation-delay: 0.6s; }
+.column:nth-child(2):hover .stackContainer > .ringSmall:nth-child(2) .barContainer > .barGreen:nth-child(2) { animation-delay: 0.7s; }
+
+/* Col 3 hover delays */
+.column:nth-child(3):hover .ringWrapperSide:nth-child(1) > .ring { animation-delay: 0s; }
+.column:nth-child(3):hover .ringWrapperSide:nth-child(1) .ring > .ring { animation-delay: 0.1s; }
+.column:nth-child(3):hover .ringWrapperSide:nth-child(1) .ring > .ring > .ring { animation-delay: 0.2s; }
+.column:nth-child(3):hover .ringWrapperSide:nth-child(1) .ringHollow { animation-delay: 0.3s; }
+
+.column:nth-child(3):hover .ringWrapperSide:nth-child(2) > .ring { animation-delay: 0.2s; }
+.column:nth-child(3):hover .ringWrapperSide:nth-child(2) .ring > .ring { animation-delay: 0.3s; }
+.column:nth-child(3):hover .ringWrapperSide:nth-child(2) .ring > .ring > .ring { animation-delay: 0.4s; }
+.column:nth-child(3):hover .ringWrapperSide:nth-child(2) .ringHollow { animation-delay: 0.5s; }

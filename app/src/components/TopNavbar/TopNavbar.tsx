@@ -24,7 +24,7 @@ export default function TopNavbar() {
   const isProjectsPage = pathname === '/projects';
   const isAccountPage = pathname.startsWith('/projects/account');
   const isAuditPage = pathname === '/projects/account/audit';
-  const { user, logout } = useAuth();
+  const { user, logoutWithTransition } = useAuth();
   const { dark, toggleTheme } = useTheme();
 
   const [activeProject, setActiveProject] = useState<Project | null>(null);
@@ -106,8 +106,8 @@ export default function TopNavbar() {
 
 
   const handleLogout = () => {
-    logout();
-    router.push('/login');
+    setShowUserDrop(false);
+    logoutWithTransition(router);
   };
 
   return (
