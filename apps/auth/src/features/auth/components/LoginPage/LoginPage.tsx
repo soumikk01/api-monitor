@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import ButtonLogoSpinner from '@/components/ButtonLogoSpinner/ButtonLogoSpinner';
 import styles from './LoginPage.module.scss';
@@ -22,7 +21,6 @@ const SpringBackground = () => (
 export default function LoginPage() {
   // dark mode is always on — no toggle needed
   const dark = true;
-  const router = useRouter();
   const { login, isLoading } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -50,7 +48,8 @@ export default function LoginPage() {
     setIsSubmitting(true);
     try {
       await login(email, password);
-      router.push('/projects');
+      // Cross-app redirect: auth app → web app (different port/domain)
+      window.location.href = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/projects`;
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
       setIsSubmitting(false);

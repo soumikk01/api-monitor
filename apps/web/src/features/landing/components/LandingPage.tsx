@@ -9,6 +9,9 @@ import { FaJava } from "react-icons/fa6";
 import styles from './LandingPage.module.scss';
 import { ArchitectureDiagram } from './ArchitectureDiagram';
 
+const AUTH_URL = process.env.NEXT_PUBLIC_AUTH_URL ?? 'http://localhost:3001';
+const DOCS_URL = process.env.NEXT_PUBLIC_DOCS_URL ?? 'http://localhost:3002';
+
 // Lazy load TerminalDemo — it starts setInterval timers immediately on mount.
 // Deferring it prevents timer overhead during the critical render path.
 const TerminalDemo = dynamic(() => import('./TerminalDemo'), {
@@ -269,7 +272,7 @@ export default function LandingPage() {
         <nav className={`${styles.nav} ${styles.navIn}`}>
           <div className={styles.navLinks}>
             {['Products','Solutions','Pricing','Company','Support','Docs'].map((link, i) => (
-              <Link key={link} href={link === 'Docs' ? '/docs' : link === 'Solutions' ? '#features' : link === 'Pricing' ? '#stats' : '#'}
+              <Link key={link} href={link === 'Docs' ? DOCS_URL : link === 'Solutions' ? '#features' : link === 'Pricing' ? '#stats' : '#'}
                 className={styles.navLink}
                 style={{ animationDelay: `${0.05 * i}s` }}>
                 {link}
@@ -277,7 +280,7 @@ export default function LandingPage() {
             ))}
           </div>
           <div className={styles.navRight}>
-            <Link href="/login" className={styles.navPill}>Try for free</Link>
+            <Link href={`${AUTH_URL}/login`} className={styles.navPill}>Try for free</Link>
             <div className={styles.navDivider} />
             <button
               id="theme-toggle"
@@ -359,7 +362,7 @@ export default function LandingPage() {
           style={{ animationDelay: '0.42s' }}
         >
           <Link
-            href="/login"
+            href={`${AUTH_URL}/login`}
             ref={magPrimary as React.RefObject<HTMLAnchorElement>}
             className={styles.ctaPrimary}
             id="cta-get-started"
@@ -501,7 +504,7 @@ export default function LandingPage() {
         <div className={styles.footerLinks}>
           <a href="#" className={styles.footerLink}>Legal</a>
           <a href="#" className={styles.footerLink}>Docs</a>
-          <Link href="/login" className={styles.footerCta}>Initialize Session →</Link>
+          <Link href={`${AUTH_URL}/login`} className={styles.footerCta}>Initialize Session →</Link>
         </div>
       </footer>
 

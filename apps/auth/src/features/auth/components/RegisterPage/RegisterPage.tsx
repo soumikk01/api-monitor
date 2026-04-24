@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import ButtonLogoSpinner from '@/components/ButtonLogoSpinner/ButtonLogoSpinner';
 import styles from './RegisterPage.module.scss';
@@ -21,7 +20,6 @@ const SpringBackground = () => (
 export default function RegisterPage() {
   // dark mode is always on — no toggle needed
   const dark = true;
-  const router = useRouter();
   const { register, isLoading } = useAuth();
 
   const [name, setName] = useState('');
@@ -56,7 +54,8 @@ export default function RegisterPage() {
     setIsSubmitting(true);
     try {
       await register(email, password, name);
-      router.push('/projects');
+      // Cross-app redirect: auth app → web app (different port/domain)
+      window.location.href = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/projects`;
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
       setIsSubmitting(false);
