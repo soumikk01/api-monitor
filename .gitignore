@@ -60,3 +60,9 @@ app/theme-gen.js
 
 # prisma generated artifacts (avoid polluting git history)
 **/src/generated/prisma
+
+# Turborepo
+.turbo/
+
+# Legacy backend/ folder (pre-monorepo migration) — contains locked Prisma .dll.node
+backend/

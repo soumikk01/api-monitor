@@ -9,6 +9,7 @@
     <a href="https://nestjs.com/"><img src="https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white" alt="NestJS" /></a>
     <a href="https://www.mongodb.com/"><img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" /></a>
     <a href="https://bun.sh/"><img src="https://img.shields.io/badge/Bun-%23000000.svg?style=for-the-badge&logo=bun&logoColor=white" alt="Bun" /></a>
+    <a href="https://turbo.build/"><img src="https://img.shields.io/badge/Turborepo-EF4444?style=for-the-badge&logo=turborepo&logoColor=white" alt="Turborepo" /></a>
   </p>
 </div>
 
@@ -16,90 +17,134 @@
 
 ## 📖 Overview
 
-**Neural Architect API Monitor** is a professional, full-stack SaaS solution designed to provide real-time, deep visibility into your application's API traffic. Whether you are debugging, monitoring performance latency, or ensuring production stability, the API Monitor seamlessly intercepts HTTP requests and streams them to a beautiful Glassmorphic Dashboard.
+**API Nest** is a professional, full-stack SaaS solution providing real-time, deep visibility into your application's API traffic. Whether you are debugging, monitoring performance latency, or ensuring production stability, API Nest seamlessly intercepts HTTP requests and streams them to a beautiful dashboard in real-time.
 
-Forget digging through terminal logs. Plug in the zero-config CLI tool and watch your traffic matrix light up in real-time.
+Forget digging through terminal logs. Plug in the zero-config CLI tool and watch your traffic matrix light up instantly.
 
 <br />
 
 ## ✨ Key Features
 
-- **🔴 Real-Time Observability**: Powered by WebSockets, watch your API traffic (`GET`, `POST`, errors, latencies) flow into the dashboard with zero delay.
-- **🔌 Zero-Config Interceptor**: A drop-in `@api-monitor-cli` NPM package auto-patches `fetch` and `axios` natively. No code refactoring required.
-- **🎨 Dual-Interface Platform**: 
-  - **The Main App**: A beautiful, Spring Blossom themed observability suite with light/dark glassmorphic design.
-  - **The Admin Panel**: A clean, scalable enterprise Next.js dashboard for multi-project and user token management.
-- **🧱 Microservice Ready**: Built specifically to trace requests across vast Node.js / Nest.js / Express microservice topologies.
-- **🔐 Secure SDK Tokens**: Encrypted project-based authentication ensures your log data stays strictly within your isolated tenant vault.
+- **🔴 Real-Time Observability**: Powered by WebSockets + Socket.io, watch API traffic flow into the dashboard with zero delay.
+- **🔌 Zero-Config Interceptor**: A drop-in `api-nest-cli` NPM package auto-patches `fetch`, `http`, and `https` natively. No code refactoring required.
+- **🏗️ Turborepo Monorepo**: All apps managed together — one `bun install`, one `bun turbo dev`.
+- **🔐 Per-Tab Security**: Tokens stored in `sessionStorage` — each browser tab has its own isolated session.
+- **🧱 Horizontally Scalable Backend**: Two NestJS instances behind NGINX, synced via Redis pub/sub.
+- **🎨 Multi-App Architecture**: Separate apps for Dashboard, Auth, Docs, and Admin.
 
 <br />
 
-## 🏗️ Architecture
+## 🏗️ Repository Structure
 
-The project is structured as a tightly-integrated monorepo:
-
-| Package | Tech Stack | Description |
-| ------- | ---------- | ----------- |
-| **`/app`** | Next.js 16, React, SCSS | The gorgeous main observability dashboard and user portal. |
-| **`/api_nest.admin`** | Next.js 16, React, Tailwind | Enterprise management panel for supervising users and active tokens. |
-| **`/backend`** | NestJS, Prisma, MongoDB | The core engine processing socket events, auth, and telemetry storage. |
-| **`/cli`** | TypeScript | The NPM package that hooks into your target apps and dispatches telemetry. |
+```
+api-monitor/                         ← Turborepo monorepo root
+├── turbo.json                       ← Build pipeline + caching
+├── package.json                     ← Root Bun workspace
+├── bun.lock                         ← Single unified lockfile
+├── .prettierrc                      ← Shared formatter
+│
+├── packages/
+│   ├── typescript-config/           ← Shared tsconfig presets (base/nextjs/nestjs)
+│   └── shared/                      ← Shared TypeScript types + constants
+│
+└── apps/
+    ├── web/        → :3000          Next.js — Landing + Dashboard
+    ├── auth/       → :3001          Next.js — Login / Register / Forgot Password
+    ├── docs/       → :3002          Next.js — Documentation site
+    ├── admin/      → :3003          Next.js — Admin panel
+    ├── backend/    → :4000 / :4001  NestJS — REST API + WebSocket + BullMQ Worker
+    └── cli/        → npm            api-nest-cli (published to npm)
+```
 
 <br />
 
 ## 🚀 Getting Started
 
-### 1. Prerequisites
-- **Node.js** (v18+)
-- **Bun** (Latest)
-- **MongoDB** (Local or Atlas Cluster)
+### Prerequisites
+- **Bun** ≥ 1.1.0
+- **Node.js** ≥ 18 (for CLI)
+- **MongoDB Atlas** account (or local MongoDB)
+- **Redis** (local or [Upstash](https://upstash.com) free tier)
 
-### 2. Environment Setup
-Configure your `.env` files in the respective packages. Follow the `.env.example` configurations.
-Ensure your backend has a valid MongoDB connection string:
-```env
-DATABASE_URL="mongodb+srv://<USER>:<PASS>@cluster.mongodb.net/api-monitor?retryWrites=true&w=majority"
-JWT_SECRET="your_super_secret_jwt_key"
-```
+### Setup
 
-### 3. Install & Start
-Install dependencies globally across the workspace:
 ```bash
+# 1. Clone
+git clone https://github.com/soumikk01/api-monitor.git
+cd api-monitor
+
+# 2. Install all dependencies (one command — Bun workspaces handles everything)
 bun install
+
+# 3. Configure backend environment
+cp apps/backend/.env.example apps/backend/.env
+# Edit apps/backend/.env with DATABASE_URL, REDIS_URL, JWT_SECRET, JWT_REFRESH_SECRET
+
+# 4. Configure frontend environments
+# apps/web/.env.local and apps/auth/.env.local already created with defaults
+
+# 5. Generate Prisma client
+cd apps/backend && bun run prisma generate && cd ../..
+
+# 6. Start everything (parallel dev servers)
+bun turbo dev
 ```
 
-Start the platform services:
-```bash
-# Terminal 1: Backend Server (Port 4000)
-cd backend && bun run start:dev
+### Local URLs after `bun turbo dev`
 
-# Terminal 2: Main Application (Port 3000)
-cd app && bun run dev
-
-# Terminal 3: Admin Panel (Port 3001)
-cd api_nest.admin && bun run dev
-```
+| App | URL | Description |
+|---|---|---|
+| Dashboard | http://localhost:3000 | Main observability dashboard |
+| Auth | http://localhost:3001 | Login / Register |
+| Docs | http://localhost:3002 | Documentation |
+| Admin | http://localhost:3003 | Admin panel |
+| API | http://localhost:4000 | NestJS REST + WebSocket |
 
 <br />
 
-## 🛠️ Integrating the CLI (Target Apps)
+## 🛠️ Integrating the CLI
 
-To monitor a separate backend application (e.g., your production Express server), simply install the CLI interceptor:
+To monitor a separate backend application (e.g., your Express server):
 
-**1. Create a Project**
-Log into the Main App (`http://localhost:3000`) and navigate to Settings to generate your unique `SDK_TOKEN`.
+**1. Generate your SDK Token**  
+Log into the dashboard (`http://localhost:3000`) → Settings → **Get Command**.
 
-**2. Initialize the Interceptor**
-In your target backend project directory, run:
+**2. Initialize the interceptor in your app**
 ```bash
-npx api-monitor-cli@latest init --token <YOUR_SDK_TOKEN>
+npx api-nest-cli init --token sdk_<YOUR_TOKEN>
 ```
-*Note: If running locally without publishing to NPM, simply use `npm link` inside the `/cli` package to simulate the global install!*
 
-**3. Watch the Magic**
-Start your target app. The CLI will automatically intercept global network requests and beam them instantly to your Neural Architect dashboard!
+**3. Add to your app's entry file**
+```ts
+// At the very top of your server entry point
+import 'api-nest-cli/register';
+```
+
+**4. Watch the dashboard**  
+Start your app. API Nest will intercept every outgoing HTTP request and stream it to your dashboard in real-time.
+
+<br />
+
+## 📚 Documentation
+
+Full developer docs in [`docs/`](./docs/):
+
+| Topic | File |
+|---|---|
+| **Quick Start (all commands)** | [docs/QUICKSTART.md](./docs/QUICKSTART.md) |
+| System Architecture | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) |
+| Database Schema | [docs/DATABASE.md](./docs/DATABASE.md) |
+| Deployment Guide | [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) |
+| Environment Variables | [docs/ENVIRONMENT.md](./docs/ENVIRONMENT.md) |
+| Backend (NestJS) | [docs/backend.md](./docs/backend.md) |
+| Web App | [docs/web.md](./docs/web.md) |
+| Auth App | [docs/auth.md](./docs/auth.md) |
+| CLI Package | [docs/cli.md](./docs/cli.md) |
+
+Developer onboarding: [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 <br />
 
 ## 📜 License
+
 Internal SaaS Architecture — All rights reserved.
