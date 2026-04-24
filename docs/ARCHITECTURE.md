@@ -7,22 +7,22 @@
 ## High-Level Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
+┌─────────────────────────────────────────────────────────────────────────────┐
 │                          DEVELOPER'S APP                                │
 │                                                                         │
 │   import 'api-nest-cli/register';   ← monkey-patches Node http/https   │
 │                                                                         │
 │   app.get('/users', ...)            ← makes outgoing HTTP calls         │
 │       └── axios.get('https://api.stripe.com/...')                       │
-└────────────────────┬────────────────────────────────────────────────────┘
+└────────────────────┤────────────────────────────────────────────────────┘
                      │ captured by interceptor
-                     │ POST /api/v1/ingest/:projectId
-                     │ Authorization: Bearer sdk_<token>
+                     │ POST /api/v1/ingest
+                     │ Body: { sdkToken, projectId, events[] }
                      ▼
-┌────────────────────────────────────────────────────────────────────────┐
+┌─────────────────────────────────────────────────────────────────────────────┐
 │                    NGINX (port 80/443)                                  │
-│              Round-robin load balancer                                  │
-│         upstream: localhost:4000, localhost:4001                        │
+│    ip_hash load balancer (sticky sessions — same client → same backend) │
+│         upstream: nestjs_1:4000, nestjs_2:4000                          │
 └──────────────┬───────────────────────────┬─────────────────────────────┘
                │                           │
                ▼                           ▼
@@ -111,16 +111,16 @@ Browser
      endedAt: "2024-01-15T10:30:00.245Z"
    }
 
-3. POST http://localhost:4000/api/v1/ingest/PROJECT_ID
-   Authorization: Bearer sdk_abc123...
+3. POST http://localhost:4000/api/v1/ingest
+Body: { sdkToken: "sdk_abc123...", projectId: "PROJECT_ID", events: [...] }
    Body: { events: [...] }
 
-4. NestJS validates SDK token → enqueues BullMQ job (~5ms response)
+4. NestJS validates SDK token (from body) → validates projectId → enqueues BullMQ job (~5ms response, 202 Accepted)
 
 5. BullMQ Worker dequeues job:
-   a. prisma.apiCall.create(...) → MongoDB Atlas
+   a. Promise.all → prisma.apiCall.create(...) per event → MongoDB Atlas
    b. eventsService.emitApiCall(projectId, record) → Socket.io
-   c. Debounced stats broadcast (5 second window)
+   c. Debounced stats broadcast (5s debounce window; queries last 1 hour of data)
 
 6. Socket.io Redis adapter publishes to all instances
 
@@ -135,8 +135,8 @@ Browser
 |---|---|---|---|
 | Project stats | Redis | 30s | New ingest batch processed |
 | Call history (paginated) | Redis | 15s | New ingest batch processed |
-| Single call detail | Redis | 60s | Never (immutable) |
-| Analytics summary | Redis | 30s | New ingest batch processed |
+| Single call detail | Redis | 60s | Never (immutable once written) |
+| Analytics summary (per range) | Redis | 30s | New ingest batch — 4 keys: `1h`, `24h`, `7d`, `30d` |
 | Top endpoints | Redis | 60s | New ingest batch processed |
 
 Cache is busted by the BullMQ worker via `CacheService.del()` after each batch. Pattern-based deletion (`delByPattern`) clears all history pages for a project.
@@ -177,12 +177,13 @@ The system is designed to scale horizontally:
 | Redis | Upgrade to Redis Cluster (supported via `REDIS_CLUSTER_NODES` env var) |
 | Frontend | Edge-deployed via Vercel — global CDN |
 
-**Each instance binds to a unique port** — two processes cannot share the same port on one machine. NGINX load-balances between them:
+**Each instance binds to its own Docker container** — in Docker Compose both expose port `4000` *inside* the container, but are mapped to host ports `4000` and `4001`. NGINX routes by `ip_hash` (sticky sessions) for WebSocket stability:
 
 ```nginx
-upstream nestjs_cluster {
-    server 127.0.0.1:4000;   # Instance 1
-    server 127.0.0.1:4001;   # Instance 2
+upstream nestjs_api {
+    ip_hash;                             # sticky: same client IP → same backend
+    server nestjs_1:4000 max_fails=3;   # Docker hostname, not 127.0.0.1
+    server nestjs_2:4000 max_fails=3;
 }
 ```
 

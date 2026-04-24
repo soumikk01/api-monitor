@@ -1,6 +1,6 @@
 services:
 
-  # ── NGINX Load Balancer ────────────────────────────────────────────────────
+  # ── NGINX Load Balancer ─────────────────────────────────────────────────────
   nginx:
     image: nginx:1.25-alpine
     container_name: api_monitor_nginx
@@ -19,7 +19,7 @@ services:
     networks:
       - api_monitor_net
 
-  # ── NestJS API — Instance 1 ───────────────────────────────────────────────
+  # ── NestJS API — Instance 1 ─────────────────────────────────────────────────
   nestjs_1:
     build:
       context: .
@@ -33,7 +33,11 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}           # Upstash / Redis Cloud managed URL
       - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
       - FRONTEND_URL=${FRONTEND_URL}
+      - AUTH_URL=${AUTH_URL}
+      - DOCS_URL=${DOCS_URL}
+      - ADMIN_URL=${ADMIN_URL}
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:4000/health"]
       interval: 10s
@@ -44,7 +48,7 @@ services:
     networks:
       - api_monitor_net
 
-  # ── NestJS API — Instance 2 ───────────────────────────────────────────────
+  # ── NestJS API — Instance 2 ─────────────────────────────────────────────────
   nestjs_2:
     build:
       context: .
@@ -58,7 +62,11 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
       - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
       - FRONTEND_URL=${FRONTEND_URL}
+      - AUTH_URL=${AUTH_URL}
+      - DOCS_URL=${DOCS_URL}
+      - ADMIN_URL=${ADMIN_URL}
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:4000/health"]
       interval: 10s
@@ -82,7 +90,11 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
       - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
       - FRONTEND_URL=${FRONTEND_URL}
+      - AUTH_URL=${AUTH_URL}
+      - DOCS_URL=${DOCS_URL}
+      - ADMIN_URL=${ADMIN_URL}
     restart: unless-stopped
     networks:
       - api_monitor_net

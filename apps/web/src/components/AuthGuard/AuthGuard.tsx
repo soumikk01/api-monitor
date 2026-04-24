@@ -23,7 +23,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     if (!isLoading && !user) {
       window.location.href = `${process.env.NEXT_PUBLIC_AUTH_URL ?? 'http://localhost:3001'}/login`;
     }
-  }, [isLoading, user, router]);
+  }, [isLoading, user]);
 
   // Auth check in progress — render nothing (page shows its own skeleton)
   if (isLoading) return null;
