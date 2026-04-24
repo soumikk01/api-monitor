@@ -1,0 +1,23 @@
+# railway.toml — used ONLY for single-instance Railway deploy
+# Load balancing is handled by NGINX (docker-compose.yml), NOT Railway.
+#
+# If deploying to Railway, this runs ONE instance.
+# NGINX sits in front and manages the 2+ NestJS containers.
+
+[build]
+  builder = "NIXPACKS"
+
+[deploy]
+  # Single instance — Railway is NOT the load balancer here
+  # NGINX (nginx/nginx.conf) handles routing between NestJS instances
+  numReplicas = 1
+
+  # Health check so Railway knows when the instance is ready
+  healthcheckPath = "/health"
+  healthcheckTimeout = 10
+
+  restartPolicyType    = "ON_FAILURE"
+  restartPolicyMaxRetries = 5
+
+  # Drain connections before stopping (graceful shutdown)
+  drainingSeconds = 10

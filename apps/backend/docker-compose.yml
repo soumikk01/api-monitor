@@ -1,0 +1,95 @@
+services:
+
+  # ── NGINX Load Balancer ────────────────────────────────────────────────────
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: api_monitor_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/api-monitor.conf:ro
+      - ./nginx/certs:/etc/ssl:ro
+    depends_on:
+      nestjs_1:
+        condition: service_healthy
+      nestjs_2:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - api_monitor_net
+
+  # ── NestJS API — Instance 1 ───────────────────────────────────────────────
+  nestjs_1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api_monitor_nestjs_1
+    ports:
+      - "4000:4000"      # host:container — Instance 1 on host port 4000
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}           # Upstash / Redis Cloud managed URL
+      - JWT_SECRET=${JWT_SECRET}
+      - FRONTEND_URL=${FRONTEND_URL}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+    networks:
+      - api_monitor_net
+
+  # ── NestJS API — Instance 2 ───────────────────────────────────────────────
+  nestjs_2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api_monitor_nestjs_2
+    ports:
+      - "4001:4000"      # host:container — Instance 2 on host port 4001
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - FRONTEND_URL=${FRONTEND_URL}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+    networks:
+      - api_monitor_net
+
+  # ── BullMQ Worker ─────────────────────────────────────────────────────────
+  # Separate process — only processes queue jobs, no HTTP server.
+  # API instances enqueue jobs (~5ms), worker does all the heavy DB writes.
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: api_monitor_worker
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - FRONTEND_URL=${FRONTEND_URL}
+    restart: unless-stopped
+    networks:
+      - api_monitor_net
+
+# ── Networks ──────────────────────────────────────────────────────────────────
+# No Redis container — use managed Redis (Upstash / Redis Cloud).
+# Set REDIS_URL in .env to your managed Redis endpoint.
+networks:
+  api_monitor_net:
+    driver: bridge

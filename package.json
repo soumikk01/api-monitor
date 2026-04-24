@@ -1,0 +1,24 @@
+{
+  "name": "api-monitor",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build":      "turbo run build",
+    "dev":        "turbo run dev --parallel",
+    "lint":       "turbo run lint",
+    "typecheck":  "turbo run typecheck",
+    "test":       "turbo run test",
+    "format":     "prettier --write \"**/*.{ts,tsx,js,json,md}\" --ignore-path .gitignore"
+  },
+  "devDependencies": {
+    "turbo":     "^2.5.4",
+    "prettier":  "^3.4.2"
+  },
+  "engines": {
+    "bun":  ">=1.1.0",
+    "node": ">=18"
+  }
+}

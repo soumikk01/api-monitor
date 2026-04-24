@@ -1,0 +1,17 @@
+{
+  "name": "@api-monitor/shared",
+  "version": "0.0.1",
+  "private": true,
+  "license": "UNLICENSED",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@api-monitor/typescript-config": "*",
+    "typescript": "^5"
+  }
+}
