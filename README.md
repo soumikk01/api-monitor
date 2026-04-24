@@ -131,6 +131,7 @@ Full developer docs in [`docs/`](./docs/):
 
 | Topic | File |
 |---|---|
+| **Quick Start (all commands)** | [docs/QUICKSTART.md](./docs/QUICKSTART.md) |
 | System Architecture | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) |
 | Database Schema | [docs/DATABASE.md](./docs/DATABASE.md) |
 | Deployment Guide | [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) |

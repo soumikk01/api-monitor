@@ -17,8 +17,8 @@
     "README.md"
   ],
   "scripts": {
-    "build": "npx --no-install tsc",
-    "dev": "npx --no-install tsc --watch"
+    "build": "bunx tsc",
+    "dev": "bunx tsc --watch"
   },
   "keywords": [
     "api",

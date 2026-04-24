@@ -1,30 +1,29 @@
 {
   "name": "api-monitor",
   "private": true,
+  "packageManager": "bun@1.3.10",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "build":         "turbo run build",
-
-    "dev":           "turbo run dev --parallel",
-    "dev:worker":    "turbo run dev:worker --filter=@api-monitor/backend",
-    "dev:all":       "turbo run dev dev:worker --parallel",
-
-    "prod:api2":     "cd apps/backend && bun run start:prod2:bun",
-
-    "lint":          "turbo run lint",
-    "typecheck":     "turbo run typecheck",
-    "test":          "turbo run test",
-    "format":        "prettier --write \"**/*.{ts,tsx,js,json,md}\" --ignore-path .gitignore"
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "dev:worker": "turbo run dev:worker --filter=@api-monitor/backend",
+    "dev:all": "turbo run dev dev:worker --parallel",
+    "prod:api2": "cd apps/backend && bun run start:prod2:bun",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\" --ignore-path .gitignore"
   },
   "devDependencies": {
-    "turbo":     "^2.5.4",
-    "prettier":  "^3.4.2"
+    "@nestjs/cli": "^11.0.21",
+    "prettier": "^3.4.2",
+    "turbo": "^2.5.4"
   },
   "engines": {
-    "bun":  ">=1.1.0",
+    "bun": ">=1.1.0",
     "node": ">=18"
   }
 }
