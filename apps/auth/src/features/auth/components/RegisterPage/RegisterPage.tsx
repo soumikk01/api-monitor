@@ -54,8 +54,16 @@ export default function RegisterPage() {
     setIsSubmitting(true);
     try {
       await register(email, password, name);
+      const at = sessionStorage.getItem('access_token');
+      const rt = sessionStorage.getItem('refresh_token');
+      
       // Cross-app redirect: auth app → web app (different port/domain)
-      window.location.href = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/projects`;
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+      const redirectUrl = new URL('/projects', baseUrl);
+      if (at) redirectUrl.searchParams.set('access_token', at);
+      if (rt) redirectUrl.searchParams.set('refresh_token', rt);
+      
+      window.location.href = redirectUrl.toString();
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
       setIsSubmitting(false);
@@ -95,7 +103,7 @@ export default function RegisterPage() {
                 </svg>
                 <span className={styles.logoMark}>API Nest</span>
               </div>
-              <Link href="/" className={styles.backLink}>← Home</Link>
+              <a href={process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'} className={styles.backLink}>← Home</a>
             </nav>
           </header>
 

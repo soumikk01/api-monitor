@@ -494,7 +494,7 @@ $dm-glass:  rgba(22, 22, 28, 0.82);
 
   .leftPane { background-color: #121217; border-right: none; }
   .rightPane { background: transparent; }
-  .patternOverlay { opacity: 0.3; mix-blend-mode: screen; filter: grayscale(1) invert(0.8) brightness(1.2); }
+  .patternOverlay { opacity: 0.15; filter: grayscale(1) invert(1); mix-blend-mode: normal; }
 
   .springBg { opacity: 0.2; }
 

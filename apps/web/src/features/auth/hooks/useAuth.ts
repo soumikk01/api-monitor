@@ -30,6 +30,24 @@ export function useAuth() {
     let cancelled = false;
 
     (async () => {
+      // ── Cross-app token transfer ──────────────────────────────────────────
+      // If we just arrived from the Auth app, tokens will be in the URL.
+      // Save them to this app's sessionStorage and strip them from the URL.
+      if (typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlAt = urlParams.get('access_token');
+        const urlRt = urlParams.get('refresh_token');
+        if (urlAt) {
+          authStorage.setAccessToken(urlAt);
+          if (urlRt) authStorage.setRefreshToken(urlRt);
+          
+          urlParams.delete('access_token');
+          urlParams.delete('refresh_token');
+          const newSearch = urlParams.toString() ? `?${urlParams.toString()}` : '';
+          window.history.replaceState({}, '', window.location.pathname + newSearch + window.location.hash);
+        }
+      }
+
       // ensureValidToken reads from sessionStorage — empty in a new tab
       const validToken = await ensureValidToken();
 

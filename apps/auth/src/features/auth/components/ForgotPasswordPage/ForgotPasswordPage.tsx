@@ -100,7 +100,7 @@ export default function ForgotPasswordPage() {
             </svg>
             <span className={styles.logoMark}>API Nest</span>
           </div>
-          <Link href="/" className={styles.backLink}>← Home</Link>
+          <a href={process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'} className={styles.backLink}>← Home</a>
         </nav>
       </header>
 
