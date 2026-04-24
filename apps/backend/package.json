@@ -10,8 +10,8 @@
     "build:clean":       "node -e \"const fs=require('fs');const path=require('path');const walk=(d)=>{if(!fs.existsSync(d))return;for(const f of fs.readdirSync(d)){const p=path.join(d,f);if(fs.statSync(p).isDirectory())walk(p);else if(!p.endsWith('.dll.node'))fs.rmSync(p);}}; walk('./dist');\" && prisma generate && nest build",
     "format":            "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
 
-    "dev":               "nest start --watch",
-    "dev:worker":        "nest build --watch & node -e \"setTimeout(()=>{},2000)\" && bun run dist/worker",
+    "dev":               "node -e \"const fs=require('fs');const src='src/generated/prisma';const dst='dist/generated/prisma';if(!fs.existsSync(dst))fs.mkdirSync(dst,{recursive:true});for(const f of fs.readdirSync(src)){if(f.endsWith('.node')){try{fs.copyFileSync(src+'/'+f,dst+'/'+f);console.log('[prisma] copied',f)}catch(e){console.warn('[prisma] copy warn:',e.message)}}}\" && nest start --watch",
+    "dev:worker":        "node -e \"const fs=require('fs');const src='src/generated/prisma';const dst='dist/generated/prisma';if(!fs.existsSync(dst))fs.mkdirSync(dst,{recursive:true});for(const f of fs.readdirSync(src)){if(f.endsWith('.node')){try{fs.copyFileSync(src+'/'+f,dst+'/'+f)}catch{}}}\" && nest build && bun run dist/worker",
 
     "start":             "nest start",
     "start:dev":         "node -e \"const fs=require('fs');const src='src/generated/prisma';const dst='dist/generated/prisma';if(!fs.existsSync(dst))fs.mkdirSync(dst,{recursive:true});for(const f of fs.readdirSync(src)){if(f.endsWith('.node')){try{fs.copyFileSync(src+'/'+f,dst+'/'+f)}catch{}}}\" && nest start --watch",

@@ -31,9 +31,12 @@ import { INGEST_QUEUE }    from './ingest/ingest.queue';
         transport: process.env.NODE_ENV !== 'production'
           ? { target: 'pino-pretty', options: { colorize: true, singleLine: true } }
           : undefined,
-        // Suppress noisy health check logs
-        autoLogging: {
-          ignore: (req) => (req as any).url === '/health',
+        // Suppress /health logs — use customSuccessMessage instead of autoLogging.ignore
+        // (autoLogging.ignore calls server.listeners() which crashes with pino-http v11 + nestjs-pino v4)
+        autoLogging: true,
+        customSuccessMessage: (req: any, res: any) => {
+          if (req.url === '/health') return '';   // empty string = pino skips the log line
+          return `${req.method} ${req.url} ${res.statusCode}`;
         },
       },
     }),

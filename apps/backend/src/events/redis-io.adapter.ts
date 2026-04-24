@@ -1,26 +1,29 @@
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import type { INestApplication } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
-import { ServerOptions } from 'socket.io';
+import { Server, ServerOptions } from 'socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
 import Redis, { Cluster } from 'ioredis';
 
 /**
  * RedisIoAdapter — plugs the Socket.io Redis adapter at the server level.
- * This is the correct NestJS way to use @socket.io/redis-adapter.
- * afterInit() in the gateway is NOT the right hook — it runs too late.
  *
- * Usage in main.ts:
- *   const adapter = new RedisIoAdapter(app);
- *   await adapter.connectToRedis();
- *   app.useWebSocketAdapter(adapter);
+ * Fix for NestJS v11 + engine.io v6.6 incompatibility:
+ *   engine.io@6.6 calls server.listeners() on the http.Server during attach().
+ *   The NestJS IoAdapter base class passes an abstracted server object that
+ *   doesn't expose listeners() directly — causing "server.listeners is not a function".
+ *
+ *   Solution: extract the raw httpServer from the NestJS app and pass it
+ *   directly to the socket.io Server constructor, bypassing the broken path.
  */
 export class RedisIoAdapter extends IoAdapter {
   private readonly logger = new Logger(RedisIoAdapter.name);
   private adapterConstructor: ReturnType<typeof createAdapter> | null = null;
+  private readonly app: INestApplication;
 
   constructor(app: INestApplication) {
     super(app);
+    this.app = app;
   }
 
   async connectToRedis(redisUrl?: string, clusterNodes?: string): Promise<void> {
@@ -67,11 +70,36 @@ export class RedisIoAdapter extends IoAdapter {
     }
   }
 
-  createIOServer(port: number, options?: ServerOptions) {
-    const server = super.createIOServer(port, options);
+  createIOServer(port: number, options?: ServerOptions): Server {
+    // ── NestJS v11 + engine.io v6.6 fix ─────────────────────────────────────
+    // engine.io calls httpServer.listeners('request') during attach().
+    // The NestJS abstract adapter passes its own wrapper which lacks .listeners().
+    // We bypass this by constructing the socket.io Server with the raw httpServer.
+    const httpServer = this.app.getHttpServer();
+
+    const cors = (options as any)?.cors ?? {
+      origin: [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:3002',
+        'http://localhost:3003',
+        process.env.FRONTEND_URL ?? 'http://localhost:3000',
+        process.env.AUTH_URL     ?? 'http://localhost:3001',
+        process.env.DOCS_URL     ?? 'http://localhost:3002',
+        process.env.ADMIN_URL    ?? 'http://localhost:3003',
+      ],
+      credentials: true,
+    };
+
+    const ioServer = new Server(httpServer, {
+      ...options,
+      cors,
+    });
+
     if (this.adapterConstructor) {
-      server.adapter(this.adapterConstructor);
+      ioServer.adapter(this.adapterConstructor);
     }
-    return server;
+
+    return ioServer;
   }
 }
