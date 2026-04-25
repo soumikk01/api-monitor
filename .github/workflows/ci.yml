@@ -1,7 +1,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 #  CI Pipeline — api-monitor
 #  Runs on: every push + every pull-request targeting main/develop
-#  Jobs: lint → typecheck → build  (in parallel where possible)
+#  Jobs: lint → typecheck → build  (lint & typecheck run in parallel)
 # ─────────────────────────────────────────────────────────────────────────────
 
 name: CI
@@ -13,17 +13,17 @@ on:
     branches: [main, develop]
 
 env:
-  # Makes bun cache work correctly across jobs
   BUN_VERSION: "1.x"
+  # Suppress Next.js telemetry in CI
+  NEXT_TELEMETRY_DISABLED: "1"
+  # Suppress Turborepo telemetry in CI
+  TURBO_TELEMETRY_DISABLED: "1"
 
 jobs:
   # ── 1. Lint ─────────────────────────────────────────────────────────────────
   lint:
     name: 🔍 Lint
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: app
 
     steps:
       - name: Checkout repository
@@ -34,11 +34,15 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
+      # FIX: cache ALL workspace node_modules, not just root
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
-          path: app/node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('app/bun.lock') }}
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
@@ -52,9 +56,6 @@ jobs:
   typecheck:
     name: 🔷 TypeScript
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: app
 
     steps:
       - name: Checkout repository
@@ -68,25 +69,29 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
-          path: app/node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('app/bun.lock') }}
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # FIX: typecheck depends on ^build in turbo.json, so shared packages
+      # must be built first (they are TypeScript source, not compiled).
+      # We skip the backend build (it needs Prisma/DB) and only check
+      # the packages that have a typecheck script.
       - name: TypeScript type check
-        run: bun run tsc --noEmit
+        run: bun run typecheck
 
   # ── 3. Build ─────────────────────────────────────────────────────────────────
   build:
     name: 🏗️ Build
     runs-on: ubuntu-latest
     needs: [lint, typecheck]
-    defaults:
-      run:
-        working-directory: app
 
     steps:
       - name: Checkout repository
@@ -100,32 +105,45 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
-          path: app/node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('app/bun.lock') }}
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
-      - name: Cache Next.js build
+      - name: Cache Turbo
         uses: actions/cache@v4
         with:
-          path: |
-            app/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('app/bun.lock') }}-${{ hashFiles('app/src/**/*.ts', 'app/src/**/*.tsx', 'app/src/**/*.scss') }}
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('app/bun.lock') }}-
+            ${{ runner.os }}-turbo-
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Build Next.js app
-        run: bun run build
+      # FIX: only build the Next.js frontend apps (web, auth, docs, admin).
+      # The backend build requires Prisma/DB secrets — excluded from CI build.
+      - name: Build frontend apps
+        # --concurrency=1 builds apps sequentially to avoid OOM on 2-core runners
+        run: bunx turbo run build --filter=@api-monitor/web --filter=@api-monitor/auth --filter=@api-monitor/docs --filter=@api-monitor/admin --concurrency=1
         env:
-          # Add your env vars here (safe, non-secret ones)
-          NEXT_PUBLIC_APP_NAME: "Neural Architect"
+          NEXT_PUBLIC_APP_NAME: "API Nest"
+          NEXT_PUBLIC_API_URL: "https://api.example.com/api/v1"
+          NEXT_PUBLIC_AUTH_URL: "https://auth.example.com"
+          NEXT_PUBLIC_DOCS_URL: "https://docs.example.com"
 
-      - name: Upload build artifact
+      # FIX: Next.js outputs to .next/, not dist/. Upload the correct paths.
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: nextjs-build
-          path: app/.next/
+          name: build-artifacts
+          path: |
+            apps/web/.next/
+            apps/auth/.next/
+            apps/docs/.next/
+            apps/admin/.next/
           retention-days: 7
+          if-no-files-found: warn

@@ -1,8 +1,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 #  CD Pipeline — api-monitor
 #  Runs on: push to main ONLY
-#  Prepares production artifacts. Replace the placeholder step with your 
-#  preferred deployment target (e.g., Docker, AWS, GitHub Pages, etc.)
+#  Builds all frontend apps and prepares production artifacts.
 # ─────────────────────────────────────────────────────────────────────────────
 
 name: CD
@@ -10,7 +9,7 @@ name: CD
 on:
   push:
     branches: [main]
-  
+
   # Allow manual trigger from GitHub UI
   workflow_dispatch:
 
@@ -19,14 +18,14 @@ concurrency:
   group: production
   cancel-in-progress: false
 
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+  TURBO_TELEMETRY_DISABLED: "1"
+
 jobs:
   build-and-prepare:
     name: 🏗️ Build Production Artifact
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: app
 
     steps:
       - name: Checkout repository
@@ -37,46 +36,72 @@ jobs:
         with:
           bun-version: "1.x"
 
+      # FIX: cache ALL workspace node_modules
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
-          path: app/node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('app/bun.lock') }}
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
+
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Build Next.js project
-        run: bun run build
+      # FIX: only build frontend apps — backend needs DB/Prisma secrets
+      - name: Build frontend apps
+        # --concurrency=1 builds apps sequentially to avoid OOM on 2-core runners
+        run: bunx turbo run build --filter=@api-monitor/web --filter=@api-monitor/auth --filter=@api-monitor/docs --filter=@api-monitor/admin --concurrency=1
         env:
-          NEXT_PUBLIC_APP_NAME: "Neural Architect"
+          NEXT_PUBLIC_APP_NAME: "API Nest"
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_AUTH_URL: ${{ secrets.NEXT_PUBLIC_AUTH_URL }}
+          NEXT_PUBLIC_DOCS_URL: ${{ secrets.NEXT_PUBLIC_DOCS_URL }}
 
+      # FIX: correct artifact paths (.next/ for Next.js apps)
       - name: Archive Production Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: production-build
           path: |
-            app/.next/
-            app/public/
-            app/package.json
-            app/bun.lock
+            apps/web/.next/
+            apps/auth/.next/
+            apps/docs/.next/
+            apps/admin/.next/
+            apps/*/public/
+            apps/*/package.json
+            package.json
+            bun.lock
+            turbo.json
           retention-days: 14
+          if-no-files-found: warn
 
   deploy:
     name: 🚀 Deploy
     runs-on: ubuntu-latest
     needs: [build-and-prepare]
-    
+
     steps:
       - name: Download Production Artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@v4
         with:
           name: production-build
-          path: app
+          path: out
 
       - name: Deployment Placeholder
         run: |
           echo "✅ Production artifacts successfully built and downloaded."
-          echo "ℹ️  Add your deployment steps here (e.g., rsync to a VPS, build and push a Docker image, or deploy to a cloud provider)."
+          echo "ℹ️  Add your deployment steps here."
+          echo "     e.g. Docker build+push, rsync to VPS, deploy to Railway/Vercel/Fly.io"
+          ls -la out/
