@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { AlertTriangle, FileLock, Layers, Workflow, CheckCircle, Database } from 'lucide-react';
+// lucide-react icons imported on demand — none currently referenced in JSX
 import { SiNodedotjs, SiPython, SiGo } from "react-icons/si";
 import { FaJava } from "react-icons/fa6";
 import styles from './LandingPage.module.scss';

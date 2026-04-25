@@ -59,7 +59,6 @@ export class EventsGateway
   afterInit(server: Server) {
     this.eventsService.setServer(server);
     this.logger.log('WebSocket gateway initialized ✓');
-
   }
 
   handleConnection(client: Socket) {

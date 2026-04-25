@@ -5,7 +5,7 @@ import styles from './LogoutOverlay.module.scss';
 import { useTheme } from '@/hooks/useTheme';
 
 export default function LogoutOverlay() {
-  const { dark } = useTheme();
+  useTheme(); // Subscribe to theme context (for future dark-mode overlay styling)
   const [active, setActive] = useState(false);
 
   useEffect(() => {

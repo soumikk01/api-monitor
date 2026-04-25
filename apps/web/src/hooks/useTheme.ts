@@ -7,7 +7,6 @@ export function useTheme() {
     // Read from localStorage on mount
     const saved = localStorage.getItem('theme-dark') === 'true';
     if (saved) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDark(true);
       document.documentElement.classList.add('dark');
     } else {

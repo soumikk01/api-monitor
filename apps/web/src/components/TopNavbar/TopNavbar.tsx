@@ -106,7 +106,7 @@ export default function TopNavbar() {
 
   const handleLogout = () => {
     setShowUserDrop(false);
-    logoutWithTransition(router);
+    logoutWithTransition();
   };
 
   return (

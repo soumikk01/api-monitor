@@ -26,9 +26,14 @@ export class RedisIoAdapter extends IoAdapter {
     this.app = app;
   }
 
-  async connectToRedis(redisUrl?: string, clusterNodes?: string): Promise<void> {
+  async connectToRedis(
+    redisUrl?: string,
+    clusterNodes?: string,
+  ): Promise<void> {
     if (!redisUrl && !clusterNodes) {
-      this.logger.warn('No Redis config — Socket.io running in single-instance mode');
+      this.logger.warn(
+        'No Redis config — Socket.io running in single-instance mode',
+      );
       return;
     }
 
@@ -45,20 +50,30 @@ export class RedisIoAdapter extends IoAdapter {
         subClient = new Cluster(nodes, { enableReadyCheck: false });
         this.logger.log('Socket.io Redis Cluster adapter ready ✓');
       } else {
-        let host = 'localhost', port = 6379;
+        let host = 'localhost',
+          port = 6379;
         let password: string | undefined, tls: object | undefined;
         try {
           const url = new URL(redisUrl!);
-          host     = url.hostname;
-          port     = parseInt(url.port || '6379', 10);
+          host = url.hostname;
+          port = parseInt(url.port || '6379', 10);
           password = url.password || undefined;
-          tls      = redisUrl!.startsWith('rediss://') ? {} : undefined;
-        } catch { this.logger.warn('Invalid REDIS_URL for Socket.io adapter'); }
+          tls = redisUrl!.startsWith('rediss://') ? {} : undefined;
+        } catch {
+          this.logger.warn('Invalid REDIS_URL for Socket.io adapter');
+        }
 
-        const opts = { host, port, password, tls, lazyConnect: true, maxRetriesPerRequest: null as unknown as number };
+        const opts = {
+          host,
+          port,
+          password,
+          tls,
+          lazyConnect: true,
+          maxRetriesPerRequest: null as unknown as number,
+        };
         pubClient = new Redis(opts);
         subClient = new Redis(opts);
-        await Promise.all([(pubClient as Redis).connect(), (subClient as Redis).connect()]);
+        await Promise.all([pubClient.connect(), subClient.connect()]);
         this.logger.log('Socket.io Redis standalone adapter ready ✓');
       }
 
@@ -84,9 +99,9 @@ export class RedisIoAdapter extends IoAdapter {
         'http://localhost:3002',
         'http://localhost:3003',
         process.env.FRONTEND_URL ?? 'http://localhost:3000',
-        process.env.AUTH_URL     ?? 'http://localhost:3001',
-        process.env.DOCS_URL     ?? 'http://localhost:3002',
-        process.env.ADMIN_URL    ?? 'http://localhost:3003',
+        process.env.AUTH_URL ?? 'http://localhost:3001',
+        process.env.DOCS_URL ?? 'http://localhost:3002',
+        process.env.ADMIN_URL ?? 'http://localhost:3003',
       ],
       credentials: true,
     };

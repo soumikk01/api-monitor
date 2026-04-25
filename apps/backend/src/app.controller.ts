@@ -26,19 +26,21 @@ export class AppController {
       this.queue.getWaitingCount(),
     ]);
 
-    const redisStatus  = redis.status  === 'fulfilled' ? 'connected' : 'disconnected';
-    const dbStatus     = db.status     === 'fulfilled' ? 'connected' : 'disconnected';
-    const queuePending = queueSize.status === 'fulfilled' ? queueSize.value : -1;
+    const redisStatus =
+      redis.status === 'fulfilled' ? 'connected' : 'disconnected';
+    const dbStatus = db.status === 'fulfilled' ? 'connected' : 'disconnected';
+    const queuePending =
+      queueSize.status === 'fulfilled' ? queueSize.value : -1;
 
     const healthy = redisStatus === 'connected' && dbStatus === 'connected';
 
     return {
-      status:    healthy ? 'ok' : 'degraded',
+      status: healthy ? 'ok' : 'degraded',
       timestamp: new Date().toISOString(),
-      uptime:    Math.floor(process.uptime()),
-      redis:     redisStatus,
-      db:        dbStatus,
-      queue:     { pending: queuePending },
+      uptime: Math.floor(process.uptime()),
+      redis: redisStatus,
+      db: dbStatus,
+      queue: { pending: queuePending },
     };
   }
 

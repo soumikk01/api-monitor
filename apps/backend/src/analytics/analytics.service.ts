@@ -3,8 +3,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CacheService } from '../cache/cache.service';
 
 // TTLs — analytics data is heavier to compute so we cache longer
-const SUMMARY_TTL   = 30;  // seconds — per range bucket
-const ENDPOINTS_TTL = 60;  // seconds — endpoint breakdown changes less often
+const SUMMARY_TTL = 30; // seconds — per range bucket
+const ENDPOINTS_TTL = 60; // seconds — endpoint breakdown changes less often
 
 @Injectable()
 export class AnalyticsService {
@@ -42,7 +42,13 @@ export class AnalyticsService {
 
     const total = calls.length;
     if (!total) {
-      const empty = { total: 0, errorRate: 0, avgLatency: 0, successRate: 0, range };
+      const empty = {
+        total: 0,
+        errorRate: 0,
+        avgLatency: 0,
+        successRate: 0,
+        range,
+      };
       await this.cache.set(cacheKey, empty, SUMMARY_TTL);
       return empty;
     }
@@ -54,9 +60,9 @@ export class AnalyticsService {
 
     const result = {
       total,
-      errorRate:   Math.round((errors / total) * 100),
+      errorRate: Math.round((errors / total) * 100),
       successRate: Math.round(((total - errors) / total) * 100),
-      avgLatency:  Math.round(avgLatency),
+      avgLatency: Math.round(avgLatency),
       range,
     };
 
@@ -79,10 +85,10 @@ export class AnalyticsService {
     const calls = await this.prisma.apiCall.findMany({
       where: { projectId },
       select: {
-        method:  true,
-        path:    true,
-        host:    true,
-        status:  true,
+        method: true,
+        path: true,
+        host: true,
+        status: true,
         latency: true,
       },
     });
@@ -93,7 +99,7 @@ export class AnalyticsService {
       { count: number; errors: number; totalLatency: number }
     >();
     for (const c of calls) {
-      const key   = `${c.method} ${c.host}${c.path}`;
+      const key = `${c.method} ${c.host}${c.path}`;
       const entry = map.get(key) ?? { count: 0, errors: 0, totalLatency: 0 };
       entry.count++;
       entry.totalLatency += c.latency;
@@ -106,8 +112,8 @@ export class AnalyticsService {
     const result = Array.from(map.entries())
       .map(([endpoint, data]) => ({
         endpoint,
-        count:      data.count,
-        errorRate:  Math.round((data.errors / data.count) * 100),
+        count: data.count,
+        errorRate: Math.round((data.errors / data.count) * 100),
         avgLatency: Math.round(data.totalLatency / data.count),
       }))
       .sort((a, b) => b.count - a.count);
@@ -119,10 +125,14 @@ export class AnalyticsService {
   private rangeToDate(range: string): Date {
     const now = new Date();
     switch (range) {
-      case '1h':  return new Date(now.getTime() - 60 * 60 * 1000);
-      case '7d':  return new Date(now.getTime() - 7  * 24 * 60 * 60 * 1000);
-      case '30d': return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      default:    return new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24h
+      case '1h':
+        return new Date(now.getTime() - 60 * 60 * 1000);
+      case '7d':
+        return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      case '30d':
+        return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      default:
+        return new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24h
     }
   }
 }

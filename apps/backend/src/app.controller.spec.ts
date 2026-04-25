@@ -12,9 +12,18 @@ describe('AppController', () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
       providers: [
-        { provide: PrismaService,  useValue: { $runCommandRaw: jest.fn().mockResolvedValue({}) } },
-        { provide: CacheService,   useValue: { get: jest.fn().mockResolvedValue(null) } },
-        { provide: getQueueToken(INGEST_QUEUE), useValue: { getWaitingCount: jest.fn().mockResolvedValue(0) } },
+        {
+          provide: PrismaService,
+          useValue: { $runCommandRaw: jest.fn().mockResolvedValue({}) },
+        },
+        {
+          provide: CacheService,
+          useValue: { get: jest.fn().mockResolvedValue(null) },
+        },
+        {
+          provide: getQueueToken(INGEST_QUEUE),
+          useValue: { getWaitingCount: jest.fn().mockResolvedValue(0) },
+        },
       ],
     }).compile();
 

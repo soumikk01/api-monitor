@@ -10,11 +10,11 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 
 // TTLs
-const STATS_TTL   = 30;  // seconds — stats refresh every 30s
-const CALLS_TTL   = 15;  // seconds — recent calls list
+const STATS_TTL = 30; // seconds — stats refresh every 30s
+const CALLS_TTL = 15; // seconds — recent calls list
 const PROJECT_TTL = 120; // seconds — single project metadata
-const LIST_TTL    = 30;  // seconds — user's project list
-const MEMBERS_TTL = 60;  // seconds — project members list
+const LIST_TTL = 30; // seconds — user's project list
+const MEMBERS_TTL = 60; // seconds — project members list
 
 @Injectable()
 export class ProjectsService {
@@ -33,10 +33,7 @@ export class ProjectsService {
     try {
       result = await this.prisma.project.findMany({
         where: {
-          OR: [
-            { userId },
-            { members: { some: { userId } } },
-          ],
+          OR: [{ userId }, { members: { some: { userId } } }],
         },
         orderBy: { createdAt: 'desc' },
         include: {
@@ -80,10 +77,11 @@ export class ProjectsService {
       updatedAt: Date;
       members?: { userId: string; role: string }[];
     }>(cacheKey);
-    
+
     if (cached) {
       const isOwner = cached.userId === userId;
-      const isMember = cached.members?.some((m) => m.userId === userId) ?? false;
+      const isMember =
+        cached.members?.some((m) => m.userId === userId) ?? false;
       if (!isOwner && !isMember) throw new ForbiddenException();
       return cached;
     }
@@ -94,9 +92,9 @@ export class ProjectsService {
         where: { id: projectId },
         include: { members: { select: { userId: true, role: true } } },
       });
-      
+
       if (!project) throw new NotFoundException('Project not found');
-      
+
       const isOwner = project.userId === userId;
       const isMember = project.members.some((m) => m.userId === userId);
       if (!isOwner && !isMember) throw new ForbiddenException();
@@ -105,11 +103,16 @@ export class ProjectsService {
       return project;
     } catch (err) {
       // If it's already a NestJS exception, rethrow it
-      if (err instanceof NotFoundException || err instanceof ForbiddenException) {
+      if (
+        err instanceof NotFoundException ||
+        err instanceof ForbiddenException
+      ) {
         throw err;
       }
       // Fallback: query without members (old Prisma client)
-      const project = await this.prisma.project.findUnique({ where: { id: projectId } });
+      const project = await this.prisma.project.findUnique({
+        where: { id: projectId },
+      });
       if (!project) throw new NotFoundException('Project not found');
       if (project.userId !== userId) throw new ForbiddenException();
       await this.cache.set(cacheKey, project, PROJECT_TTL);
@@ -248,21 +251,25 @@ export class ProjectsService {
       where: {
         OR: [
           { email: emailOrId },
-          { id: emailOrId.length === 24 ? emailOrId : '000000000000000000000000' }
-        ]
-      }
+          {
+            id:
+              emailOrId.length === 24 ? emailOrId : '000000000000000000000000',
+          },
+        ],
+      },
     });
 
     if (!targetUser) throw new NotFoundException('User not found');
-    if (targetUser.id === ownerId) throw new BadRequestException('Cannot add yourself to the project');
+    if (targetUser.id === ownerId)
+      throw new BadRequestException('Cannot add yourself to the project');
 
     const existing = await this.prisma.projectMember.findUnique({
-      where: { projectId_userId: { projectId, userId: targetUser.id } }
+      where: { projectId_userId: { projectId, userId: targetUser.id } },
     });
     if (existing) throw new BadRequestException('User is already a member');
 
     await this.prisma.projectMember.create({
-      data: { projectId, userId: targetUser.id, role: 'MEMBER' }
+      data: { projectId, userId: targetUser.id, role: 'MEMBER' },
     });
 
     await this.cache.del(`project:${projectId}`, `members:${projectId}`);
@@ -283,17 +290,17 @@ export class ProjectsService {
         user: { select: { id: true, email: true, name: true } },
         members: {
           include: {
-            user: { select: { id: true, email: true, name: true } }
-          }
-        }
-      }
+            user: { select: { id: true, email: true, name: true } },
+          },
+        },
+      },
     });
 
     if (!project) throw new NotFoundException('Project not found');
 
     const result = [
       { user: project.user, role: 'OWNER' },
-      ...project.members.map(m => ({ user: m.user, role: m.role }))
+      ...project.members.map((m) => ({ user: m.user, role: m.role })),
     ];
 
     await this.cache.set(cacheKey, result, MEMBERS_TTL);

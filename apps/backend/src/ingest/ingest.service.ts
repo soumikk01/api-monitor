@@ -29,7 +29,11 @@ export class IngestService {
       });
     }
 
-    return { projectId: project.id, projectName: project.name, userId: user.id };
+    return {
+      projectId: project.id,
+      projectName: project.name,
+      userId: user.id,
+    };
   }
 
   /**
@@ -49,20 +53,21 @@ export class IngestService {
     const project = await this.prisma.project.findFirst({
       where: { id: dto.projectId, userId: user.id },
     });
-    if (!project) throw new UnauthorizedException('Project not found or access denied');
+    if (!project)
+      throw new UnauthorizedException('Project not found or access denied');
 
     // 3. Enqueue — returns immediately, worker handles the rest
     await this.ingestQueue.add(
       INGEST_JOB.PROCESS_BATCH,
       {
         projectId: project.id,
-        userId:    user.id,
-        events:    dto.events,
+        userId: user.id,
+        events: dto.events,
       },
       {
         // Remove job from Redis after it completes (keeps memory lean)
         removeOnComplete: { count: 100 },
-        removeOnFail:     { count: 50 },
+        removeOnFail: { count: 50 },
         // Retry failed jobs up to 3 times with exponential back-off
         attempts: 3,
         backoff: { type: 'exponential', delay: 1_000 },

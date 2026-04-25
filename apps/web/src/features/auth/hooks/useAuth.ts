@@ -156,7 +156,7 @@ export function useAuth() {
     setState({ user: null, accessToken: null, isAuthenticated: false, isLoading: false });
   }, []);
 
-  const logoutWithTransition = useCallback((router: { push: (url: string) => void }) => {
+  const logoutWithTransition = useCallback(() => {
     const authUrl = process.env.NEXT_PUBLIC_AUTH_URL ?? 'http://localhost:3001';
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event('show-logout-transition'));

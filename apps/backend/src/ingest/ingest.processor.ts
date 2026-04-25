@@ -19,11 +19,19 @@ function classifyStatus(statusCode?: number): string {
 }
 
 function extractHost(url: string): string {
-  try { return new URL(url).hostname; } catch { return url; }
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return url;
+  }
 }
 
 function extractPath(url: string): string {
-  try { return new URL(url).pathname; } catch { return url; }
+  try {
+    return new URL(url).pathname;
+  } catch {
+    return url;
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -34,7 +42,10 @@ const STATS_DEBOUNCE_MS = 5_000;
 @Processor(INGEST_QUEUE)
 export class IngestProcessor extends WorkerHost {
   private readonly logger = new Logger(IngestProcessor.name);
-  private readonly statsDebounce = new Map<string, ReturnType<typeof setTimeout>>();
+  private readonly statsDebounce = new Map<
+    string,
+    ReturnType<typeof setTimeout>
+  >();
 
   constructor(
     private prisma: PrismaService,
@@ -65,7 +76,10 @@ export class IngestProcessor extends WorkerHost {
     for (const record of records) {
       this.eventsService.emitApiCall(projectId, record);
 
-      if (record.status === 'CLIENT_ERROR' || record.status === 'SERVER_ERROR') {
+      if (
+        record.status === 'CLIENT_ERROR' ||
+        record.status === 'SERVER_ERROR'
+      ) {
         this.eventsService.emitApiError(projectId, {
           id: record.id,
           error: `${record.statusCode} ${record.statusText ?? ''}`,
@@ -90,22 +104,22 @@ export class IngestProcessor extends WorkerHost {
       data: {
         projectId,
         userId,
-        method:          event.method.toUpperCase(),
-        url:             event.url,
-        host:            extractHost(event.url),
-        path:            extractPath(event.url),
-        requestHeaders:  event.requestHeaders  ?? null,
-        requestBody:     event.requestBody     ?? null,
-        queryParams:     event.queryParams     ?? null,
-        statusCode:      event.statusCode      ?? null,
-        statusText:      event.statusText      ?? null,
+        method: event.method.toUpperCase(),
+        url: event.url,
+        host: extractHost(event.url),
+        path: extractPath(event.url),
+        requestHeaders: event.requestHeaders ?? null,
+        requestBody: event.requestBody ?? null,
+        queryParams: event.queryParams ?? null,
+        statusCode: event.statusCode ?? null,
+        statusText: event.statusText ?? null,
         responseHeaders: event.responseHeaders ?? null,
-        responseBody:    event.responseBody    ?? null,
-        responseSize:    event.responseSize    ?? null,
-        latency:         event.latency,
-        startedAt:       new Date(event.startedAt),
-        endedAt:         new Date(event.endedAt),
-        status:          classifyStatus(event.statusCode),
+        responseBody: event.responseBody ?? null,
+        responseSize: event.responseSize ?? null,
+        latency: event.latency,
+        startedAt: new Date(event.startedAt),
+        endedAt: new Date(event.endedAt),
+        status: classifyStatus(event.statusCode),
       },
     });
   }
@@ -150,15 +164,15 @@ export class IngestProcessor extends WorkerHost {
 
     if (!calls.length) return;
 
-    const total      = calls.length;
-    const errors     = calls.filter(
+    const total = calls.length;
+    const errors = calls.filter(
       (c) => c.status === 'CLIENT_ERROR' || c.status === 'SERVER_ERROR',
     ).length;
     const avgLatency = calls.reduce((sum, c) => sum + c.latency, 0) / total;
 
     this.eventsService.emitStats(projectId, {
       total,
-      errorRate:  Math.round((errors / total) * 100),
+      errorRate: Math.round((errors / total) * 100),
       avgLatency: Math.round(avgLatency),
     });
   }

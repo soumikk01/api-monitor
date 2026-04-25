@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Patch, Body, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Body,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UpdateAvatarDto } from './dto/update-avatar.dto';

@@ -2,7 +2,7 @@
 import { authStorage } from '@/lib/fetchWithAuth';
 
 import { useState, useCallback, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import { Shimmer, ShimmerBlock, ShimmerRow } from '@/components/Shimmer/Shimmer';
@@ -20,7 +20,7 @@ interface Stats {
 export default function AccountPage() {
   const { dark } = useTheme();
   const { user, logoutWithTransition, getCliCommand } = useAuth();
-  const router = useRouter();
+
 
   const [stats, setStats] = useState<Stats>({ totalProjects: 0, totalCalls: 0 });
   const [cliCommand, setCliCommand] = useState<{ command: string; token: string; instructions: string } | null>(null);
@@ -92,7 +92,7 @@ export default function AccountPage() {
 
   useEffect(() => { void loadData(); }, [loadData]);
 
-  const handleLogout = () => { logoutWithTransition(router); };
+  const handleLogout = () => { logoutWithTransition(); };
 
   const copyToClipboard = async () => {
     if (cliCommand) {

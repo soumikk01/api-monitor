@@ -4,11 +4,11 @@ import { BullModule } from '@nestjs/bullmq';
 import { LoggerModule } from 'nestjs-pino';
 import { Cluster } from 'ioredis';
 
-import { PrismaModule }    from './prisma/prisma.module';
-import { CacheModule }     from './cache/cache.module';
-import { EventsModule }    from './events/events.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { CacheModule } from './cache/cache.module';
+import { EventsModule } from './events/events.module';
 import { IngestProcessor } from './ingest/ingest.processor';
-import { INGEST_QUEUE }    from './ingest/ingest.queue';
+import { INGEST_QUEUE } from './ingest/ingest.queue';
 
 /**
  * Minimal module for the BullMQ worker process.
@@ -22,9 +22,13 @@ import { INGEST_QUEUE }    from './ingest/ingest.queue';
     LoggerModule.forRoot({
       pinoHttp: {
         level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
-        transport: process.env.NODE_ENV !== 'production'
-          ? { target: 'pino-pretty', options: { colorize: true, singleLine: true } }
-          : undefined,
+        transport:
+          process.env.NODE_ENV !== 'production'
+            ? {
+                target: 'pino-pretty',
+                options: { colorize: true, singleLine: true },
+              }
+            : undefined,
       },
     }),
 
@@ -47,16 +51,23 @@ import { INGEST_QUEUE }    from './ingest/ingest.queue';
           };
         }
 
-        const redisUrl = config.get<string>('REDIS_URL') ?? 'redis://localhost:6379';
-        let host = 'localhost', port = 6379;
+        const redisUrl =
+          config.get<string>('REDIS_URL') ?? 'redis://localhost:6379';
+        let host = 'localhost',
+          port = 6379;
         let password: string | undefined, tls: object | undefined;
         try {
           const u = new URL(redisUrl);
-          host = u.hostname; port = parseInt(u.port || '6379', 10);
+          host = u.hostname;
+          port = parseInt(u.port || '6379', 10);
           password = u.password || undefined;
           tls = redisUrl.startsWith('rediss://') ? {} : undefined;
-        } catch { console.error('[Worker] Invalid REDIS_URL — using localhost'); }
-        return { connection: { host, port, password, tls, maxRetriesPerRequest: null } };
+        } catch {
+          console.error('[Worker] Invalid REDIS_URL — using localhost');
+        }
+        return {
+          connection: { host, port, password, tls, maxRetriesPerRequest: null },
+        };
       },
     }),
 
@@ -64,7 +75,7 @@ import { INGEST_QUEUE }    from './ingest/ingest.queue';
 
     PrismaModule,
     CacheModule,
-    EventsModule,   // provides EventsService for WebSocket emit via Redis adapter
+    EventsModule, // provides EventsService for WebSocket emit via Redis adapter
   ],
   providers: [IngestProcessor],
 })

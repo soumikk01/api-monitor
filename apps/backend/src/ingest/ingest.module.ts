@@ -16,7 +16,7 @@ import { INGEST_QUEUE } from './ingest.queue';
   ],
   controllers: [IngestController],
   providers: [
-    IngestService,   // producer — enqueues jobs
+    IngestService, // producer — enqueues jobs
     IngestProcessor, // worker  — consumes and processes jobs
   ],
 })
