@@ -26,11 +26,10 @@ $pill:   100px;
 // ════════════════════════════════════════════════
 .page {
   position: relative;
-  min-height: 100vh;
+  min-height: calc(100vh - 46px);
   background: linear-gradient(145deg, $bg-top 0%, $bg-bot 100%);
   color: $text-main;
   font-family: 'Inter', sans-serif;
-  overflow: hidden;
 }
 
 // Ambient orbs
@@ -64,14 +63,97 @@ $pill:   100px;
   mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
 }
 
-.content {
+.pageLayout {
+  display: flex;
   position: relative;
   z-index: 10;
-  margin: 0 auto;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  width: 250px;
+  height: calc(100vh - 46px);
+  overflow-y: auto;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  background: $white-glass;
+  backdrop-filter: blur(10px);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  
+  .dark & {
+    background: $dark-glass;
+    border-right-color: $dark-border;
+  }
+}
+
+.sidebarBrand {
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $text-muted;
+  
+  .dark & {
+    color: $dark-text-muted;
+  }
+}
+
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebarBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: $r-md;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: $accent;
+  color: #fff;
+  transition: all 0.2s ease;
+  font-family: inherit;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.sidebarBtnSecondary {
+  background: transparent;
+  color: $text-main;
+  border: 1px solid rgba(0,0,0,0.1);
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+    box-shadow: none;
+    transform: none;
+  }
+
+  svg { transform: rotate(180deg); } // back arrow
+  
+  .dark & {
+    color: $dark-text-main;
+    border-color: $dark-border;
+    &:hover { background: rgba(255, 255, 255, 0.05); }
+  }
+}
+
+.content {
+  flex: 1;
   padding: 2.5rem 3rem;
-  margin-top: 46px;
-  min-height: calc(100vh - 46px);
   max-width: 1300px;
+  margin: 0 auto;
 }
 
 // ════════════════════════════════════════════════
@@ -519,37 +601,67 @@ $pill:   100px;
   transition: color 0.2s ease;
 }
 
-// ── Skeleton ──
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+// ── SVG Stroke-Draw Loader ──
+@keyframes drawCircle {
+  from { stroke-dashoffset: var(--dash-len); }
+  to   { stroke-dashoffset: 0; }
 }
 
-.skeletonCard {
-  padding: 24px;
+@keyframes loaderAppear {
+  from { opacity: 0; transform: scale(0.8) translateY(16px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes labelFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.loaderWrap {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  pointer-events: none;
-  min-height: 200px;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 80px 20px;
+  animation: loaderAppear 0.35s ease both;
 }
 
-.skeletonHeader, .skeletonBody, .skeletonFooter {
-  border-radius: 8px;
-  background: rgba(0,0,0,0.05);
-  position: relative;
-  overflow: hidden;
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-    animation: shimmer 1.5s infinite;
-  }
+.loaderSvg {
+  width: 110px;
+  height: 110px;
+  color: $accent-alt;
+  opacity: 0.75;
+
+  .dark & { color: #818CF8; opacity: 0.9; }
 }
-.skeletonHeader { height: 44px; width: 44px; border-radius: $r-md; }
-.skeletonBody { height: 48px; flex: 1; }
-.skeletonFooter { height: 20px; width: 60%; }
+
+.loaderPath {
+  fill: none;
+  stroke: currentColor;
+  stroke-dasharray: var(--dash-len, 600);
+  stroke-dashoffset: var(--dash-len, 600);
+  animation: drawCircle 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+// Outer: circumference ≈ 289 for r=46; ≈ 138 for r=22; etc.
+.loaderPath1 { --dash-len: 290; animation-delay: 0s;    }
+.loaderPath2 { --dash-len: 176; animation-delay: 0.3s;  }
+.loaderPath3 { --dash-len: 63;  animation-delay: 0.58s; }
+.loaderPath4 { --dash-len: 44;  animation-delay: 0.76s; }
+.loaderPath5 { --dash-len: 44;  animation-delay: 0.9s;  }
+
+.loaderLabel {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $accent-alt;
+  opacity: 0;
+  animation: labelFadeIn 0.4s ease 1.1s forwards;
+
+  .dark & { color: #818CF8; }
+}
+
 
 // ── Empty state ──
 .emptyState {

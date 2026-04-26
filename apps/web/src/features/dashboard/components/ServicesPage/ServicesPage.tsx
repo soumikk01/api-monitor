@@ -30,6 +30,24 @@ const HexLogo = () => (
   </svg>
 );
 
+const SingleServiceIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" width="14" height="14">
+    <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.5"/>
+    <circle cx="12" cy="12" r="3" fill="currentColor"/>
+  </svg>
+);
+
+const MultiServiceIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" width="14" height="14">
+    <circle cx="12" cy="7.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
+    <circle cx="7.5" cy="15.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
+    <circle cx="16.5" cy="15.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
+    <circle cx="12" cy="7.5" r="1.8" fill="currentColor"/>
+    <circle cx="7.5" cy="15.5" r="1.8" fill="currentColor"/>
+    <circle cx="16.5" cy="15.5" r="1.8" fill="currentColor"/>
+  </svg>
+);
+
 /* ── Status dot ── */
 const StatusDot = ({ active }: { active?: boolean }) => (
   <span className={`${styles.statusDot} ${active ? styles.statusActive : styles.statusIdle}`} />
@@ -172,23 +190,29 @@ export default function ServicesPage() {
       <div className={styles.ambientOrb2} />
       <div className={styles.gridLines} />
 
-      <main className={styles.content}>
-        {/* ── BREADCRUMB ── */}
-        <div className={styles.breadcrumb}>
-          <button className={styles.breadcrumbLink} onClick={() => router.push('/projects')}>
-            Projects
-          </button>
-          <span className={styles.breadcrumbSep}>/</span>
-          <span className={styles.breadcrumbCurrent}>{project?.name ?? '…'}</span>
-          <span className={styles.breadcrumbSep}>/</span>
-          <span className={styles.breadcrumbActive}>Services</span>
-        </div>
+      <div className={styles.pageLayout}>
+        {/* ── LEFT SIDEBAR ── */}
+        <aside className={styles.sidebar}>
+          <div className={styles.sidebarBrand}>
+            <span>Project Services</span>
+          </div>
+          <nav className={styles.sidebarNav}>
+            <button className={styles.sidebarBtn} onClick={() => setShowCreateModal(true)}>
+              <PlusIcon /> New File
+            </button>
+            <button className={`${styles.sidebarBtn} ${styles.sidebarBtnSecondary}`} onClick={() => router.push('/projects')}>
+              <ArrowRight /> Back to Projects
+            </button>
+          </nav>
+        </aside>
+
+        <main className={styles.content}>
 
         {/* ── HEADER ── */}
         <div className={styles.header}>
           <div>
             <div className={styles.badge}>
-              <HexLogo />
+              {isSingle ? <SingleServiceIcon /> : <MultiServiceIcon />}
               <span>{isSingle ? 'Single Service' : 'Multi Service'}</span>
             </div>
             <h1 className={styles.title}>{project?.name ?? 'Loading…'}</h1>
@@ -209,15 +233,53 @@ export default function ServicesPage() {
 
         {/* ── SERVICES GRID ── */}
         {loading ? (
-          /* skeleton */
-          <div className={styles.grid}>
-            {[1, 2, 3].map(i => (
-              <div key={i} className={`${styles.card} ${styles.skeletonCard}`}>
-                <div className={styles.skeletonHeader} />
-                <div className={styles.skeletonBody} />
-                <div className={styles.skeletonFooter} />
-              </div>
-            ))}
+          /* ── SVG stroke-draw loader ── */
+          <div className={styles.loaderWrap}>
+            {/* Single service icon draw */}
+            {(project === null || isSingle) && (
+              <svg
+                className={styles.loaderSvg}
+                viewBox="0 0 120 120"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                {/* Outer circle */}
+                <circle className={`${styles.loaderPath} ${styles.loaderPath1}`} cx="60" cy="60" r="46" />
+                {/* Inner ring */}
+                <circle className={`${styles.loaderPath} ${styles.loaderPath2}`} cx="60" cy="60" r="28" />
+                {/* Center dot (filled via stroke trick) */}
+                <circle className={`${styles.loaderPath} ${styles.loaderPath3}`} cx="60" cy="60" r="10" />
+              </svg>
+            )}
+            {/* Multi service icon draw */}
+            {isMulti && (
+              <svg
+                className={styles.loaderSvg}
+                viewBox="0 0 120 120"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                {/* Top circle */}
+                <circle className={`${styles.loaderPath} ${styles.loaderPath1}`} cx="60" cy="32" r="22" />
+                {/* Bottom-left circle */}
+                <circle className={`${styles.loaderPath} ${styles.loaderPath2}`} cx="35" cy="78" r="22" />
+                {/* Bottom-right circle */}
+                <circle className={`${styles.loaderPath} ${styles.loaderPath3}`} cx="85" cy="78" r="22" />
+                {/* Center dots */}
+                <circle className={`${styles.loaderPath} ${styles.loaderPath4}`} cx="60" cy="32" r="7" />
+                <circle className={`${styles.loaderPath} ${styles.loaderPath5}`} cx="35" cy="78" r="7" />
+                <circle className={`${styles.loaderPath} ${styles.loaderPath5}`} cx="85" cy="78" r="7" />
+              </svg>
+            )}
+            <p className={styles.loaderLabel}>
+              {project === null ? 'Loading…' : isSingle ? 'Single Service' : 'Multi Service'}
+            </p>
           </div>
         ) : isSingle && services.length === 0 ? (
           /* single-mode project with no service yet — one-click setup */
@@ -280,7 +342,9 @@ export default function ServicesPage() {
                 <div className={styles.cardGlow} />
                 <div className={styles.cardInner}>
                   <div className={styles.cardTop}>
-                    <div className={styles.serviceIconWrap}><HexLogo /></div>
+                    <div className={styles.serviceIconWrap}>
+                      {isSingle ? <SingleServiceIcon /> : <MultiServiceIcon />}
+                    </div>
                     <StatusDot active />
                   </div>
                   <div className={styles.cardBody}>
@@ -387,6 +451,7 @@ export default function ServicesPage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Folders } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import { authStorage } from '@/lib/fetchWithAuth';
@@ -14,12 +13,28 @@ interface Project {
   id: string;
   name: string;
   description?: string;
+  serviceMode?: 'single' | 'multi';
   createdAt: string;
   _count?: { apiCalls: number };
 }
 
 type SortKey = 'name' | 'createdAt';
 type ViewMode = 'grid' | 'list';
+
+/* ── Projects heading icon ── */
+const ProjectsIcon = () => (
+  <svg viewBox="0 0 28 28" fill="none" width="28" height="28" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    {/* Bottom layer outline */}
+    <rect x="2" y="11" width="24" height="14" rx="2.5"/>
+    {/* Middle layer outline */}
+    <rect x="4.5" y="7" width="19" height="14" rx="2"/>
+    {/* Top layer outline */}
+    <rect x="7" y="3" width="14" height="14" rx="1.5"/>
+    {/* Lines inside top card */}
+    <line x1="10" y1="8" x2="18" y2="8"/>
+    <line x1="10" y1="11" x2="15.5" y2="11"/>
+  </svg>
+);
 
 /* ── Spring Blossom Background (shared with auth, dialed back) ── */
 
@@ -55,7 +70,22 @@ const DotsIcon = () => (
 );
 const CloseIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
-    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+);
+const SingleServiceIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" width="14" height="14">
+    <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.5"/>
+    <circle cx="12" cy="12" r="3" fill="currentColor"/>
+  </svg>
+);
+const MultiServiceIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" width="14" height="14">
+    <circle cx="12" cy="7.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
+    <circle cx="7.5" cy="15.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
+    <circle cx="16.5" cy="15.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
+    <circle cx="12" cy="7.5" r="1.8" fill="currentColor"/>
+    <circle cx="7.5" cy="15.5" r="1.8" fill="currentColor"/>
+    <circle cx="16.5" cy="15.5" r="1.8" fill="currentColor"/>
   </svg>
 );
 
@@ -66,6 +96,8 @@ export default function ProjectsPage() {
   const { dark } = useTheme();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [iconAnimDone, setIconAnimDone] = useState(false);
+  const titleIconRef = useRef<HTMLDivElement>(null);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<SortKey>('name');
   const [view, setView] = useState<ViewMode>('grid');
@@ -209,6 +241,14 @@ export default function ProjectsPage() {
 
   const isInitialLoading = authLoading || loading;
 
+  /* Fly animation: once loading done, after a brief moment trigger fly-to-header */
+  useEffect(() => {
+    if (!isInitialLoading && !iconAnimDone) {
+      const t = setTimeout(() => setIconAnimDone(true), 600);
+      return () => clearTimeout(t);
+    }
+  }, [isInitialLoading, iconAnimDone]);
+
   return (
     <div className={`${styles.page}${dark ? ' ' + styles.dark : ''}`}>
       <div className={styles.ambientOrb1} />
@@ -220,7 +260,9 @@ export default function ProjectsPage() {
         {/* Header */}
         <div className={styles.header}>
           <div className={styles.titleWrapper}>
-            <Folders className={styles.titleIcon} size={28} strokeWidth={2} />
+            <div ref={titleIconRef} className={`${styles.titleIconWrap} ${!isInitialLoading && iconAnimDone ? styles.titleIconVisible : styles.titleIconHidden}`}>
+              <ProjectsIcon />
+            </div>
             <h1 className={styles.title}>Projects</h1>
           </div>
           <div className={styles.headerActions}>
@@ -271,19 +313,29 @@ export default function ProjectsPage() {
 
         {/* Project cards */}
         {isInitialLoading ? (
-          <div className={`${styles.grid} ${view === 'list' ? styles.gridList : ''}`}>
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className={`${styles.card} ${styles.skeletonCard}`}>
-                <div className={styles.cardHeader}>
-                  <div className={`${styles.skeletonText} ${styles.skeletonTitle}`} />
-                </div>
-                <div className={`${styles.skeletonText} ${styles.skeletonDesc}`} />
-                <div className={styles.cardFooter}>
-                  <div className={`${styles.skeletonText} ${styles.skeletonDate}`} />
-                  <div className={`${styles.skeletonText} ${styles.skeletonBadge}`} />
-                </div>
-              </div>
-            ))}
+          /* ── SVG draw-in loader ── */
+          <div className={styles.loaderWrap}>
+            <svg
+              className={styles.loaderSvg}
+              viewBox="0 0 140 140"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              {/* Bottom layer */}
+              <rect className={`${styles.loaderPath} ${styles.loaderPath1}`} x="10" y="55" rx="10" width="120" height="75" />
+              {/* Middle layer */}
+              <rect className={`${styles.loaderPath} ${styles.loaderPath2}`} x="22" y="35" rx="8" width="96" height="75" />
+              {/* Top layer */}
+              <rect className={`${styles.loaderPath} ${styles.loaderPath3}`} x="35" y="15" rx="7" width="70" height="75" />
+              {/* Line 1 */}
+              <line className={`${styles.loaderPath} ${styles.loaderPath4}`} x1="50" y1="38" x2="90" y2="38" />
+              {/* Line 2 */}
+              <line className={`${styles.loaderPath} ${styles.loaderPath5}`} x1="50" y1="52" x2="78" y2="52" />
+            </svg>
+            <p className={styles.loaderLabel}>Loading projects…</p>
           </div>
         ) : filtered.length === 0 ? (
           <div className={styles.emptyState}>
@@ -308,7 +360,13 @@ export default function ProjectsPage() {
                 onKeyDown={e => e.key === 'Enter' && router.push(`/services?projectId=${project.id}`)}
               >
                 <div className={styles.cardHeader}>
-                  <span className={styles.cardName}>{project.name}</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <span className={styles.cardName}>{project.name}</span>
+                    <div className={styles.serviceBadge}>
+                      {project.serviceMode === 'multi' ? <MultiServiceIcon /> : <SingleServiceIcon />}
+                      {project.serviceMode === 'multi' ? 'Multi Service' : 'Single Service'}
+                    </div>
+                  </div>
                   <button
                     className={styles.menuBtn}
                     onClick={e => { e.stopPropagation(); setOpenMenu(openMenu === project.id ? null : project.id); }}
@@ -404,12 +462,12 @@ export default function ProjectsPage() {
                   >
                     <div className={styles.serviceTypeIcon}>
                       <svg viewBox="0 0 24 24" fill="none" width="28" height="28">
-                        <circle cx="6" cy="12" r="4" stroke="currentColor" strokeWidth="1.5"/>
-                        <circle cx="18" cy="12" r="4" stroke="currentColor" strokeWidth="1.5"/>
-                        <circle cx="12" cy="6" r="4" stroke="currentColor" strokeWidth="1.5"/>
-                        <circle cx="6" cy="12" r="1.5" fill="currentColor"/>
-                        <circle cx="18" cy="12" r="1.5" fill="currentColor"/>
-                        <circle cx="12" cy="6" r="1.5" fill="currentColor"/>
+                        <circle cx="12" cy="7.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
+                        <circle cx="7.5" cy="15.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
+                        <circle cx="16.5" cy="15.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
+                        <circle cx="12" cy="7.5" r="1.8" fill="currentColor"/>
+                        <circle cx="7.5" cy="15.5" r="1.8" fill="currentColor"/>
+                        <circle cx="16.5" cy="15.5" r="1.8" fill="currentColor"/>
                       </svg>
                     </div>
                     <div className={styles.serviceTypeLabel}>Multi Service</div>
