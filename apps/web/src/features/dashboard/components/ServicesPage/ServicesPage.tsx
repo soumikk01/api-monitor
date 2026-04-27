@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useTheme } from '@/hooks/useTheme';
-import { authStorage } from '@/lib/fetchWithAuth';
+import { authStorage, fetchWithAuth } from '@/lib/fetchWithAuth';
+import ProjectSettingsContent from '@/features/dashboard/components/SettingsPage/ProjectSettingsContent';
 import styles from './ServicesPage.module.scss';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
@@ -85,10 +86,26 @@ const SettingsIcon = () => (
 
 export default function ServicesPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const { dark } = useTheme();
 
   const projectId = searchParams.get('projectId') ?? '';
+  // Track Project Settings panel via URL param so browser Back works
+  const showProjectSettings = searchParams.get('panel') === 'project-settings';
+
+  const openProjectSettings = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('panel', 'project-settings');
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
+  const closeProjectSettings = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('panel');
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
   const [project, setProject] = useState<Project | null>(null);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -102,16 +119,11 @@ export default function ServicesPage() {
   /* ── Fetch project + services in one pass ── */
   const fetchData = useCallback(async () => {
     if (!projectId) return;
-    const token = authStorage.getAccessToken();
     setLoading(true);
     try {
       const [projRes, svcRes] = await Promise.all([
-        fetch(`${API}/projects/${projectId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`${API}/projects/${projectId}/services`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        fetchWithAuth(`${API}/projects/${projectId}`),
+        fetchWithAuth(`${API}/projects/${projectId}/services`),
       ]);
 
       if (projRes.ok) {
@@ -138,11 +150,10 @@ export default function ServicesPage() {
     if (!newServiceName.trim()) return;
     setCreating(true);
     setCreateError('');
-    const token = authStorage.getAccessToken();
     try {
-      const res = await fetch(`${API}/projects/${projectId}/services`, {
+      const res = await fetchWithAuth(`${API}/projects/${projectId}/services`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: newServiceName.trim(),
           description: newServiceDesc.trim() || undefined,
@@ -169,11 +180,10 @@ export default function ServicesPage() {
   const initDefaultService = async () => {
     if (!project) return;
     setInitializing(true);
-    const token = authStorage.getAccessToken();
     try {
-      const res = await fetch(`${API}/projects/${projectId}/services`, {
+      const res = await fetchWithAuth(`${API}/projects/${projectId}/services`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: `default-service_${project.name}`,
           description: 'Default service',
@@ -206,15 +216,32 @@ export default function ServicesPage() {
               <ArrowRight /> Back to Projects
             </button>
           </nav>
-          <div style={{ marginTop: 'auto' }}>
-            <button 
-              className={`${styles.sidebarBtn} ${styles.sidebarBtnSecondary}`} 
-              onClick={() => router.push(`/settings?projectId=${projectId}`)}
+          <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {/* Show Service Settings only when there's exactly one service or it's single-mode */}
+            {services.length > 0 && isSingle && (
+              <button
+                className={`${styles.sidebarBtn} ${styles.sidebarBtnSecondary}`}
+                onClick={() => router.push(`/service-settings?projectId=${projectId}&serviceId=${services[0].id}`)}
+              >
+                <SettingsIcon /> Service Settings
+              </button>
+            )}
+            <button
+              className={`${styles.sidebarBtn} ${styles.sidebarBtnSecondary} ${showProjectSettings ? styles.sidebarBtnActive : ''}`}
+              onClick={() => showProjectSettings ? closeProjectSettings() : openProjectSettings()}
             >
               <SettingsIcon /> Project Settings
             </button>
           </div>
         </aside>
+
+        {/* ── When showProjectSettings: replace content with inline settings ── */}
+        {showProjectSettings ? (
+          <ProjectSettingsContent
+            projectId={projectId}
+            onBack={closeProjectSettings}
+          />
+        ) : (
 
         <main className={styles.content}>
 
@@ -396,67 +423,68 @@ export default function ServicesPage() {
           </div>
         )}
       </main>
+        )}
 
-      {/* ── CREATE SERVICE MODAL ── */}
-      {showCreateModal && (
-        <div className={styles.overlay} onClick={() => setShowCreateModal(false)}>
-          <div className={styles.modal} onClick={e => e.stopPropagation()}>
-            <div className={styles.modalGlow} />
-            <div className={styles.modalHeader}>
-              <div className={styles.modalTitle}>
-                <div className={styles.modalTitleIcon}><HexLogo /></div>
-                <h2>New Service</h2>
+        {/* ── CREATE SERVICE MODAL ── */}
+        {showCreateModal && (
+          <div className={styles.overlay} onClick={() => setShowCreateModal(false)}>
+            <div className={styles.modal} onClick={e => e.stopPropagation()}>
+              <div className={styles.modalGlow} />
+              <div className={styles.modalHeader}>
+                <div className={styles.modalTitle}>
+                  <div className={styles.modalTitleIcon}><HexLogo /></div>
+                  <h2>New Service</h2>
+                </div>
+                <button className={styles.closeBtn} onClick={() => setShowCreateModal(false)}>
+                  <CloseIcon />
+                </button>
               </div>
-              <button className={styles.closeBtn} onClick={() => setShowCreateModal(false)}>
-                <CloseIcon />
-              </button>
+              <form onSubmit={e => void handleCreateService(e)} className={styles.modalForm}>
+                <div className={styles.field}>
+                  <label htmlFor="svc-name" className={styles.fieldLabel}>
+                    Service name <span className={styles.required}>*</span>
+                  </label>
+                  <input
+                    id="svc-name"
+                    className={styles.fieldInput}
+                    placeholder="e.g. payment-api"
+                    value={newServiceName}
+                    onChange={e => setNewServiceName(e.target.value)}
+                    autoFocus
+                    maxLength={80}
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label htmlFor="svc-desc" className={styles.fieldLabel}>
+                    Description <span className={styles.optional}>(optional)</span>
+                  </label>
+                  <textarea
+                    id="svc-desc"
+                    className={styles.fieldTextarea}
+                    placeholder="What does this service monitor?"
+                    value={newServiceDesc}
+                    onChange={e => setNewServiceDesc(e.target.value)}
+                    rows={3}
+                    maxLength={300}
+                  />
+                </div>
+                {createError && <p className={styles.modalError}>{createError}</p>}
+                <div className={styles.modalActions}>
+                  <button type="button" className={styles.cancelBtn} onClick={() => setShowCreateModal(false)}>
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className={styles.createBtn}
+                    disabled={creating || !newServiceName.trim()}
+                  >
+                    {creating ? 'Creating…' : 'Create Service'}
+                  </button>
+                </div>
+              </form>
             </div>
-            <form onSubmit={e => void handleCreateService(e)} className={styles.modalForm}>
-              <div className={styles.field}>
-                <label htmlFor="svc-name" className={styles.fieldLabel}>
-                  Service name <span className={styles.required}>*</span>
-                </label>
-                <input
-                  id="svc-name"
-                  className={styles.fieldInput}
-                  placeholder="e.g. payment-api"
-                  value={newServiceName}
-                  onChange={e => setNewServiceName(e.target.value)}
-                  autoFocus
-                  maxLength={80}
-                />
-              </div>
-              <div className={styles.field}>
-                <label htmlFor="svc-desc" className={styles.fieldLabel}>
-                  Description <span className={styles.optional}>(optional)</span>
-                </label>
-                <textarea
-                  id="svc-desc"
-                  className={styles.fieldTextarea}
-                  placeholder="What does this service monitor?"
-                  value={newServiceDesc}
-                  onChange={e => setNewServiceDesc(e.target.value)}
-                  rows={3}
-                  maxLength={300}
-                />
-              </div>
-              {createError && <p className={styles.modalError}>{createError}</p>}
-              <div className={styles.modalActions}>
-                <button type="button" className={styles.cancelBtn} onClick={() => setShowCreateModal(false)}>
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className={styles.createBtn}
-                  disabled={creating || !newServiceName.trim()}
-                >
-                  {creating ? 'Creating…' : 'Create Service'}
-                </button>
-              </div>
-            </form>
           </div>
-        </div>
-      )}
+        )}
       </div>
     </div>
   );

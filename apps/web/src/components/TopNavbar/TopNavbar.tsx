@@ -60,7 +60,13 @@ export default function TopNavbar() {
   const { dark, toggleTheme } = useTheme();
 
   const [activeProject, setActiveProject] = useState<Project | null>(null);
-  const [activeServiceName, setActiveServiceName] = useState<string>('');
+  // Read cached service name synchronously (avoids 'Loading...' flash on navigation)
+  const [activeServiceName, setActiveServiceName] = useState<string>(() => {
+    if (typeof window === 'undefined') return '';
+    const sid = new URLSearchParams(window.location.search).get('serviceId');
+    if (!sid) return '';
+    return localStorage.getItem(`svcName:${sid}`) ?? '';
+  });
   const [showUserDrop, setShowUserDrop] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchVal, setSearchVal] = useState('');
@@ -105,7 +111,8 @@ export default function TopNavbar() {
   }, [searchParams]);
 
   useEffect(() => {
-    if (!user) return;
+    // Fire as soon as there's a stored token — don't wait for user object to hydrate
+    if (!user && !authStorage.hasSession()) return;
     const controller = new AbortController();
     void fetchProjects(controller.signal);
     return () => controller.abort();
@@ -120,29 +127,37 @@ export default function TopNavbar() {
       return;
     }
 
-    const controller = new AbortController();
-    
+    // Show cached value immediately (no flash)
     if (serviceId) {
-      // We have a specific serviceId, fetch it directly
+      const cached = localStorage.getItem(`svcName:${serviceId}`);
+      if (cached) setActiveServiceName(cached);
+    }
+
+    const controller = new AbortController();
+
+    if (serviceId) {
       void fetchWithAuth(`${API}/projects/${projectId}/services/${serviceId}`, {
         signal: controller.signal,
       }).then(async r => {
         if (r.ok) {
           const svc = await r.json() as { name: string };
           setActiveServiceName(svc.name);
+          // Cache so next navigation is instant
+          localStorage.setItem(`svcName:${serviceId}`, svc.name);
         }
       }).catch(err => {
         if ((err as Error).name !== 'AbortError') console.warn('[TopNavbar] service fetch failed', err);
       });
     } else {
-      // No serviceId in URL (e.g. fresh navigation to Overview) — fetch the first/default service for this project
+      // No serviceId — fetch first/default service
       void fetchWithAuth(`${API}/projects/${projectId}/services`, {
         signal: controller.signal,
       }).then(async r => {
         if (r.ok) {
-          const services = await r.json() as { id: string, name: string }[];
+          const services = await r.json() as { id: string; name: string }[];
           if (services && services.length > 0) {
             setActiveServiceName(services[0].name);
+            localStorage.setItem(`svcName:${services[0].id}`, services[0].name);
           } else {
             setActiveServiceName('');
           }
@@ -236,9 +251,16 @@ export default function TopNavbar() {
                   </span>
                 )}
 
-                {/* Environment badge */}
-                <button className={styles.envBtn} title="Environment: Production">
-                  <span className={styles.selectorLabel}>{activeServiceName || 'Loading...'}</span>
+                {/* Environment badge — click to go back to Services page */}
+                <button
+                  className={styles.envBtn}
+                  title="Back to Services"
+                  onClick={() => {
+                    const pid = searchParams.get('projectId') ?? activeProject?.id ?? '';
+                    if (pid) router.push(`/services?projectId=${pid}`);
+                  }}
+                >
+                  <span className={styles.selectorLabel}>{activeServiceName}</span>
                   <span className={styles.prodBadge}>PRODUCTION</span>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="11" height="11">
                     <polyline points="6 9 12 15 18 9"/>

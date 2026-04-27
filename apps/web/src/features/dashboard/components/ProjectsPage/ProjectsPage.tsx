@@ -94,7 +94,12 @@ export default function ProjectsPage() {
   const { isLoading: authLoading } = useAuth();
   
   const { dark } = useTheme();
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<Project[]>(() => {
+    // Seed from localStorage so list shows instantly on navigation-back
+    if (typeof window === 'undefined') return [];
+    try { return JSON.parse(localStorage.getItem('cachedProjects') ?? '[]') as Project[]; }
+    catch { return []; }
+  });
   const [loading, setLoading] = useState(true);
   const [iconAnimDone, setIconAnimDone] = useState(false);
   const titleIconRef = useRef<HTMLDivElement>(null);
@@ -127,8 +132,10 @@ export default function ProjectsPage() {
       if (!res.ok) throw new Error('Failed to fetch');
       const data = await res.json() as Project[];
       setProjects(data);
+      // Cache for instant render on next visit
+      localStorage.setItem('cachedProjects', JSON.stringify(data));
     } catch {
-      /* silently ignore — empty state shown */
+      /* silently ignore — cached or empty state shown */
     } finally {
       setLoading(false);
     }
@@ -230,7 +237,8 @@ export default function ProjectsPage() {
 
   const initials = (name: string) => name.slice(0, 2).toUpperCase();
 
-  const isInitialLoading = authLoading || loading;
+  // Only show the full loading skeleton when there's no cached data to show
+  const isInitialLoading = (authLoading || loading) && projects.length === 0;
 
   /* Fly animation: once loading done, after a brief moment trigger fly-to-header */
   useEffect(() => {

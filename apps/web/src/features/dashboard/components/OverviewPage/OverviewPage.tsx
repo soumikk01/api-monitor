@@ -1,5 +1,5 @@
 'use client';
-import { authStorage } from '@/lib/fetchWithAuth';
+import { authStorage, fetchWithAuth } from '@/lib/fetchWithAuth';
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
@@ -42,6 +42,12 @@ export default function OverviewPage() {
   const searchParams = useSearchParams();
   const [projectId, setProjectId] = useState('');
   const [projectName, setProjectName] = useState('');
+  const [serviceName, setServiceName] = useState<string>(() => {
+    if (typeof window === 'undefined') return '';
+    const sid = new URLSearchParams(window.location.search).get('serviceId');
+    if (!sid) return '';
+    return localStorage.getItem(`svcName:${sid}`) ?? '';
+  });
 
   // DB-sourced state
   const [dbStats, setDbStats] = useState<DbStats | null>(null);
@@ -52,25 +58,22 @@ export default function OverviewPage() {
   // ── Resolve active project from URL or first project ──
   useEffect(() => {
     const paramId = searchParams.get('projectId');
-    const token = authStorage.getAccessToken();
-    if (!token) return;
+    const paramServiceId = searchParams.get('serviceId');
 
     void (async () => {
       setLoadState('loading');
       if (paramId) {
-        const r = await fetch(`${API}/projects/${paramId}`, { headers: { Authorization: `Bearer ${token}` } });
+        const r = await fetchWithAuth(`${API}/projects/${paramId}`);
         if (r.ok) {
           const p = await r.json() as { id: string; name: string };
           setProjectId(p.id);
           setProjectName(p.name);
           localStorage.setItem('activeProjectId', p.id);
-          setLoadState('ready');
         } else {
           setProjectId(paramId);
-          setLoadState('ready');
         }
       } else {
-        const r = await fetch(`${API}/projects`, { headers: { Authorization: `Bearer ${token}` } });
+        const r = await fetchWithAuth(`${API}/projects`);
         if (!r.ok) { setLoadState('empty'); return; }
         const projects = await r.json() as { id: string; name: string }[];
         const saved = localStorage.getItem('activeProjectId');
@@ -79,24 +82,36 @@ export default function OverviewPage() {
           setProjectId(active.id);
           setProjectName(active.name);
           localStorage.setItem('activeProjectId', active.id);
-          setLoadState('ready');
         } else {
           setLoadState('empty');
+          return;
         }
       }
+
+      // Fetch service name when serviceId present
+      if (paramServiceId && paramId) {
+        try {
+          const sr = await fetchWithAuth(`${API}/projects/${paramId}/services/${paramServiceId}`);
+          if (sr.ok) {
+            const svc = await sr.json() as { name: string };
+            setServiceName(svc.name);
+            localStorage.setItem(`svcName:${paramServiceId}`, svc.name);
+          }
+        } catch { /* ignore */ }
+      }
+
+      setLoadState('ready');
     })();
   }, [searchParams]);
 
   // ── Fetch real DB stats + recent call history when projectId is known ──
   const fetchDashboard = useCallback(async () => {
     if (!projectId) return;
-    const token = authStorage.getAccessToken();
-    if (!token) return;
     setStatsLoading(true);
     try {
       const [statsRes, callsRes] = await Promise.all([
-        fetch(`${API}/projects/${projectId}/stats`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${API}/projects/${projectId}/calls?limit=50`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetchWithAuth(`${API}/projects/${projectId}/stats`),
+        fetchWithAuth(`${API}/projects/${projectId}/calls?limit=50`),
       ]);
       if (statsRes.ok) setDbStats(await statsRes.json() as DbStats);
       if (callsRes.ok) setDbCalls(await callsRes.json() as DbCall[]);
@@ -200,7 +215,7 @@ export default function OverviewPage() {
       <main className={styles.content}>
         <div className={styles.header}>
           <div>
-            <h1>{projectName ? `${projectName} — Overview` : 'Platform Overview'}</h1>
+            <h1>{serviceName ? `${serviceName} — Overview` : projectName ? `${projectName} — Overview` : 'Platform Overview'}</h1>
             <p>Welcome back, {user?.name || 'Operator'} — Live Socket: {isConnected ? 'Connected 🟢' : 'Connecting 🟡'}</p>
           </div>
           <button

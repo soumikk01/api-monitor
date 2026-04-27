@@ -1,5 +1,5 @@
 'use client';
-import { authStorage } from '@/lib/fetchWithAuth';
+import { fetchWithAuth } from '@/lib/fetchWithAuth';
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -18,29 +18,32 @@ export default function DashboardPage() {
   const searchParams = useSearchParams();
   const [projectId, setProjectId] = useState('');
   const [projectName, setProjectName] = useState('');
+  const [serviceName, setServiceName] = useState<string>(() => {
+    if (typeof window === 'undefined') return '';
+    const sid = new URLSearchParams(window.location.search).get('serviceId');
+    if (!sid) return '';
+    return localStorage.getItem(`svcName:${sid}`) ?? '';
+  });
   const [loadState, setLoadState] = useState<'loading' | 'empty' | 'ready'>('loading');
 
   useEffect(() => {
     const paramId = searchParams.get('projectId');
-    const token = authStorage.getAccessToken();
-    if (!token) return;
+    const paramServiceId = searchParams.get('serviceId');
 
     void (async () => {
       setLoadState('loading');
       if (paramId) {
-        const r = await fetch(`${API}/projects/${paramId}`, { headers: { Authorization: `Bearer ${token}` } });
+        const r = await fetchWithAuth(`${API}/projects/${paramId}`);
         if (r.ok) {
           const p = await r.json() as { id: string; name: string };
           setProjectId(p.id);
           setProjectName(p.name);
           localStorage.setItem('activeProjectId', p.id);
-          setLoadState('ready');
         } else {
           setProjectId(paramId);
-          setLoadState('ready');
         }
       } else {
-        const r = await fetch(`${API}/projects`, { headers: { Authorization: `Bearer ${token}` } });
+        const r = await fetchWithAuth(`${API}/projects`);
         if (!r.ok) { setLoadState('empty'); return; }
         const projects = await r.json() as { id: string; name: string }[];
         const saved = localStorage.getItem('activeProjectId');
@@ -49,11 +52,25 @@ export default function DashboardPage() {
           setProjectId(active.id);
           setProjectName(active.name);
           localStorage.setItem('activeProjectId', active.id);
-          setLoadState('ready');
         } else {
           setLoadState('empty');
+          return;
         }
       }
+
+      // Fetch service name if serviceId is present
+      if (paramServiceId && paramId) {
+        try {
+          const sr = await fetchWithAuth(`${API}/projects/${paramId}/services/${paramServiceId}`);
+          if (sr.ok) {
+            const svc = await sr.json() as { name: string };
+            setServiceName(svc.name);
+            localStorage.setItem(`svcName:${paramServiceId}`, svc.name);
+          }
+        } catch { /* ignore */ }
+      }
+
+      setLoadState('ready');
     })();
   }, [searchParams]);
 
@@ -106,7 +123,8 @@ export default function DashboardPage() {
           <div className={styles.leftCol}>
             <div className={styles.header}>
               <div className={styles.titleRow}>
-                <h1>{projectName || 'api-monitor'}</h1>
+                <h1>{serviceName || projectName || 'api-monitor'}</h1>
+                {serviceName && <span style={{ fontSize: '0.8rem', color: '#888', fontWeight: 400, marginLeft: '0.5rem' }}>({projectName})</span>}
                 <span className={styles.badge}>NANO</span>
               </div>
               <div className={styles.urlRow}>

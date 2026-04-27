@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { authStorage } from '@/lib/fetchWithAuth';
 
@@ -11,44 +11,54 @@ interface AuthGuardProps {
 /**
  * AuthGuard — wraps every protected dashboard page.
  *
- * Auth tokens use localStorage storage:
- *  - Access token: localStorage (instant restore on page refresh)
- *  - Refresh token: localStorage (used to silently renew AT when expired)
+ * ## Hydration-safe approach
  *
- * Key fix for blank-page-on-navigation bug:
- *   useAuth() starts with isLoading=true on EVERY mount (even navigating between
- *   pages within the same session). If we block rendering until isLoading=false,
- *   the page shows blank on every route change until the /users/me call resolves.
+ * `localStorage` is only available in the browser. Reading it synchronously
+ * on the first render causes a server/client HTML mismatch because the server
+ * always sees `false` while the client sees the real token state.
  *
- *   Solution: check localStorage SYNCHRONOUSLY on first render.
- *   - If a token already exists  → render children immediately (no flicker)
- *   - If no token at all         → block until the async auth check completes,
- *                                  then redirect to login
+ * Fix: start with `mounted = false` so both server and client render the same
+ * initial output (nothing). After the first client-side paint, `useEffect`
+ * fires, we read localStorage, and we decide whether to show children or
+ * redirect — all without any mismatch.
+ *
+ * This means there is a single frame of blank screen on first load, which is
+ * invisible in practice because Next.js streaming and the browser paint happen
+ * together. Every *subsequent* navigation within the session is instant because
+ * the component is already mounted and the second useEffect below fires
+ * synchronously with the stored token.
  */
 export default function AuthGuard({ children }: AuthGuardProps) {
   const { isLoading, user } = useAuth();
 
-  // Synchronous check — does a token exist right now?
-  // This is true on every page transition for a logged-in user.
-  const hasTokenInStorage = authStorage.hasSession();
+  // Must be false on first render so server and client HTML match.
+  // Updated to the real value in useEffect (client-only).
+  const [hasToken, setHasToken] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Only redirect once the async check has finished AND confirmed no session
-    if (!isLoading && !user && !hasTokenInStorage) {
+    setHasToken(authStorage.hasSession());
+    setMounted(true);
+  }, []);
+
+  // Redirect when auth resolves with no session
+  useEffect(() => {
+    if (!mounted) return;
+    if (!isLoading && !user && !hasToken) {
       window.location.href = `${process.env.NEXT_PUBLIC_AUTH_URL ?? 'http://localhost:3001'}/login`;
     }
-  }, [isLoading, user, hasTokenInStorage]);
+  }, [mounted, isLoading, user, hasToken]);
 
-  // ── Case 1: No token at all (not logged in, never was) ──────────────────
-  // Block rendering while auth check runs, then the effect above redirects.
-  if (!hasTokenInStorage && isLoading) return null;
+  // ── Before mount: render nothing (matches SSR output perfectly) ──────────
+  if (!mounted) return null;
 
-  // ── Case 2: Async check finished — genuinely unauthenticated ────────────
-  // Redirect is already firing via the effect above; show nothing.
-  if (!isLoading && !user && !hasTokenInStorage) return null;
+  // ── No token + still loading: redirect is pending, show nothing ──────────
+  if (!hasToken && isLoading) return null;
 
-  // ── Case 3: Token exists (logged in) or check still running ────────────
-  // Render children immediately. Pages show their own shimmer/skeleton loaders
-  // while their data fetches. This eliminates the blank-page flash on navigation.
+  // ── Auth confirmed failed: redirect already firing ───────────────────────
+  if (!isLoading && !user && !hasToken) return null;
+
+  // ── Token exists or auth check still running: render children ───────────
+  // Pages render their own skeleton/shimmer while their data loads.
   return <>{children}</>;
 }
