@@ -1,5 +1,5 @@
 'use client';
-import { authStorage } from '@/lib/fetchWithAuth';
+import { authStorage, fetchWithAuth } from '@/lib/fetchWithAuth';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -8,7 +8,14 @@ import styles from './GettingStartedPage.module.scss';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
 
-export default function GettingStartedPanel() {
+interface Props {
+  /** When provided, the panel shows the SDK token for this specific service */
+  projectId?: string;
+  serviceId?: string;
+  serviceName?: string;
+}
+
+export default function GettingStartedPanel({ projectId, serviceId, serviceName }: Props) {
   const { user } = useAuth();
   const [sdkToken, setSdkToken] = useState<string>('');
   const [sdkLoading, setSdkLoading] = useState(true);
@@ -26,27 +33,42 @@ export default function GettingStartedPanel() {
 
   useEffect(() => {
     let cancelled = false;
+    setSdkLoading(true);
+    setSdkToken('');
+
     (async () => {
-      const token = authStorage.getAccessToken();
-      if (!token) {
-        if (!cancelled) setSdkLoading(false);
-        return;
-      }
       try {
-        const r = await fetch(`${API}/users/me/command`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!r.ok) throw new Error('Failed');
-        const d = await r.json() as { token?: string };
-        if (!cancelled && d.token) setSdkToken(d.token);
+        if (projectId && serviceId) {
+          // ── Service-specific token ──────────────────────────────────────
+          const cached = localStorage.getItem(`svcToken:${serviceId}`);
+          if (cached) { if (!cancelled) { setSdkToken(cached); setSdkLoading(false); } }
+
+          const res = await fetchWithAuth(`${API}/projects/${projectId}/services/${serviceId}`);
+          if (!res.ok) throw new Error('Failed');
+          const svc = await res.json() as { sdkToken?: string };
+          if (!cancelled && svc.sdkToken) {
+            setSdkToken(svc.sdkToken);
+            localStorage.setItem(`svcToken:${serviceId}`, svc.sdkToken);
+          }
+        } else {
+          // ── User-level token (fallback / no service context) ────────────
+          const token = authStorage.getAccessToken();
+          if (!token) return;
+          const r = await fetch(`${API}/users/me/command`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!r.ok) throw new Error('Failed');
+          const d = await r.json() as { token?: string };
+          if (!cancelled && d.token) setSdkToken(d.token);
+        }
       } catch {
-        // ignore
+        // ignore — placeholder shown in CLI command
       } finally {
         if (!cancelled) setSdkLoading(false);
       }
     })();
     return () => { cancelled = true; };
-  }, []);
+  }, [projectId, serviceId]);
 
   function copy(text: string, key: string) {
     if (!text) return;
@@ -64,16 +86,29 @@ export default function GettingStartedPanel() {
       <div className={styles.header}>
         <div>
           <h1>Getting Started</h1>
-          <p>Set up API monitoring in your project in under 60 seconds.</p>
+          {serviceName ? (
+            <p>Setting up <strong>{serviceName}</strong> — your SDK token is pre-filled below.</p>
+          ) : (
+            <p>Set up API monitoring in your project in under 60 seconds.</p>
+          )}
         </div>
       </div>
 
       {/* Welcome banner */}
       <div className={styles.welcomeBanner}>
-        <div className={styles.welcomeIcon}>👋</div>
+        <div className={styles.welcomeIcon}>{serviceName ? '🔑' : '👋'}</div>
         <div>
-          <div className={styles.welcomeTitle}>Welcome, {user?.name || user?.email || 'Developer'}!</div>
-          <div className={styles.welcomeSub}>Your personalized command is ready below. Copy, run, done.</div>
+          {serviceName ? (
+            <>
+              <div className={styles.welcomeTitle}>SDK Token for <strong>{serviceName}</strong></div>
+              <div className={styles.welcomeSub}>This token is unique to this service. Run the command below to connect it.</div>
+            </>
+          ) : (
+            <>
+              <div className={styles.welcomeTitle}>Welcome, {user?.name || user?.email || 'Developer'}!</div>
+              <div className={styles.welcomeSub}>Your personalized command is ready below. Copy, run, done.</div>
+            </>
+          )}
         </div>
       </div>
 

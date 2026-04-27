@@ -106,7 +106,13 @@ export default function ServicesPage() {
     router.replace(`${pathname}?${params.toString()}`);
   };
 
-  const [project, setProject] = useState<Project | null>(null);
+  const [project, setProject] = useState<Project | null>(() => {
+    // Seed from localStorage so the title never flickers to 'Loading…'
+    if (typeof window === 'undefined') return null;
+    const cached = localStorage.getItem(`project:${searchParams.get('projectId') ?? ''}`);
+    if (!cached) return null;
+    try { return JSON.parse(cached) as Project; } catch { return null; }
+  });
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -127,7 +133,10 @@ export default function ServicesPage() {
       ]);
 
       if (projRes.ok) {
-        setProject(await projRes.json() as Project);
+        const proj = await projRes.json() as Project;
+        setProject(proj);
+        // Cache for instant render next time
+        localStorage.setItem(`project:${projectId}`, JSON.stringify(proj));
       }
       if (svcRes.ok) {
         setServices(await svcRes.json() as Service[]);
@@ -248,16 +257,19 @@ export default function ServicesPage() {
         {/* ── HEADER ── */}
         <div className={styles.header}>
           <div>
-            <h1 className={styles.title}>{project?.name ?? 'Loading…'}</h1>
-            <p className={styles.subtitle}>
-              {isSingle
-                ? 'This project has a single default service. Click to enter the dashboard.'
-                : 'Manage your services. Each service monitors a separate API endpoint group.'}
-            </p>
+            {/* Use cached name — never shows 'Loading…' on revisit */}
+            <h1 className={styles.title}>{project?.name ?? ''}</h1>
+            {!loading && (
+              <p className={styles.subtitle}>
+                {isSingle
+                  ? 'This project has a single default service. Click to enter the dashboard.'
+                  : 'Manage your services. Each service monitors a separate API endpoint group.'}
+              </p>
+            )}
           </div>
 
-          {/* Add service — only for multi-service mode */}
-          {isMulti && (
+          {/* Add service — only for multi-service mode, only after loaded */}
+          {!loading && isMulti && (
             <button className={styles.addBtn} onClick={() => setShowCreateModal(true)}>
               <PlusIcon /> Add Service
             </button>
@@ -400,8 +412,35 @@ export default function ServicesPage() {
                         })}
                       </span>
                     </div>
-                    <div className={styles.enterBtn}>
-                      Enter <ArrowRight />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      {/* Connect button — opens Getting Started panel with this service's token */}
+                      <button
+                        className={styles.connectBtn ?? styles.enterBtn}
+                        style={{
+                          fontSize: '0.75rem',
+                          padding: '4px 10px',
+                          borderRadius: 6,
+                          border: '1px solid currentColor',
+                          opacity: 0.7,
+                          cursor: 'pointer',
+                          background: 'transparent',
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation(); // don't trigger card click
+                          const params = new URLSearchParams(searchParams.toString());
+                          params.set('panel', 'getting-started');
+                          params.set('projectId', projectId);
+                          params.set('serviceId', service.id);
+                          params.set('serviceName', encodeURIComponent(service.name));
+                          window.history.replaceState(null, '', `${pathname}?${params.toString()}`);
+                          window.dispatchEvent(new PopStateEvent('popstate'));
+                        }}
+                      >
+                        🔑 SDK Token
+                      </button>
+                      <div className={styles.enterBtn}>
+                        Enter <ArrowRight />
+                      </div>
                     </div>
                   </div>
                 </div>

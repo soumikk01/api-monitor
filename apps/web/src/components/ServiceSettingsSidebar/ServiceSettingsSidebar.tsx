@@ -62,6 +62,14 @@ export default function ServiceSettingsSidebar({
           <span className={styles.label}>General</span>
         </a>
 
+        <a
+          href="#sdk"
+          onClick={() => handleNavClick('sdk')}
+          className={`${styles.navItem} ${activeSection === 'sdk' ? styles.active : ''}`}
+        >
+          <span className={styles.label}>SDK Token</span>
+        </a>
+
         <div className={styles.sectionTitle} style={{ color: '#ef4444' }}>Danger Zone</div>
 
         <a

@@ -11,6 +11,7 @@ export const INGEST_JOB = {
 /** Shape of the job payload pushed onto the queue */
 export interface IngestJobPayload {
   projectId: string;
+  serviceId: string;   // ← per-service routing
   userId: string;
   events: ApiCallEventDto[];
 }

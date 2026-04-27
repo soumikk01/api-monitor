@@ -10,6 +10,13 @@ function ConnectPanelInner() {
   const searchParams = useSearchParams();
   const isOpen = searchParams.get('panel') === 'getting-started';
 
+  // Service context — set by pages that open the panel for a specific service
+  const projectId   = searchParams.get('projectId')  ?? undefined;
+  const serviceId   = searchParams.get('serviceId')  ?? undefined;
+  const serviceName = searchParams.get('serviceName')
+    ? decodeURIComponent(searchParams.get('serviceName')!)
+    : undefined;
+
   // Use replaceState instead of router.push — avoids a full Next.js navigation
   // which would remount all page components and cause a visible reload flash.
   const close = () => {
@@ -37,7 +44,7 @@ function ConnectPanelInner() {
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
             </svg>
-            Getting Started
+            {serviceName ? `Connect: ${serviceName}` : 'Getting Started'}
           </div>
           <button className={styles.closeBtn} onClick={close} aria-label="Close panel">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
@@ -49,7 +56,11 @@ function ConnectPanelInner() {
 
         {/* Scrollable body */}
         <div className={styles.body}>
-          <GettingStartedPanel />
+          <GettingStartedPanel
+            projectId={projectId}
+            serviceId={serviceId}
+            serviceName={serviceName}
+          />
         </div>
       </aside>
     </>

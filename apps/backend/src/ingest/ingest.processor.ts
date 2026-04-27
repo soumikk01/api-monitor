@@ -61,11 +61,11 @@ export class IngestProcessor extends WorkerHost {
       return;
     }
 
-    const { projectId, userId, events } = job.data;
+    const { projectId, serviceId, userId, events } = job.data;
 
     // ── Write all events in parallel ──────────────────────────────────────
     const records = await Promise.all(
-      events.map((event) => this.persistEvent(event, projectId, userId)),
+      events.map((event) => this.persistEvent(event, projectId, serviceId, userId)),
     );
 
     this.logger.debug(
@@ -88,7 +88,7 @@ export class IngestProcessor extends WorkerHost {
     }
 
     // ── Debounced stats broadcast + cache bust ────────────────────────────
-    this.scheduleBroadcastStats(projectId);
+    this.scheduleBroadcastStats(projectId, serviceId);
   }
 
   // ─────────────────────────────────────────────
@@ -98,11 +98,13 @@ export class IngestProcessor extends WorkerHost {
   private async persistEvent(
     event: ApiCallEventDto,
     projectId: string,
+    serviceId: string,
     userId: string,
   ) {
     return this.prisma.apiCall.create({
       data: {
         projectId,
+        serviceId: serviceId || undefined,
         userId,
         method: event.method.toUpperCase(),
         url: event.url,
@@ -124,29 +126,35 @@ export class IngestProcessor extends WorkerHost {
     });
   }
 
-  private scheduleBroadcastStats(projectId: string) {
-    const existing = this.statsDebounce.get(projectId);
+  private scheduleBroadcastStats(projectId: string, serviceId?: string) {
+    const key = serviceId ? `${projectId}:${serviceId}` : projectId;
+    const existing = this.statsDebounce.get(key);
     if (existing) clearTimeout(existing);
 
     const timer = setTimeout(() => {
-      this.statsDebounce.delete(projectId);
+      this.statsDebounce.delete(key);
       void this.broadcastStats(projectId);
-      // Bust all data caches for this project so the next page load is fresh
-      void this.cache.del(
+      // Bust all data caches for this project + service
+      const bustedKeys = [
         `stats:${projectId}`,
         `calls:${projectId}:50`,
         `analytics:endpoints:${projectId}`,
-        // Summary buckets for all range options
         `analytics:summary:${projectId}:1h`,
         `analytics:summary:${projectId}:24h`,
         `analytics:summary:${projectId}:7d`,
         `analytics:summary:${projectId}:30d`,
-      );
-      // History pages become stale too — wipe first page as a fast refresh
+      ];
+      if (serviceId) {
+        bustedKeys.push(
+          `stats:${projectId}:${serviceId}`,
+          `calls:${projectId}:${serviceId}:50`,
+        );
+      }
+      void this.cache.del(...bustedKeys);
       void this.cache.delByPattern(`history:${projectId}:*`);
     }, STATS_DEBOUNCE_MS);
 
-    this.statsDebounce.set(projectId, timer);
+    this.statsDebounce.set(key, timer);
   }
 
   /**

@@ -49,6 +49,20 @@ export default function ServiceSettingsPage() {
   const [isSaving,   setIsSaving]   = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
+  // SDK Token state
+  const [sdkToken,    setSdkToken]    = useState(() => {
+    if (typeof window === 'undefined') return '';
+    return localStorage.getItem(`svcToken:${serviceId}`) ?? '';
+  });
+  const [showToken,         setShowToken]         = useState(false);
+  const [tokenCopied,       setTokenCopied]       = useState(false);
+  const [regenerating,      setRegenerating]      = useState(false);
+  const [showRegenModal,    setShowRegenModal]    = useState(false);
+  const [tokenLoading,      setTokenLoading]      = useState(
+    // If no cached token, we'll be loading it from the API
+    () => typeof window !== 'undefined' && !localStorage.getItem(`svcToken:${serviceId}`)
+  );
+
   // Delete modal state
   const [showDeleteModal,   setShowDeleteModal]   = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
@@ -78,18 +92,25 @@ export default function ServiceSettingsPage() {
           console.warn('[ServiceSettings] fetch failed', res.status);
           return; // keep showing cached content
         }
-        const svc = await res.json() as { id: string; name: string; description?: string; isDefault: boolean };
+        const svc = await res.json() as { id: string; name: string; description?: string; isDefault: boolean; sdkToken?: string };
         setServiceName(svc.name);
         setServiceDesc(svc.description ?? '');
         setEditName(svc.name);
         setEditDesc(svc.description ?? '');
         setIsDefault(svc.isDefault);
+        if (svc.sdkToken) {
+          setSdkToken(svc.sdkToken);
+          localStorage.setItem(`svcToken:${serviceId}`, svc.sdkToken);
+        }
+        // Always clear loading — whether or not sdkToken was in the response
+        setTokenLoading(false);
         setLoadState('ready');
-        // Cache for instant render on next open
+        // Cache name/desc for instant render on next open
         localStorage.setItem(`svcName:${serviceId}`, svc.name);
         localStorage.setItem(`svcDesc:${serviceId}`, svc.description ?? '');
       } catch {
         // Network error — keep showing cached content if available
+        setTokenLoading(false); // never leave shimmer stuck on network failure
         if (!localStorage.getItem(`svcName:${serviceId}`)) setLoadState('empty');
       }
     })();
@@ -140,10 +161,44 @@ export default function ServiceSettingsPage() {
         method: 'DELETE',
       });
       if (!res.ok) throw new Error('Failed to delete');
+      localStorage.removeItem(`svcName:${serviceId}`);
+      localStorage.removeItem(`svcDesc:${serviceId}`);
+      localStorage.removeItem(`svcToken:${serviceId}`);
       router.push(`/services?projectId=${projectId}`);
     } catch {
       setDeleting(false);
     }
+  };
+
+  // ── Regenerate SDK token ────────────────────────────────────────────────────
+  const handleRegenerateToken = () => {
+    setShowRegenModal(true); // open confirmation modal instead of confirm()
+  };
+
+  const confirmRegenerate = async () => {
+    setShowRegenModal(false);
+    setRegenerating(true);
+    try {
+      const res = await fetchWithAuth(
+        `${API}/projects/${projectId}/services/${serviceId}/regenerate-token`,
+        { method: 'POST' },
+      );
+      if (res.ok) {
+        const { sdkToken: newToken } = await res.json() as { sdkToken: string };
+        setSdkToken(newToken);
+        setShowToken(true);       // auto-reveal new token
+        setTokenLoading(false);
+        localStorage.setItem(`svcToken:${serviceId}`, newToken);
+      }
+    } catch { /* ignore */ } finally {
+      setRegenerating(false);
+    }
+  };
+
+  const handleCopyToken = async () => {
+    await navigator.clipboard.writeText(sdkToken);
+    setTokenCopied(true);
+    setTimeout(() => setTokenCopied(false), 2000);
   };
 
   const hasChanges = editName.trim() !== serviceName || editDesc.trim() !== serviceDesc;
@@ -288,6 +343,82 @@ export default function ServiceSettingsPage() {
           </div>
         )}
 
+        {/* ── SDK Token ── */}
+        {activeSection === 'sdk' && (
+          <div className={styles.panel} id="sdk">
+            <div className={styles.panelHeader}>
+              <h3>SDK Token</h3>
+            </div>
+            <div className={styles.panelBody}>
+              <p>Use this token to connect <strong>{serviceName}</strong> to the API Nest interceptor.</p>
+              <p className={styles.helperText} style={{ marginTop: '0.25rem' }}>
+                Keep it secret — anyone with this token can send data to this service.
+              </p>
+              <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  {tokenLoading ? (
+                    /* Shimmer while fetching */
+                    <div style={{ flex: 1, height: 42, borderRadius: 8, background: 'linear-gradient(90deg, rgba(0,0,0,0.06) 25%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.06) 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite' }} />
+                  ) : sdkToken ? (
+                    /* Token loaded — show masked or real */
+                    <input
+                      className={`${styles.input} ${styles.readOnly}`}
+                      style={{ fontFamily: 'monospace', fontSize: '0.85rem', color: '#16a34a', flex: 1 }}
+                      value={showToken ? sdkToken : ('sdk_' + '•'.repeat(Math.max(0, sdkToken.length - 4)))}
+                      readOnly
+                    />
+                  ) : (
+                    /* Token not returned by API — show message */
+                    <input
+                      className={`${styles.input} ${styles.readOnly}`}
+                      style={{ flex: 1, color: '#999', fontStyle: 'italic' }}
+                      value="Token unavailable — click Regenerate to create a new one"
+                      readOnly
+                    />
+                  )}
+                  <button
+                    className={styles.secondaryBtn}
+                    onClick={() => setShowToken(v => !v)}
+                    style={{ whiteSpace: 'nowrap' }}
+                    disabled={tokenLoading || !sdkToken}
+                  >
+                    {showToken ? 'Hide' : 'Show'}
+                  </button>
+                  <button
+                    className={styles.secondaryBtn}
+                    onClick={() => void handleCopyToken()}
+                    style={{ whiteSpace: 'nowrap' }}
+                    disabled={tokenLoading || !sdkToken}
+                  >
+                    {tokenCopied ? '✓ Copied' : 'Copy'}
+                  </button>
+                </div>
+              </div>
+              {sdkToken && (
+                <div className={styles.formGroup}>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 500 }}>Usage example</label>
+                  <pre style={{ background: 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '0.75rem', fontSize: '0.8rem', overflow: 'auto' }}>
+                    {'import { apiNest } from ' + "'@api-nest/sdk';" + '\n\n' +
+                     'apiNest.init({ token: ' + "'" + (showToken ? sdkToken : 'sdk_' + '•'.repeat(20)) + "'" + ' });'}
+                  </pre>
+                </div>
+              )}
+            </div>
+            <div className={styles.panelFooter} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem' }}>
+              <button
+                className={styles.secondaryBtn}
+                onClick={handleRegenerateToken}
+                disabled={regenerating}
+              >
+                {regenerating ? 'Regenerating…' : '↺ Regenerate Token'}
+              </button>
+              <p style={{ fontSize: '0.78rem', color: '#ef4444', margin: 0 }}>
+                ⚠ Regenerating will invalidate your current token immediately.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* ── Advanced / Danger Zone ── */}
         {activeSection === 'danger' && (
           <div className={`${styles.panel} ${styles.dangerPanel}`} id="danger">
@@ -352,6 +483,44 @@ export default function ServiceSettingsPage() {
                   onClick={() => void handleDelete()}
                 >
                   {deleting ? 'Deleting…' : 'I understand, delete this service'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Regenerate Token Confirmation Modal ── */}
+      {showRegenModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <h2>Regenerate SDK Token?</h2>
+              <button className={styles.closeBtn} onClick={() => setShowRegenModal(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className={styles.modalBody}>
+              <div className={styles.warningBanner}>
+                <AlertTriangle size={18} />
+                <span>Your current token will be invalidated immediately.</span>
+              </div>
+              <p className={styles.modalText}>
+                Any running apps or services using the current <strong>{serviceName}</strong> SDK token
+                will stop sending monitoring data until you update them with the new token.
+              </p>
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+                <button
+                  className={styles.dangerBtnFull}
+                  onClick={() => void confirmRegenerate()}
+                >
+                  Yes, regenerate token
+                </button>
+                <button
+                  className={styles.secondaryBtn}
+                  onClick={() => setShowRegenModal(false)}
+                >
+                  Cancel
                 </button>
               </div>
             </div>
