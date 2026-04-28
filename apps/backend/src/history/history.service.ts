@@ -9,6 +9,7 @@ import { QueryHistoryDto } from './dto/query-history.dto';
 
 const HISTORY_LIST_TTL = 15; // seconds — paginated list
 const HISTORY_ITEM_TTL = 60; // seconds — single call detail
+const ACCESS_TTL = 60; // seconds — project access check
 
 @Injectable()
 export class HistoryService {
@@ -24,12 +25,20 @@ export class HistoryService {
   async findAll(userId: string, query: QueryHistoryDto) {
     const { projectId, page = 1, limit = 50, status, method } = query;
 
-    // Verify project ownership
-    const project = await this.prisma.project.findFirst({
-      where: { id: projectId, userId },
-    });
-    if (!project)
-      throw new ForbiddenException('Project not found or access denied');
+    // Cache access check — avoids DB hit on every paginated request
+    const accessKey = `access:${projectId}:${userId}`;
+    const accessCached = await this.cache.get<boolean>(accessKey);
+    if (!accessCached) {
+      const project = await this.prisma.project.findFirst({
+        where: {
+          id: projectId,
+          OR: [{ userId }, { members: { some: { userId } } }],
+        },
+      });
+      if (!project)
+        throw new ForbiddenException('Project not found or access denied');
+      await this.cache.set(accessKey, true, ACCESS_TTL);
+    }
 
     // Build a deterministic cache key from all filter params
     const cacheKey = `history:${projectId}:p${page}:l${limit}:s${status ?? ''}:m${method ?? ''}`;

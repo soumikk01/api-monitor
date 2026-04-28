@@ -15,6 +15,7 @@ interface Service {
   description?: string;
   isDefault: boolean;
   createdAt: string;
+  _count?: { apiCalls?: number };
 }
 
 interface Project {
@@ -376,10 +377,18 @@ export default function ServicesPage() {
           /* service cards — works for both single (1 card) and multi (N cards + add card) */
           <div className={styles.grid}>
             {services.map((service, idx) => (
-              <button
+              <div
                 key={service.id}
+                role="button"
+                tabIndex={0}
                 className={`${styles.card} ${styles.cardInteractive} ${hoveredCard === service.id ? styles.cardHovered : ''}`}
                 onClick={() => openService(service.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openService(service.id);
+                  }
+                }}
                 onMouseEnter={() => setHoveredCard(service.id)}
                 onMouseLeave={() => setHoveredCard(null)}
                 style={{ '--card-delay': `${idx * 0.06}s` } as React.CSSProperties}
@@ -411,6 +420,11 @@ export default function ServicesPage() {
                           month: 'short', day: 'numeric',
                         })}
                       </span>
+                      {service._count?.apiCalls !== undefined && (
+                        <span style={{ fontSize: '0.75rem', color: '#6B6B6B', background: 'rgba(0,0,0,0.06)', padding: '2px 8px', borderRadius: '99px', marginLeft: '6px' }}>
+                          {service._count.apiCalls} calls
+                        </span>
+                      )}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       {/* Connect button — opens Getting Started panel with this service's token */}
@@ -444,7 +458,7 @@ export default function ServicesPage() {
                     </div>
                   </div>
                 </div>
-              </button>
+              </div>
             ))}
 
             {/* Add service card — only in multi mode */}

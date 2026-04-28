@@ -4,7 +4,7 @@ import { authStorage, fetchWithAuth } from '@/lib/fetchWithAuth';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { Moon, Sun, LogOut, User, ClipboardList } from 'lucide-react';
+import { Moon, Sun, LogOut, User, ClipboardList, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import { AVATARS } from '@/features/dashboard/components/AccountPage/avatars';
@@ -314,10 +314,7 @@ export default function TopNavbar() {
 
       {/* ══ RIGHT ══ */}
       <div className={styles.right}>
-        {/* Feedback */}
-        <a href="mailto:feedback@apinest.dev" className={styles.ghostBtn}>
-          Feedback
-        </a>
+
 
         {/* Search */}
         <div 
@@ -405,22 +402,39 @@ export default function TopNavbar() {
               </button>
 
               <div className={styles.dropDivider}/>
-              <button 
-                className={styles.dropItem} 
-                onClick={() => {
-                  toggleTheme();
-                }}
-              >
-                {dark ? (
-                  <><Sun size={14} style={{ marginRight: '8px', opacity: 0.7 }} /> Light mode</>
-                ) : (
-                  <><Moon size={14} style={{ marginRight: '8px', opacity: 0.7 }} /> Dark mode</>
-                )}
-              </button>
+              <div className={styles.dropSectionTitle}>Theme</div>
+              <div className={styles.themeToggleRow}>
+                <button 
+                  className={`${styles.themeToggleBtn} ${!dark ? styles.themeToggleBtnActive : ''}`} 
+                  onClick={() => { if (dark) toggleTheme(); }}
+                >
+                  <Sun size={14} style={{ marginRight: '6px' }} /> Light
+                </button>
+                <button 
+                  className={`${styles.themeToggleBtn} ${dark ? styles.themeToggleBtnActive : ''}`} 
+                  onClick={() => { if (!dark) toggleTheme(); }}
+                >
+                  <Moon size={14} style={{ marginRight: '6px' }} /> Dark
+                </button>
+              </div>
+
               <div className={styles.dropDivider}/>
-              <button className={`${styles.dropItem} ${styles.dropItemDanger}`} onClick={handleLogout}>
-                <LogOut size={14} style={{ marginRight: '8px', opacity: 0.7 }} />
-                Sign out
+              <a href="mailto:feedback@apinest.dev" className={styles.dropItem} style={{ textDecoration: 'none' }}>
+                <MessageSquare size={14} style={{ marginRight: '8px', opacity: 0.7 }} />
+                Feedback
+              </a>
+              <div className={styles.dropDivider}/>
+              <button className={`${styles.dropItem} ${styles.dropItemDanger} ${styles.signOutBtn}`} onClick={handleLogout}>
+                <div className={styles.signOutIconWrapper}>
+                  <svg className={styles.signOutDoor} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="14" height="14">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  </svg>
+                  <svg className={styles.signOutArrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="14" height="14">
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                  </svg>
+                </div>
+                <span className={styles.signOutText}>Sign out</span>
               </button>
             </div>
           )}

@@ -15,7 +15,7 @@ interface Project {
   description?: string;
   serviceMode?: 'single' | 'multi';
   createdAt: string;
-  _count?: { apiCalls: number };
+  _count?: { apiCalls?: number, services?: number };
 }
 
 type SortKey = 'name' | 'createdAt';
@@ -97,7 +97,7 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>(() => {
     // Seed from localStorage so list shows instantly on navigation-back
     if (typeof window === 'undefined') return [];
-    try { return JSON.parse(localStorage.getItem('cachedProjects') ?? '[]') as Project[]; }
+    try { return JSON.parse(localStorage.getItem('cachedProjectsV2') ?? '[]') as Project[]; }
     catch { return []; }
   });
   const [loading, setLoading] = useState(true);
@@ -133,7 +133,7 @@ export default function ProjectsPage() {
       const data = await res.json() as Project[];
       setProjects(data);
       // Cache for instant render on next visit
-      localStorage.setItem('cachedProjects', JSON.stringify(data));
+      localStorage.setItem('cachedProjectsV2', JSON.stringify(data));
     } catch {
       /* silently ignore — cached or empty state shown */
     } finally {
@@ -359,15 +359,18 @@ export default function ProjectsPage() {
                 onKeyDown={e => e.key === 'Enter' && router.push(`/services?projectId=${project.id}`)}
               >
                 <div className={styles.cardHeader}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <span className={styles.cardName}>{project.name}</span>
-                    <div className={styles.serviceBadge}>
-                      {project.serviceMode === 'multi' ? <MultiServiceIcon /> : <SingleServiceIcon />}
-                      {project.serviceMode === 'multi' ? 'Multi Service' : 'Single Service'}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
+                    <div className={styles.cardInitials} style={{ flexShrink: 0 }}>{initials(project.name)}</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: 0 }}>
+                      <span className={styles.cardName} title={project.name}>{project.name}</span>
+                      <span className={styles.cardMeta} style={{ whiteSpace: 'nowrap' }}>
+                        Created {new Date(project.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
                     </div>
                   </div>
                   <button
                     className={styles.menuBtn}
+                    style={{ flexShrink: 0 }}
                     onClick={e => { e.stopPropagation(); setOpenMenu(openMenu === project.id ? null : project.id); }}
                     title="Options"
                   >
@@ -408,20 +411,31 @@ export default function ProjectsPage() {
                 )}
 
                 <div className={styles.cardFooter}>
-                  <span className={styles.cardMeta}>
-                    Created {new Date(project.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                  </span>
+                  <div className={styles.serviceBadge}>
+                    {project.serviceMode === 'multi' ? <MultiServiceIcon /> : <SingleServiceIcon />}
+                    {project.serviceMode === 'multi' ? 'Multi Service' : 'Single Service'}
+                  </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    {project._count !== undefined && (
+                    {project._count?.services !== undefined && (
                       <span style={{ fontSize: '0.75rem', color: '#6B6B6B', background: 'rgba(0,0,0,0.06)', padding: '2px 8px', borderRadius: '99px' }}>
-                        {project._count.apiCalls} calls
+                        {project._count.services} {project._count.services === 1 ? 'service' : 'services'}
                       </span>
                     )}
-                    <div className={styles.cardInitials}>{initials(project.name)}</div>
                   </div>
                 </div>
               </div>
             ))}
+            
+            {/* Add project card */}
+            <button
+              className={`${styles.card} ${styles.addCard}`}
+              onClick={openCreateModal}
+            >
+              <div className={styles.addCardInner}>
+                <div className={styles.addCardIcon}><PlusIcon /></div>
+                <span className={styles.addCardLabel}>New Project</span>
+              </div>
+            </button>
           </div>
         )}
       </main>

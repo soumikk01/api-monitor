@@ -27,7 +27,7 @@ export class ProjectsService {
 
   /** List all projects for a user, including API call count */
   async list(userId: string) {
-    const cacheKey = `projects:${userId}`;
+    const cacheKey = `projects:v2:${userId}`;
     const cached = await this.cache.get<object[]>(cacheKey);
     if (cached) return cached;
 
@@ -39,7 +39,7 @@ export class ProjectsService {
         },
         orderBy: { createdAt: 'desc' },
         include: {
-          _count: { select: { apiCalls: true } },
+          _count: { select: { apiCalls: true, services: true } },
         },
       });
     } catch {
@@ -48,7 +48,7 @@ export class ProjectsService {
         where: { userId },
         orderBy: { createdAt: 'desc' },
         include: {
-          _count: { select: { apiCalls: true } },
+          _count: { select: { apiCalls: true, services: true } },
         },
       });
     }
@@ -72,7 +72,7 @@ export class ProjectsService {
     if (serviceMode === 'single') {
       await this.servicesService.createDefault(project.id, project.name);
     }
-    await this.cache.del(`projects:${userId}`);
+    await this.cache.del(`projects:v2:${userId}`);
     return project;
   }
 

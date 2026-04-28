@@ -397,8 +397,16 @@ $h:         46px;
 //  DROPDOWN (Light theme)
 // ════════════════════════════════════════════
 @keyframes dropIn {
-  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  0% { 
+    opacity: 0; 
+    transform: translateY(-10px) scale(0.95); 
+    filter: blur(8px);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+    filter: blur(0);
+  }
 }
 
 .dropWrap { position: relative; }
@@ -413,12 +421,13 @@ $h:         46px;
   border-radius: 12px;
   box-shadow: 0 12px 32px rgba(0,0,0,0.1);
   z-index: 500;
-  animation: dropIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top left;
+  animation: dropIn 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.15) forwards;
   overflow: hidden;
   padding: 6px;
 }
 
-.dropRight { left: auto; right: 0; }
+.dropRight { left: auto; right: 0; transform-origin: top right; }
 
 .dropHeader {
   padding: 16px 14px 12px;
@@ -473,6 +482,49 @@ $h:         46px;
   margin: 4px 0;
 }
 
+.dropSectionTitle {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $muted;
+  padding: 10px 14px 4px;
+}
+
+.themeToggleRow {
+  display: flex;
+  align-items: center;
+  background: rgba(0,0,0,0.04);
+  border-radius: 8px;
+  padding: 4px;
+  margin: 0 10px 8px;
+  gap: 4px;
+}
+
+.themeToggleBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: $muted;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover { color: $text; }
+}
+
+.themeToggleBtnActive {
+  background: #FFF;
+  color: $text;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
 .dropEmpty {
   padding: 10px 14px;
   font-size: 0.85rem;
@@ -513,6 +565,49 @@ $h:         46px;
 .dropItemDanger {
   color: #ef4444;
   &:hover { background: #FEF2F2; }
+}
+
+.signOutBtn {
+  overflow: hidden;
+  position: relative;
+}
+
+.signOutIconWrapper {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+  opacity: 0.7;
+}
+
+.signOutDoor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.3s ease;
+}
+
+.signOutArrow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.signOutText {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.signOutBtn:hover {
+  .signOutDoor {
+    opacity: 0;
+  }
+  .signOutArrow {
+    transform: translateX(166px);
+  }
+  .signOutText {
+    transform: translateX(2px);
+  }
 }
 
 .dropAction {
@@ -614,6 +709,11 @@ $h:         46px;
   .dropEmpty { color: #a1a1aa; }
 
   .dropDivider { background: #27272a; }
+  .dropSectionTitle { color: #71717a; }
+
+  .themeToggleRow { background: rgba(255,255,255,0.05); }
+  .themeToggleBtn { color: #a1a1aa; &:hover { color: #fff; } }
+  .themeToggleBtnActive { background: rgba(255,255,255,0.1); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
 
   .dropItem, .dropAction {
     color: #e4e4e7;
