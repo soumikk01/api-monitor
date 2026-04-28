@@ -6,7 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
-import { randomBytes } from 'crypto';
+
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -26,14 +26,12 @@ export class AuthService {
     if (existing) throw new ConflictException('Email already in use');
 
     const hash = await bcrypt.hash(dto.password, 12);
-    const sdkToken = `sdk_${randomBytes(24).toString('hex')}`;
 
     const user = await this.prisma.user.create({
       data: {
         email: dto.email,
         password: hash,
         name: dto.name,
-        sdkToken,
       },
     });
 

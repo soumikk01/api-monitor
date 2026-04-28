@@ -3,7 +3,7 @@ import { fetchWithAuth } from '@/lib/fetchWithAuth';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useAuth } from '@/hooks/useAuth';
+
 import styles from './GettingStartedPage.module.scss';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
@@ -16,7 +16,7 @@ interface Props {
 }
 
 export default function GettingStartedPanel({ projectId, serviceId, serviceName }: Props) {
-  const { user } = useAuth();
+
   const [sdkToken, setSdkToken] = useState<string>('');
   const [copied, setCopied] = useState<string | null>(null);
   const [pm, setPm] = useState<'npm' | 'yarn' | 'pnpm' | 'bun'>('npm');
@@ -92,8 +92,8 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
             </>
           ) : (
             <>
-              <div className={styles.welcomeTitle}>Welcome, {user?.name || user?.email || 'Developer'}!</div>
-              <div className={styles.welcomeSub}>Your personalized command is ready below. Copy, run, done.</div>
+              <div className={styles.welcomeTitle}>Getting Started</div>
+              <div className={styles.welcomeSub}>Select a service from the Services page to get your SDK token and connect it.</div>
             </>
           )}
         </div>

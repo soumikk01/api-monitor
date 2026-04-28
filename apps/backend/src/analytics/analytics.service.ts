@@ -13,9 +13,13 @@ export class AnalyticsService {
     private cache: CacheService,
   ) {}
 
-  private async assertProjectOwner(projectId: string, userId: string) {
+  private async assertProjectAccess(projectId: string, userId: string) {
+    // Allow owner OR any project member
     const project = await this.prisma.project.findFirst({
-      where: { id: projectId, userId },
+      where: {
+        id: projectId,
+        OR: [{ userId }, { members: { some: { userId } } }],
+      },
     });
     if (!project)
       throw new ForbiddenException('Project not found or access denied');
@@ -28,7 +32,7 @@ export class AnalyticsService {
    * Cached per (project + range) bucket.
    */
   async summary(userId: string, projectId: string, range = '24h') {
-    await this.assertProjectOwner(projectId, userId);
+    await this.assertProjectAccess(projectId, userId);
 
     const cacheKey = `analytics:summary:${projectId}:${range}`;
     const cached = await this.cache.get<object>(cacheKey);
@@ -38,6 +42,7 @@ export class AnalyticsService {
     const calls = await this.prisma.apiCall.findMany({
       where: { projectId, createdAt: { gte: since } },
       select: { status: true, latency: true, statusCode: true },
+      take: 50_000, // Safety cap — prevents OOM on large projects
     });
 
     const total = calls.length;
@@ -76,7 +81,7 @@ export class AnalyticsService {
    * Cached per project — busted when new calls are ingested.
    */
   async endpoints(userId: string, projectId: string) {
-    await this.assertProjectOwner(projectId, userId);
+    await this.assertProjectAccess(projectId, userId);
 
     const cacheKey = `analytics:endpoints:${projectId}`;
     const cached = await this.cache.get<object[]>(cacheKey);
