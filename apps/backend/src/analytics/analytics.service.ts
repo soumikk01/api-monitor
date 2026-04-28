@@ -5,6 +5,7 @@ import { CacheService } from '../cache/cache.service';
 // TTLs — analytics data is heavier to compute so we cache longer
 const SUMMARY_TTL = 30; // seconds — per range bucket
 const ENDPOINTS_TTL = 60; // seconds — endpoint breakdown changes less often
+const ACCESS_TTL = 60; // seconds — project access check result
 
 @Injectable()
 export class AnalyticsService {
@@ -14,7 +15,11 @@ export class AnalyticsService {
   ) {}
 
   private async assertProjectAccess(projectId: string, userId: string) {
-    // Allow owner OR any project member
+    // Cache ownership check to avoid repeated DB hits on parallel requests
+    const accessKey = `access:${projectId}:${userId}`;
+    const cached = await this.cache.get<boolean>(accessKey);
+    if (cached) return;
+
     const project = await this.prisma.project.findFirst({
       where: {
         id: projectId,
@@ -23,7 +28,8 @@ export class AnalyticsService {
     });
     if (!project)
       throw new ForbiddenException('Project not found or access denied');
-    return project;
+
+    await this.cache.set(accessKey, true, ACCESS_TTL);
   }
 
   /**
@@ -96,6 +102,7 @@ export class AnalyticsService {
         status: true,
         latency: true,
       },
+      take: 50_000, // Safety cap — prevents OOM/timeout on large projects
     });
 
     // Group by method + path

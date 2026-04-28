@@ -11,11 +11,11 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 
 // TTLs
-const STATS_TTL = 30; // seconds — stats refresh every 30s
-const CALLS_TTL = 15; // seconds — recent calls list
-const PROJECT_TTL = 120; // seconds — single project metadata
-const LIST_TTL = 30; // seconds — user's project list
-const MEMBERS_TTL = 60; // seconds — project members list
+const STATS_TTL = 30;    // seconds — stats refresh every 30s
+const CALLS_TTL = 15;    // seconds — recent calls list
+const PROJECT_TTL = 300; // seconds — single project metadata (5 min, rarely changes)
+const LIST_TTL = 60;     // seconds — user's project list
+const MEMBERS_TTL = 60;  // seconds — project members list
 
 @Injectable()
 export class ProjectsService {
@@ -27,7 +27,7 @@ export class ProjectsService {
 
   /** List all projects for a user, including API call count */
   async list(userId: string) {
-    const cacheKey = `projects:${userId}`;
+    const cacheKey = `projects:v2:${userId}`;
     const cached = await this.cache.get<object[]>(cacheKey);
     if (cached) return cached;
 
@@ -39,7 +39,7 @@ export class ProjectsService {
         },
         orderBy: { createdAt: 'desc' },
         include: {
-          _count: { select: { apiCalls: true } },
+          _count: { select: { apiCalls: true, services: true } },
         },
       });
     } catch {
@@ -48,7 +48,7 @@ export class ProjectsService {
         where: { userId },
         orderBy: { createdAt: 'desc' },
         include: {
-          _count: { select: { apiCalls: true } },
+          _count: { select: { apiCalls: true, services: true } },
         },
       });
     }
@@ -72,7 +72,7 @@ export class ProjectsService {
     if (serviceMode === 'single') {
       await this.servicesService.createDefault(project.id, project.name);
     }
-    await this.cache.del(`projects:${userId}`);
+    await this.cache.del(`projects:v2:${userId}`);
     return project;
   }
 
@@ -164,11 +164,11 @@ export class ProjectsService {
    * Eliminates repetitive Atlas round-trips on every dashboard refresh.
    */
   async getStats(projectId: string, userId: string) {
-    await this.findOne(projectId, userId); // ownership guard
-
     const cacheKey = `stats:${projectId}`;
     const cached = await this.cache.get<object>(cacheKey);
     if (cached) return cached;
+
+    await this.findOne(projectId, userId); // ownership guard — only on cache miss
 
     const calls = await this.prisma.apiCall.findMany({
       where: { projectId },
@@ -222,11 +222,11 @@ export class ProjectsService {
    * Seeds the Overview feed on page load before live socket events arrive.
    */
   async getRecentCalls(projectId: string, userId: string, limit = 50) {
-    await this.findOne(projectId, userId); // guard
-
     const cacheKey = `calls:${projectId}:${limit}`;
     const cached = await this.cache.get<object[]>(cacheKey);
     if (cached) return cached;
+
+    await this.findOne(projectId, userId); // guard — only on cache miss
 
     const calls = await this.prisma.apiCall.findMany({
       where: { projectId },

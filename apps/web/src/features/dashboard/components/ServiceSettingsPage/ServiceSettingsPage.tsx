@@ -5,7 +5,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import { AlertTriangle, X } from 'lucide-react';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { queryClient } from '@/lib/queryClient';
 import { useTheme } from '@/hooks/useTheme';
+import { queryKeys, fetchService } from '@/lib/queries';
 import ProjectSidebar from '@/components/ProjectSidebar/ProjectSidebar';
 import ServiceSettingsSidebar from '@/components/ServiceSettingsSidebar/ServiceSettingsSidebar';
 import { Shimmer, ShimmerBlock } from '@/components/Shimmer/Shimmer';
@@ -21,35 +24,12 @@ export default function ServiceSettingsPage() {
   const projectId = searchParams.get('projectId') ?? '';
   const serviceId = searchParams.get('serviceId') ?? '';
 
-  const [serviceName, setServiceName] = useState(() => {
-    if (typeof window === 'undefined') return '';
-    return localStorage.getItem(`svcName:${serviceId}`) ?? '';
-  });
-  const [serviceDesc, setServiceDesc] = useState(() => {
-    if (typeof window === 'undefined') return '';
-    return localStorage.getItem(`svcDesc:${serviceId}`) ?? '';
-  });
-  const [editName,    setEditName]    = useState(() => {
-    if (typeof window === 'undefined') return '';
-    return localStorage.getItem(`svcName:${serviceId}`) ?? '';
-  });
-  const [editDesc,    setEditDesc]    = useState(() => {
-    if (typeof window === 'undefined') return '';
-    return localStorage.getItem(`svcDesc:${serviceId}`) ?? '';
-  });
+  const [editName,    setEditName]    = useState('');
+  const [editDesc,    setEditDesc]    = useState('');
   const [isDefault,   setIsDefault]   = useState(false);
-  // Start ready if cache available — no loading flash
-  const [loadState,   setLoadState]   = useState<'loading' | 'empty' | 'ready'>(() => {
-    if (typeof window === 'undefined') return 'loading';
-    return localStorage.getItem(`svcName:${serviceId}`) ? 'ready' : 'loading';
-  });
   const [activeSection, setActiveSection] = useState('general');
-
-  // Save state
   const [isSaving,   setIsSaving]   = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
-
-  // SDK Token state
   const [sdkToken,    setSdkToken]    = useState(() => {
     if (typeof window === 'undefined') return '';
     return localStorage.getItem(`svcToken:${serviceId}`) ?? '';
@@ -59,11 +39,8 @@ export default function ServiceSettingsPage() {
   const [regenerating,      setRegenerating]      = useState(false);
   const [showRegenModal,    setShowRegenModal]    = useState(false);
   const [tokenLoading,      setTokenLoading]      = useState(
-    // If no cached token, we'll be loading it from the API
     () => typeof window !== 'undefined' && !localStorage.getItem(`svcToken:${serviceId}`)
   );
-
-  // Delete modal state
   const [showDeleteModal,   setShowDeleteModal]   = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [deleting,          setDeleting]          = useState(false);
@@ -79,81 +56,81 @@ export default function ServiceSettingsPage() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  // ── Load service data ───────────────────────────────────────────────────────
+  // ── Service detail via React Query — instant from cache (ServicesPage already fetched it) ──
+  const { data: svcData, isLoading: svcLoading } = useQuery({
+    queryKey: queryKeys.services.detail(projectId, serviceId),
+    queryFn: () => fetchService(projectId, serviceId),
+    enabled: !!projectId && !!serviceId,
+    placeholderData: () => {
+      const name = localStorage.getItem(`svcName:${serviceId}`);
+      const desc = localStorage.getItem(`svcDesc:${serviceId}`) ?? '';
+      return name ? { id: serviceId, name, description: desc, isDefault: false, createdAt: '' } : undefined;
+    },
+    staleTime: 60_000, // settings rarely change
+  });
+
+  // Sync local edit state when data arrives
   useEffect(() => {
-    if (!projectId || !serviceId) return;
+    if (!svcData) return;
+    setEditName(svcData.name);
+    setEditDesc(svcData.description ?? '');
+    setIsDefault(svcData.isDefault);
+    if (svcData.sdkToken) {
+      setSdkToken(svcData.sdkToken);
+      setTokenLoading(false);
+      localStorage.setItem(`svcToken:${serviceId}`, svcData.sdkToken);
+    } else {
+      setTokenLoading(false);
+    }
+    localStorage.setItem(`svcName:${serviceId}`, svcData.name);
+    localStorage.setItem(`svcDesc:${serviceId}`, svcData.description ?? '');
+  }, [svcData, serviceId]);
 
-    void (async () => {
-      try {
-        const res = await fetchWithAuth(`${API}/projects/${projectId}/services/${serviceId}`);
-        // Only show "not found" for a true 404 — 401/5xx are auth/network issues
-        if (res.status === 404) { setLoadState('empty'); return; }
-        if (!res.ok) {
-          console.warn('[ServiceSettings] fetch failed', res.status);
-          return; // keep showing cached content
-        }
-        const svc = await res.json() as { id: string; name: string; description?: string; isDefault: boolean; sdkToken?: string };
-        setServiceName(svc.name);
-        setServiceDesc(svc.description ?? '');
-        setEditName(svc.name);
-        setEditDesc(svc.description ?? '');
-        setIsDefault(svc.isDefault);
-        if (svc.sdkToken) {
-          setSdkToken(svc.sdkToken);
-          localStorage.setItem(`svcToken:${serviceId}`, svc.sdkToken);
-        }
-        // Always clear loading — whether or not sdkToken was in the response
-        setTokenLoading(false);
-        setLoadState('ready');
-        // Cache name/desc for instant render on next open
-        localStorage.setItem(`svcName:${serviceId}`, svc.name);
-        localStorage.setItem(`svcDesc:${serviceId}`, svc.description ?? '');
-      } catch {
-        // Network error — keep showing cached content if available
-        setTokenLoading(false); // never leave shimmer stuck on network failure
-        if (!localStorage.getItem(`svcName:${serviceId}`)) setLoadState('empty');
-      }
-    })();
-  }, [projectId, serviceId]);
+  const serviceName = svcData?.name ?? localStorage.getItem(`svcName:${serviceId}`) ?? '';
+  const serviceDesc = svcData?.description ?? localStorage.getItem(`svcDesc:${serviceId}`) ?? '';
+  const loadState = svcLoading && !svcData ? 'loading' : !svcData && !svcLoading ? 'empty' : 'ready';
 
-  // ── Save general settings ───────────────────────────────────────────────────
-  const handleSave = async () => {
-    const nameChanged = editName.trim() !== serviceName;
-    const descChanged = editDesc.trim() !== serviceDesc;
-    if (!nameChanged && !descChanged) return;
-    if (!editName.trim()) return;
-
-    setIsSaving(true);
-    setSaveStatus('idle');
-    try {
+  // ── Save general settings ────────────────────────────────────────────────
+  const saveMutation = useMutation({
+    mutationFn: async (payload: { name?: string; description?: string }) => {
       const res = await fetchWithAuth(`${API}/projects/${projectId}/services/${serviceId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...(nameChanged && { name: editName.trim() }),
-          ...(descChanged && { description: editDesc.trim() || undefined }),
-        }),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) {
         const d = await res.json() as { message?: string };
         throw new Error(d.message ?? 'Failed to save');
       }
-      const updated = await res.json() as { name: string; description?: string };
-      setServiceName(updated.name);
-      setServiceDesc(updated.description ?? '');
-      // Update cache so next open shows the new name immediately
+      return res.json() as Promise<{ name: string; description?: string }>;
+    },
+    onSuccess: (updated) => {
       localStorage.setItem(`svcName:${serviceId}`, updated.name);
       localStorage.setItem(`svcDesc:${serviceId}`, updated.description ?? '');
+      void queryClient.invalidateQueries({ queryKey: queryKeys.services.detail(projectId, serviceId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.services.list(projectId) });
       setSaveStatus('success');
       setTimeout(() => setSaveStatus('idle'), 2500);
-    } catch {
-      setSaveStatus('error');
-    } finally {
-      setIsSaving(false);
-    }
+    },
+    onError: () => setSaveStatus('error'),
+    onSettled: () => setIsSaving(false),
+  });
+
+  const handleSave = () => {
+    const nameChanged = editName.trim() !== serviceName;
+    const descChanged = editDesc.trim() !== serviceDesc;
+    if (!nameChanged && !descChanged) return;
+    if (!editName.trim()) return;
+    setIsSaving(true);
+    setSaveStatus('idle');
+    saveMutation.mutate({
+      ...(nameChanged && { name: editName.trim() }),
+      ...(descChanged && { description: editDesc.trim() || undefined }),
+    });
   };
 
   // ── Delete service ──────────────────────────────────────────────────────────
+
   const handleDelete = async () => {
     setDeleting(true);
     try {

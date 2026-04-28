@@ -94,12 +94,33 @@ async function tryRefresh(): Promise<string | null> {
 
 /**
  * Drop-in replacement for fetch():
- *  1. Attaches Bearer token from localStorage
- *  2. On 401 → silently refreshes and retries ONCE
- *  3. Transient errors → session preserved
- *  4. Definitive failure → session cleared
+ *  1. Proactively refreshes token if it expires in < 5 min
+ *  2. Attaches Bearer token from localStorage
+ *  3. On 401 → silently refreshes and retries ONCE
+ *  4. Transient errors → session preserved
+ *  5. Definitive failure → session cleared
  */
+
+/** Parse JWT expiry without a library */
+function getTokenExpiresInMs(token: string | null): number {
+  if (!token) return 0;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    if (!payload.exp) return Infinity;
+    return payload.exp * 1000 - Date.now();
+  } catch {
+    return 0;
+  }
+}
+
 export async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
+  // ── Proactive refresh: if token expires in < 5 min, refresh now ──────────
+  const currentToken = authStorage.getAccessToken();
+  const expiresIn = getTokenExpiresInMs(currentToken);
+  if (expiresIn > 0 && expiresIn < 5 * 60 * 1000) {
+    try { await tryRefresh(); } catch { /* ignore transient errors */ }
+  }
+
   const makeReq = (token: string | null) =>
     fetch(url, {
       ...options,

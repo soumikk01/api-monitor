@@ -38,7 +38,11 @@ export class IngestService {
     // Resolve service by SDK token (fast indexed lookup)
     const service = await this.prisma.service.findUnique({
       where: { sdkToken: dto.sdkToken },
-      include: { project: { include: { user: true } } },
+      select: {
+        id: true,
+        projectId: true,
+        project: { select: { userId: true } },
+      },
     });
 
     if (!service) throw new UnauthorizedException('Invalid SDK token');

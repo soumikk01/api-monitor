@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Inter, Fira_Code, JetBrains_Mono } from "next/font/google";
 import "@/styles/tailwind.css";
 import "@/styles/globals.scss";
+import Providers from './_components/Providers';
 
-// next/font: fonts are self-hosted and inlined — no render-blocking external requests
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
@@ -48,11 +48,13 @@ export default function RootLayout({
       className={`dark ${spaceGrotesk.variable} ${inter.variable} ${firaCode.variable} ${jetbrainsMono.variable}`}
     >
       <head>
-        {/* Material Symbols — still loaded via CDN as next/font doesn't support variable icon fonts */}
+        {/* Material Symbols — CDN loaded, next/font doesn't support variable icon fonts */}
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
