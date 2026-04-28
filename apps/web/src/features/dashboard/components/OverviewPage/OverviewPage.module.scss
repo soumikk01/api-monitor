@@ -1,14 +1,9 @@
 // ══════════════════════════════════════════════
-//  DESIGN TOKENS — mirrors LandingPage & Login
+//  OVERVIEW PAGE — token-driven, 3-theme aware
 // ══════════════════════════════════════════════
-$bg-top:     #F7F3EA;
-$bg-bot:     #F1ECE2;
-$text-main:  #1A1A1A;
-$text-muted: #6B6B6B;
-$white-glass: rgba(255, 255, 255, 0.72);
-$pill:   100px;
-$r-lg:   24px;
-$r-md:   16px;
+$pill: 100px;
+$r-lg: 24px;
+$r-md: 16px;
 
 // ══════════════════════════════════════════════
 //  LAYOUT
@@ -16,154 +11,32 @@ $r-md:   16px;
 .page {
   position: relative;
   min-height: 100vh;
-  background: linear-gradient(160deg, $bg-top 0%, $bg-bot 100%);
-  color: $text-main;
+  background: linear-gradient(160deg, var(--bg-base) 0%, var(--bg-base-2) 100%);
+  color: var(--text-primary);
   font-family: 'Inter', sans-serif;
   overflow: visible;
   display: flex;
 }
 
-
 .ambientOrb1 {
-  position: fixed;
-  width: 500px;
-  height: 500px;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(90px);
-  z-index: 0;
-  background: radial-gradient(circle, rgba(79, 70, 229, 0.06) 0%, transparent 70%);
-  top: -200px;
-  right: -100px;
+  position: fixed; width: 500px; height: 500px; border-radius: 50%;
+  pointer-events: none; filter: blur(90px); z-index: 0;
+  background: radial-gradient(circle, var(--orb1) 0%, transparent 70%);
+  top: -200px; right: -100px;
 }
-
 .ambientOrb2 {
-  position: fixed;
-  width: 400px;
-  height: 400px;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(90px);
-  z-index: 0;
-  background: radial-gradient(circle, rgba(168, 216, 255, 0.08) 0%, transparent 70%);
-  bottom: -100px;
-  left: -100px;
+  position: fixed; width: 400px; height: 400px; border-radius: 50%;
+  pointer-events: none; filter: blur(90px); z-index: 0;
+  background: radial-gradient(circle, var(--orb2) 0%, transparent 70%);
+  bottom: -100px; left: -100px;
 }
-
 .gridLines {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 40px 40px;
   mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
-}
-
-// ══════════════════════════════════════════════
-//  SPRING BACKGROUND (Subtle for Dashboard)
-// ══════════════════════════════════════════════
-@keyframes floatPetal {
-  0%   { transform: translateY(0)    rotate(0deg)   translateX(0); opacity: 0.4; }
-  25%  { transform: translateY(30px)  rotate(40deg)  translateX(8px); }
-  50%  { transform: translateY(60px)  rotate(80deg)  translateX(-6px); opacity: 0.2; }
-  75%  { transform: translateY(90px)  rotate(120deg) translateX(10px); }
-  100% { transform: translateY(140px) rotate(160deg) translateX(0); opacity: 0; }
-}
-@keyframes gentleFloat {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-10px); }
-}
-
-.springBg {
-  position: fixed;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  overflow: hidden;
-  opacity: 0.7; // Lowered opacity so it doesn't distract from charts
-}
-
-.branch1 { position: absolute; top: -10px; left: -30px; width: 380px; opacity: 0.7; }
-.branch2 { position: absolute; top: -10px; right: -30px; width: 360px; opacity: 0.6; }
-
-.petal { position: absolute; animation: floatPetal 8s ease-in infinite; }
-.petal1 { width: 18px; top: 12%; left: 18%; animation-duration: 9s;  animation-delay: 0s; }
-.petal2 { width: 14px; top:  8%; left: 55%; animation-duration: 7s;  animation-delay: 1.5s; }
-.petal3 { width: 16px; top: 18%; left: 80%; animation-duration: 10s; animation-delay: 0.5s; }
-.petal4 { width: 12px; top:  5%; left: 35%; animation-duration: 8s;  animation-delay: 2.5s; }
-
-.sparkle, .bloom1, .bloom2 { display: none; } // Hide extra noise on dashboard
-
-// ══════════════════════════════════════════════
-//  SIDEBAR
-// ══════════════════════════════════════════════
-.sidebar {
-  position: relative;
-  z-index: 10;
-  width: 260px;
-  height: calc(100vh - 46px);
-  background: $white-glass;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-right: 1px solid rgba(255, 255, 255, 0.55);
-  display: flex;
-  flex-direction: column;
-  padding: 2rem 1.5rem;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 3rem;
-
-  .brandIcon {
-    width: 32px; height: 32px;
-    background: rgba(168, 216, 255, 0.35);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .brandText {
-    font-size: 0.85rem;
-    font-weight: 800;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: $text-main;
-  }
-}
-
-.nav {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.navItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0.8rem 1rem;
-  border-radius: $r-md;
-  color: $text-muted;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.04);
-    color: $text-main;
-  }
-
-  &.active {
-    background: #fff;
-    color: $text-main;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-  }
 }
 
 // ══════════════════════════════════════════════
@@ -191,11 +64,11 @@ $r-md:   16px;
     font-weight: 800;
     letter-spacing: -0.02em;
     margin: 0;
-    color: $text-main;
+    color: var(--text-primary);
   }
   p {
     margin: 4px 0 0;
-    color: $text-muted;
+    color: var(--text-muted);
     font-size: 0.95rem;
   }
 }
@@ -208,20 +81,20 @@ $r-md:   16px;
 }
 
 .statCard {
-  background: $white-glass;
+  background: var(--bg-overlay);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  border: 1px solid var(--border);
   border-radius: $r-lg;
   padding: 1.8rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
 
   .statLabel {
     font-size: 0.85rem;
     font-weight: 600;
-    color: $text-muted;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 1rem;
@@ -230,31 +103,32 @@ $r-md:   16px;
   .statValue {
     font-size: 2.8rem;
     font-weight: 800;
-    color: $text-main;
+    color: var(--text-primary);
     line-height: 1;
     margin-bottom: 0.5rem;
   }
 
   .statSub {
     font-size: 0.85rem;
-    color: #10b981; // green
+    color: var(--green);
     font-weight: 500;
   }
 }
 
 .panel {
-  background: $white-glass;
+  background: var(--bg-overlay);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
   border-radius: $r-lg;
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
 
   h3 {
     margin: 0 0 1.5rem;
     font-size: 1.2rem;
     font-weight: 700;
-    color: $text-main;
+    color: var(--text-primary);
   }
 }
 
@@ -270,23 +144,26 @@ $r-md:   16px;
   justify-content: space-between;
   padding: 1rem;
   border-radius: $r-md;
-  background: rgba(255,255,255, 0.4);
-  border: 1px solid rgba(255,255,255, 0.5);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  transition: background 0.15s;
+  &:hover { background: var(--bg-active); }
 
   .feedMethod {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
     font-size: 0.8rem;
     font-weight: 700;
     padding: 4px 8px;
     border-radius: 6px;
-    background: rgba(0,0,0,0.05);
-    color: $text-main;
+    background: var(--accent-muted);
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
   }
 
   .feedEndpoint {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
     font-size: 0.85rem;
-    color: $text-muted;
+    color: var(--text-muted);
     flex: 1;
     margin: 0 1rem;
   }
@@ -294,193 +171,66 @@ $r-md:   16px;
   .feedStatus {
     font-weight: 600;
     font-size: 0.85rem;
-    &.status200 { color: #10b981; }
-    &.status400 { color: #ef4444; }
-  }
-}
-
-// ══════════════════════════════════════════════
-//  THEME TOGGLE
-// ══════════════════════════════════════════════
-.themeToggle {
-  position: absolute;
-  top: 2.5rem;
-  right: 3rem;
-  z-index: 200;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 1px solid rgba(26, 26, 26, 0.12);
-  background: $white-glass;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $text-main;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-  &:hover {
-    transform: scale(1.08);
-  }
-}
-
-// ══════════════════════════════════════════════
-//  DARK MODE
-// ══════════════════════════════════════════════
-$dm-bg:     #121214;
-$dm-text:   #EDEAE4;
-$dm-muted:  #888898;
-$dm-border: rgba(255, 255, 255, 0.08);
-$dm-glass:  rgba(255, 255, 255, 0.03);
-
-.dark {
-
-  .ambientOrb1 {
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-  }
-  .ambientOrb2 {
-    background: radial-gradient(circle, rgba(100, 180, 255, 0.1) 0%, transparent 70%);
-  }
-  .gridLines {
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  }
-  background: $dm-bg;
-  color: $dm-text;
-
-  .springBg { opacity: 0.1; }
-  
-  .sidebar {
-    background: rgba(18, 18, 20, 0.6);
-    border-color: $dm-border;
-  }
-
-  .brandText { color: $dm-text; }
-  
-  .navItem {
-    color: $dm-muted;
-    &:hover { background: rgba(255,255,255,0.04); color: $dm-text; }
-    &.active {
-      background: rgba(255,255,255,0.06);
-      border-color: $dm-border;
-      color: $dm-text;
-      box-shadow: none;
-    }
-  }
-
-  .header h1 { color: $dm-text; }
-  .header p { color: $dm-muted; }
-
-  .statCard, .panel {
-    background: rgba(255, 255, 255, 0.02);
-    border-color: $dm-border;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    .statLabel { color: $dm-muted; }
-    .statValue { color: $dm-text; }
-    h3 { color: $dm-text; }
-  }
-
-  .feedItem {
-    background: rgba(255,255,255,0.02);
-    border-color: $dm-border;
-    
-    .feedMethod { background: rgba(255,255,255,0.1); color: $dm-text; }
-    .feedEndpoint { color: $dm-muted; }
-  }
-
-  .themeToggle {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: $dm-border;
-    color: $dm-text;
+    &.status200 { color: var(--green); }
+    &.status400 { color: var(--red); }
   }
 }
 
 // ── Skeleton Loader ────────────────────────────
 @keyframes shimmer {
   0%   { background-position: -600px 0; }
-  100% { background-position: 600px 0; }
+  100% { background-position:  600px 0; }
 }
 
 %skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, var(--bg-hover) 25%, var(--bg-active) 50%, var(--bg-hover) 75%);
   background-size: 600px 100%;
   animation: shimmer 1.4s infinite linear;
   border-radius: 6px;
 }
 
-.skeletonTitle {
-  @extend %skeleton;
-  height: 28px;
-  width: 220px;
-  margin-bottom: 0.5rem;
-}
-
-.skeletonSub {
-  @extend %skeleton;
-  height: 16px;
-  width: 320px;
-}
-
-.skeletonBlock {
-  @extend %skeleton;
-  height: 48px;
-  width: 100%;
-}
+.skeletonTitle   { @extend %skeleton; height: 28px; width: 220px; margin-bottom: 0.5rem; }
+.skeletonSub     { @extend %skeleton; height: 16px; width: 320px; }
+.skeletonBlock   { @extend %skeleton; height: 48px; width: 100%; }
 
 // ── Empty State ────────────────────────────────
 .emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 6rem 2rem;
-  max-width: 480px;
-  margin: 0 auto;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center;
+  padding: 6rem 2rem; max-width: 480px; margin: 0 auto;
 
-  h2 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: $text-main;
-    margin: 1.25rem 0 0.5rem;
-  }
-
-  p {
-    font-size: 0.875rem;
-    color: $text-muted;
-    line-height: 1.6;
-    margin: 0;
-  }
+  h2 { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin: 1.25rem 0 0.5rem; }
+  p  { font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; margin: 0; }
 }
 
 .emptyIcon {
-  width: 72px;
-  height: 72px;
-  background: #f3f4f6;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #9ca3af;
+  width: 72px; height: 72px; background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 16px; display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted);
 }
 
 .emptyBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1.5rem;
-  padding: 0.6rem 1.25rem;
-  background: #000;
-  color: #fff;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  margin-top: 1.5rem; padding: 0.6rem 1.25rem;
+  background: var(--accent); color: #fff; border-radius: 6px;
+  font-size: 0.875rem; font-weight: 600; text-decoration: none;
   transition: background 0.15s;
-
-  &:hover { background: #333; }
+  &:hover { background: var(--accent-hover); }
 }
+
+// ── Spring Bg (decorative) ─────────────────────
+@keyframes floatPetal {
+  0%   { transform: translateY(0)    rotate(0deg)   translateX(0); opacity: 0.4; }
+  50%  { transform: translateY(60px) rotate(80deg)  translateX(-6px); opacity: 0.2; }
+  100% { transform: translateY(140px) rotate(160deg) translateX(0); opacity: 0; }
+}
+.springBg { position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; opacity: 0.5; }
+.branch1 { position: absolute; top: -10px; left: -30px; width: 380px; opacity: 0.5; }
+.branch2 { position: absolute; top: -10px; right: -30px; width: 360px; opacity: 0.4; }
+.petal   { position: absolute; animation: floatPetal 8s ease-in infinite; }
+.petal1  { width: 18px; top: 12%; left: 18%; animation-duration: 9s; animation-delay: 0s; }
+.petal2  { width: 14px; top:  8%; left: 55%; animation-duration: 7s; animation-delay: 1.5s; }
+.petal3  { width: 16px; top: 18%; left: 80%; animation-duration: 10s; animation-delay: 0.5s; }
+.petal4  { width: 12px; top:  5%; left: 35%; animation-duration: 8s; animation-delay: 2.5s; }
+.sparkle, .bloom1, .bloom2 { display: none; }

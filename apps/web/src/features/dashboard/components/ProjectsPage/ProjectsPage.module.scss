@@ -19,21 +19,17 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 
 // Loading Screen
 .loadingScreen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: $bg-top;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; background: var(--bg-base);
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 .spinner {
-  width: 28px;
-  height: 28px;
-  border: 2.5px solid rgba(0,0,0,0.1);
-  border-top-color: #1A1A1A;
+  width: 28px; height: 28px;
+  border: 2.5px solid var(--border);
+  border-top-color: var(--text-primary);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
@@ -44,11 +40,37 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 .page {
   position: relative;
   min-height: 100vh;
-  background: linear-gradient(160deg, $bg-top 0%, $bg-bot 100%);
-  color: $text-main;
+  background: linear-gradient(160deg, var(--bg-base) 0%, var(--bg-base-2) 100%);
+  color: var(--text-primary);
   font-family: 'Inter', sans-serif;
   overflow: hidden;
   display: flex;
+}
+
+.ambientOrb1 {
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(90px);
+  z-index: 0;
+  background: radial-gradient(circle, var(--orb1) 0%, transparent 70%);
+  top: -200px;
+  right: -100px;
+}
+
+.ambientOrb2 {
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(90px);
+  z-index: 0;
+  background: radial-gradient(circle, var(--orb2) 0%, transparent 70%);
+  bottom: -100px;
+  left: -100px;
 }
 
 .ambientOrb1 {
@@ -83,8 +105,8 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   z-index: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 40px 40px;
   mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
 }
@@ -121,102 +143,7 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 .petal3 { top: 60px; left: 150px; animation: floatPetal 7s infinite linear 4s; }
 .petal4 { top: 20px; left: 100px; animation: floatPetal 8.5s infinite linear 6s; }
 
-// ══════════════════════════════════════════════
-//  DARK MODE STYLES
-// ══════════════════════════════════════════════
-.dark {
-
-  .ambientOrb1 {
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-  }
-  .ambientOrb2 {
-    background: radial-gradient(circle, rgba(100, 180, 255, 0.1) 0%, transparent 70%);
-  }
-  .gridLines {
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  }
-  background: linear-gradient(160deg, $dark-bg-top 0%, $dark-bg-bot 100%);
-  color: $dark-text-main;
-
-
-  .spinner {
-    border-color: rgba(255,255,255,0.1);
-    border-top-color: $dark-text-main;
-  }
-
-  .sidebar {
-    background: $dark-glass;
-    border-right-color: rgba(255,255,255,0.05);
-  }
-  .brandText, .navItem { color: $dark-text-main; }
-  .navItem:hover { background: rgba(255,255,255,0.05); }
-  .navItem.active {
-    background: rgba(255,255,255,0.08);
-    border-color: rgba(255,255,255,0.1);
-    box-shadow: none;
-  }
-  .brandIcon {
-    background: rgba(255, 255, 255, 0.1);
-    svg polygon { stroke: $dark-text-main; }
-    svg circle { fill: $dark-text-main; }
-  }
-
-  .themeToggle {
-    background: $dark-glass;
-    border-color: rgba(255,255,255,0.1);
-    color: $dark-text-main;
-    &:hover { background: rgba(255,255,255,0.1); }
-  }
-
-  // Cards & Inputs
-  .card, .modal {
-    background: $dark-glass;
-    border-color: rgba(255, 255, 255, 0.08);
-  }
-  .card:hover {
-    background: rgba(40, 40, 47, 0.85);
-    border-color: rgba(255, 255, 255, 0.15);
-  }
-  .cardName { color: $dark-text-main; }
-  .cardDesc, .cardMeta, .modal .fieldLabel span { color: $dark-text-muted; }
-
-  .searchInput, .filterBtn, .viewToggle, .dropdown, .fieldInput, .fieldTextarea, .emptyIcon {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.1);
-    color: $dark-text-main;
-  }
-  .titleWrapper, .titleIcon {
-    color: $dark-text-main;
-  }
-
-  .searchInput:focus, .fieldInput:focus, .fieldTextarea:focus {
-    border-color: rgba(255, 255, 255, 0.25);
-  }
-
-  .dropItem { color: $dark-text-main; }
-  .dropItem:hover { background: rgba(255, 255, 255, 0.08); }
-  .cancelBtn { color: $dark-text-muted; border-color: rgba(255,255,255,0.1); }
-  .cancelBtn:hover { color: $dark-text-main; border-color: rgba(255,255,255,0.2); }
-
-  .emptyState p { color: $dark-text-muted; }
-  
-  .menuBtn:hover, .viewBtn:hover { background: rgba(255, 255, 255, 0.1); color: $dark-text-main; }
-  .viewBtnActive { background: rgba(255, 255, 255, 0.15) !important; color: $dark-text-main !important; }
-
-  .addCard {
-    background: rgba(255,255,255,0.02);
-    border-color: rgba(255, 255, 255, 0.07);
-    &:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.15); }
-  }
-  .addCardIcon {
-    background: rgba(99,102,241,0.1);
-    color: #818CF8;
-    border-color: rgba(99,102,241,0.2);
-  }
-  .addCardLabel { color: $dark-text-muted; }
-}
+// Dark mode is now handled via CSS variables — no class needed.
 
 .themeToggle {
   position: absolute;
@@ -252,43 +179,22 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 //  SIDEBAR
 // ══════════════════════════════════════════════
 .sidebar {
-  position: relative;
+  position: fixed;
   z-index: 10;
   width: 260px;
   height: calc(100vh - 46px);
-  background: $white-glass;
+  background: var(--sidebar-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-right: 1px solid rgba(255, 255, 255, 0.55);
-  display: flex;
-  flex-direction: column;
-  padding: 2rem 1.5rem;
-  
-  // Need to offset for the navbar!
-  top: 46px; 
-  position: fixed;
-  left: 0;
+  border-right: 1px solid var(--sidebar-border);
+  display: flex; flex-direction: column; padding: 2rem 1.5rem;
+  top: 46px; left: 0;
 }
 
 .brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 3rem;
-
-  .brandIcon {
-    width: 32px; height: 32px;
-    background: rgba(168, 216, 255, 0.35);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .brandText {
-    font-size: 0.85rem;
-    font-weight: 800;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: $text-main;
-  }
+  display: flex; align-items: center; gap: 10px; margin-bottom: 3rem;
+  .brandIcon { width: 32px; height: 32px; background: var(--accent-muted); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .brandText { font-size: 0.85rem; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-primary); }
 }
 
 .nav {
@@ -298,28 +204,11 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 }
 
 .navItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0.8rem 1rem;
-  border-radius: $r-md;
-  color: $text-muted;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.04);
-    color: $text-main;
-  }
-
-  &.active {
-    background: #fff;
-    color: $text-main;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-  }
+  display: flex; align-items: center; gap: 12px; padding: 0.8rem 1rem;
+  border-radius: $r-md; color: var(--text-muted); text-decoration: none;
+  font-weight: 600; font-size: 0.9rem; transition: all 0.2s ease;
+  &:hover { background: var(--bg-hover); color: var(--text-primary); }
+  &.active { background: var(--bg-surface); color: var(--text-primary); box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid var(--border); }
 }
 
 // ══════════════════════════════════════════════
@@ -351,14 +240,12 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   gap: 0.75rem;
 }
 
-.titleIcon {
-  color: $text-main;
-}
+.titleIcon { color: var(--text-primary); }
 
 .title {
   font-size: 2rem;
   font-weight: 800;
-  color: $text-main;
+  color: var(--text-primary);
   letter-spacing: -0.02em;
   margin: 0;
 }
@@ -378,20 +265,17 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 }
 
 .searchIcon {
-  position: absolute;
-  left: 12px;
-  color: $text-muted;
-  display: flex;
-  align-items: center;
-  pointer-events: none;
+  position: absolute; left: 12px;
+  color: var(--text-muted);
+  display: flex; align-items: center; pointer-events: none;
 }
 
 .searchInput {
-  background: $white-glass;
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid var(--border);
   border-radius: $pill;
-  color: $text-main;
+  color: var(--text-primary);
   font-size: 0.875rem;
   padding: 10px 16px 10px 38px;
   width: 220px;
@@ -399,17 +283,17 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   transition: border-color 0.15s, box-shadow 0.15s;
   font-family: inherit;
 
-  &::placeholder { color: $text-muted; }
-  &:focus { border-color: rgba(0,0,0,0.2); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
+  &::placeholder { color: var(--text-muted); }
+  &:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-muted); }
 }
 
 // ── Filters & View ──
 .filterBtn {
-  background: $white-glass;
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid var(--border);
   border-radius: $pill;
-  color: $text-main;
+  color: var(--text-primary);
   font-size: 0.875rem;
   font-family: inherit;
   font-weight: 600;
@@ -419,11 +303,7 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   align-items: center;
   gap: 6px;
   transition: all 0.2s ease;
-
-  &:hover {
-    background: rgba(255,255,255,0.9);
-    border-color: rgba(0,0,0,0.15);
-  }
+  &:hover { background: var(--bg-hover); border-color: var(--border-strong); }
 }
 
 .caret {
@@ -433,9 +313,9 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 
 .viewToggle {
   display: flex;
-  background: $white-glass;
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid var(--border);
   border-radius: $pill;
   overflow: hidden;
   padding: 3px;
@@ -446,19 +326,18 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   border: none;
   border-radius: $pill;
   background: transparent;
-  color: $text-muted;
+  color: var(--text-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
   transition: all 0.2s ease;
-
-  &:hover { background: rgba(0,0,0,0.04); color: $text-main; }
+  &:hover { background: var(--bg-hover); color: var(--text-primary); }
 }
 
 .viewBtnActive {
-  background: #fff !important;
-  color: $text-main !important;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  background: var(--bg-overlay) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
 }
 
 // ── New project btn ──
@@ -466,8 +345,8 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #1A1A1A;
-  color: #fff;
+  background: var(--text-primary);
+  color: var(--bg-base);
   border: none;
   border-radius: $pill;
   padding: 10px 20px;
@@ -476,7 +355,6 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   font-family: inherit;
   cursor: pointer;
   transition: all 0.2s ease;
-
   &:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
   &:active { transform: translateY(0); }
   &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
@@ -508,22 +386,16 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 }
 
 .skeletonText {
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--bg-hover);
   border-radius: 4px;
   position: relative;
   overflow: hidden;
-
   &::after {
     content: "";
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    background: linear-gradient(90deg, transparent, var(--bg-active), transparent);
     animation: shimmer 1.5s infinite;
-  }
-  
-  .dark & {
-    background: rgba(255, 255, 255, 0.06);
-    &::after { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent); }
   }
 }
 
@@ -564,10 +436,8 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 .loaderSvg {
   width: 120px;
   height: 120px;
-  color: $text-main;
-  opacity: 0.7;
-
-  .dark & { color: #818CF8; opacity: 0.9; }
+  color: var(--accent);
+  opacity: 0.85;
 }
 
 .loaderPath {
@@ -586,13 +456,11 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 .loaderLabel {
   font-size: 0.88rem;
   font-weight: 600;
-  color: $text-muted;
+  color: var(--text-muted);
   letter-spacing: 0.04em;
   animation: drawStroke 0.3s ease 1.1s both;
   opacity: 0;
   animation-fill-mode: forwards;
-
-  .dark & { color: rgba(255,255,255,0.35); }
 }
 
 // ── Title icon: hidden until load done, then fades in ──
@@ -622,9 +490,9 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 }
 
 .card {
-  background: $white-glass;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
   border-radius: $r-lg;
   padding: 24px;
   cursor: pointer;
@@ -632,16 +500,17 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   animation: cardIn 0.3s ease both;
   transition: all 0.2s ease;
   outline: none;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.06);
-    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+    background: var(--bg-surface);
+    border-color: var(--border-strong);
   }
 
   &:focus-visible {
-    box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.2);
+    box-shadow: 0 0 0 3px var(--accent-muted);
   }
 }
 
@@ -656,7 +525,7 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 .cardName {
   font-size: 1.1rem;
   font-weight: 700;
-  color: $text-main;
+  color: var(--text-primary);
   line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
@@ -668,26 +537,20 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(79, 70, 229, 0.08);
-  border: 1px solid rgba(79, 70, 229, 0.15);
+  background: var(--accent-muted);
+  border: 1px solid var(--accent-border);
   padding: 4px 10px;
   border-radius: $pill;
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  color: #4F46E5;
-  
-  .dark & {
-    background: rgba(99, 102, 241, 0.1);
-    border-color: rgba(99, 102, 241, 0.2);
-    color: #818CF8;
-  }
+  color: var(--accent);
 }
 
 .cardDesc {
   font-size: 0.9rem;
-  color: $text-muted;
+  color: var(--text-muted);
   line-height: 1.5;
   margin-bottom: 20px;
   display: -webkit-box;
@@ -703,12 +566,12 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   justify-content: space-between;
   margin-top: auto;
   padding-top: 16px;
-  border-top: 1px solid rgba(0,0,0,0.06);
+  border-top: 1px solid var(--border);
 }
 
 .cardMeta {
   font-size: 0.8rem;
-  color: $text-muted;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -716,8 +579,8 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #1A1A1A;
-  color: #FFF;
+  background: var(--text-primary);
+  color: var(--bg-base);
   font-size: 0.75rem;
   font-weight: 800;
   display: flex;
@@ -732,26 +595,25 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   border-radius: 6px;
   border: none;
   background: transparent;
-  color: $text-muted;
+  color: var(--text-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-
-  &:hover { background: rgba(0,0,0,0.05); color: $text-main; }
+  &:hover { background: var(--bg-hover); color: var(--text-primary); }
 }
 
 .dropdown {
   position: absolute;
   top: 28px;
   right: 0;
-  background: #FFF;
-  border: 1px solid rgba(0,0,0,0.1);
+  background: var(--drop-bg);
+  border: 1px solid var(--drop-border);
   border-radius: 12px;
   min-width: 160px;
   z-index: 100;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+  box-shadow: var(--drop-shadow);
   overflow: hidden;
   animation: cardIn 0.15s ease;
   padding: 4px;
@@ -763,7 +625,7 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   padding: 10px 14px;
   border: none;
   background: transparent;
-  color: $text-main;
+  color: var(--text-primary);
   font-size: 0.875rem;
   font-weight: 500;
   font-family: inherit;
@@ -771,19 +633,18 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   cursor: pointer;
   border-radius: 8px;
   transition: background 0.15s;
-
-  &:hover { background: rgba(0,0,0,0.04); }
+  &:hover { background: var(--drop-item-hover); }
 }
 
 .dropItemDanger {
-  color: #ef4444;
-  &:hover { background: rgba(239, 68, 68, 0.08); }
+  color: var(--red);
+  &:hover { background: var(--red-bg); }
 }
 
 // ── Add project card ──
 .addCard {
-  background: rgba(255,255,255,0.35);
-  border: 1.5px dashed rgba(0,0,0,0.12);
+  background: var(--bg-input);
+  border: 1.5px dashed var(--border-strong);
   border-radius: $r-lg;
   display: flex;
   align-items: center;
@@ -791,19 +652,13 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   min-height: 125px;
   transition: all 0.2s ease;
   padding: 0;
-
   &:hover {
-    background: rgba(255,255,255,0.55);
-    border-color: rgba(79, 70, 229, 0.3);
+    background: var(--accent-muted);
+    border-color: var(--accent);
     transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(79, 70, 229, 0.06);
-
-    .addCardIcon {
-      background: rgba(79, 70, 229, 0.1);
-      color: #4F46E5;
-      border-color: rgba(79, 70, 229, 0.2);
-    }
-    .addCardLabel { color: #4F46E5; }
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+    .addCardIcon { background: var(--accent-muted); color: var(--accent); border-color: var(--accent-border); }
+    .addCardLabel { color: var(--accent); }
   }
 }
 
@@ -818,19 +673,19 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.04);
-  border: 1px solid rgba(0,0,0,0.08);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $text-muted;
+  color: var(--text-muted);
   transition: all 0.2s ease;
 }
 
 .addCardLabel {
   font-size: 0.88rem;
   font-weight: 700;
-  color: $text-muted;
+  color: var(--text-muted);
   transition: color 0.2s ease;
 }
 
@@ -842,26 +697,26 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   justify-content: center;
   gap: 16px;
   padding: 80px 20px;
-  color: $text-muted;
+  color: var(--text-muted);
 }
 
 .emptyIcon {
   width: 64px;
   height: 64px;
-  background: $white-glass;
-  border: 1px solid rgba(0,0,0,0.05);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
   border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $text-muted;
+  color: var(--text-muted);
   box-shadow: 0 8px 24px rgba(0,0,0,0.04);
 }
 
 .emptyTitle {
   font-size: 1.1rem;
   font-weight: 600;
-  color: $text-muted;
+  color: var(--text-muted);
   margin: 0;
 }
 
@@ -887,13 +742,13 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 }
 
 .modal {
-  background: #FFF;
-  border: 1px solid rgba(0,0,0,0.05);
+  background: var(--drop-bg);
+  border: 1px solid var(--drop-border);
   border-radius: $r-lg;
   padding: 32px;
   width: 100%;
   max-width: 480px;
-  box-shadow: 0 32px 64px rgba(0,0,0,0.15);
+  box-shadow: var(--drop-shadow);
   animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -906,7 +761,7 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   h2 {
     font-size: 1.5rem;
     font-weight: 800;
-    color: $text-main;
+    color: var(--text-primary);
     margin: 0;
     letter-spacing: -0.02em;
   }
@@ -917,14 +772,14 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   height: 32px;
   border-radius: 50%;
   border: none;
-  background: rgba(0,0,0,0.04);
-  color: $text-muted;
+  background: var(--bg-hover);
+  color: var(--text-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  &:hover { background: rgba(0,0,0,0.08); color: $text-main; }
+  &:hover { background: var(--bg-active); color: var(--text-primary); }
 }
 
 .modalForm {
@@ -942,18 +797,18 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 .fieldLabel {
   font-size: 0.9rem;
   font-weight: 600;
-  color: $text-main;
+  color: var(--text-primary);
 }
 
-.required { color: #ef4444; margin-left: 2px; }
-.optional { color: $text-muted; font-weight: 400; }
+.required { color: var(--red); margin-left: 2px; }
+.optional  { color: var(--text-muted); font-weight: 400; }
 
 .fieldInput,
 .fieldTextarea {
-  background: #fafafa;
-  border: 1px solid rgba(0,0,0,0.1);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
   border-radius: 12px;
-  color: $text-main;
+  color: var(--text-primary);
   font-size: 0.95rem;
   font-family: inherit;
   padding: 12px 16px;
@@ -961,11 +816,11 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   transition: all 0.2s ease;
   resize: vertical;
 
-  &::placeholder { color: $text-muted; opacity: 0.7; }
-  &:focus { 
-    background: #fff;
-    border-color: #1A1A1A; 
-    box-shadow: 0 0 0 3px rgba(26,26,26,0.1); 
+  &::placeholder { color: var(--text-muted); opacity: 0.7; }
+  &:focus {
+    background: var(--bg-hover);
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px var(--accent-muted);
   }
 }
 
@@ -985,20 +840,20 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
 
 .cancelBtn {
   background: transparent;
-  border: 1px solid rgba(0,0,0,0.1);
+  border: 1px solid var(--border);
   border-radius: $pill;
-  color: $text-muted;
+  color: var(--text-muted);
   font-size: 0.95rem;
   font-family: inherit;
   font-weight: 600;
   padding: 10px 24px;
   cursor: pointer;
   transition: all 0.2s ease;
-  &:hover { border-color: rgba(0,0,0,0.2); color: $text-main; background: rgba(0,0,0,0.02); }
+  &:hover { border-color: var(--border-strong); color: var(--text-primary); background: var(--bg-hover); }
 }
 
 .createBtn {
-  background: #1A1A1A;
+  background: var(--accent);
   border: none;
   border-radius: $pill;
   color: #FFF;
@@ -1008,19 +863,19 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   padding: 10px 24px;
   cursor: pointer;
   transition: all 0.2s ease;
-  &:hover { background: #333; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  &:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
   &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 }
 
 .deleteWarning {
-  color: $text-muted;
+  color: var(--text-muted);
   font-size: 0.95rem;
   line-height: 1.6;
   margin: 0 0 24px;
 }
 
 .deleteBtn {
-  background: #ef4444;
+  background: var(--red);
   border: none;
   border-radius: $pill;
   color: #fff;
@@ -1030,7 +885,7 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   padding: 10px 24px;
   cursor: pointer;
   transition: all 0.2s ease;
-  &:hover { background: #dc2626; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); }
+  &:hover { filter: brightness(0.9); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); }
 }
 
 // ══════════════════════════════════════════════
@@ -1042,104 +897,37 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   gap: 20px;
 }
 
-.serviceTypeHint {
-  font-size: 0.9rem;
-  color: $text-muted;
-  margin: 0;
-}
+.serviceTypeHint { font-size: 0.9rem; color: var(--text-muted); margin: 0; }
 
-.serviceTypeGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
+.serviceTypeGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
 .serviceTypeCard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 20px 16px;
-  background: #fafafa;
-  border: 2px solid rgba(0,0,0,0.08);
-  border-radius: 16px;
-  cursor: pointer;
-  font-family: inherit;
-  text-align: center;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: #f5f5ff;
-    border-color: rgba(79, 70, 229, 0.3);
-  }
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 20px 16px; background: var(--bg-input); border: 2px solid var(--border);
+  border-radius: 16px; cursor: pointer; font-family: inherit;
+  text-align: center; transition: all 0.2s ease;
+  &:hover { background: var(--accent-muted); border-color: var(--accent-border); }
 }
 
 .serviceTypeCardActive {
-  background: rgba(79, 70, 229, 0.05) !important;
-  border-color: #4F46E5 !important;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  background: var(--accent-muted) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px var(--accent-muted);
 }
 
 .serviceTypeIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #4F46E5;
-  transition: all 0.2s ease;
-  margin-bottom: 4px;
-
-  .serviceTypeCardActive & {
-    transform: scale(1.05);
-  }
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent); transition: all 0.2s ease; margin-bottom: 4px;
+  .serviceTypeCardActive & { transform: scale(1.05); }
 }
 
-.serviceTypeLabel {
-  font-size: 0.9rem;
-  font-weight: 800;
-  color: $text-main;
-  letter-spacing: -0.01em;
-}
-
-.serviceTypeDesc {
-  font-size: 0.78rem;
-  color: $text-muted;
-  line-height: 1.4;
-}
+.serviceTypeLabel { font-size: 0.9rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.01em; }
+.serviceTypeDesc  { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
 
 .serviceModeBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #4F46E5;
-  background: rgba(79, 70, 229, 0.07);
-  border: 1px solid rgba(79, 70, 229, 0.15);
-  border-radius: 100px;
-  padding: 4px 12px;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  align-self: flex-start;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.75rem; font-weight: 700; color: var(--accent);
+  background: var(--accent-muted); border: 1px solid var(--accent-border);
+  border-radius: 100px; padding: 4px 12px;
+  letter-spacing: 0.03em; text-transform: uppercase; align-self: flex-start;
 }
-
-// Dark mode for service type cards
-.dark {
-  .serviceTypeCard {
-    background: rgba(255,255,255,0.03);
-    border-color: rgba(255,255,255,0.08);
-    &:hover { background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.3); }
-  }
-  .serviceTypeCardActive {
-    background: rgba(79,70,229,0.08) !important;
-    border-color: rgba(99,102,241,0.6) !important;
-  }
-  .serviceTypeLabel { color: #F0F0F5; }
-  .serviceTypeDesc { color: #7A7A8C; }
-  .serviceTypeHint { color: #7A7A8C; }
-  .serviceModeBadge {
-    color: #818CF8;
-    background: rgba(99,102,241,0.1);
-    border-color: rgba(99,102,241,0.2);
-  }
-}
-

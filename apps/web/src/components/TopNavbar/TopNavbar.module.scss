@@ -1,23 +1,12 @@
-// ════════════════════════════════════════════
-//  Top Navbar — Light Glassmorphic Style
-// ════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+//  Top Navbar — Theme-aware via CSS variables (3 themes)
+//  All colors reference var(--*) — never hardcode anything here.
+// ════════════════════════════════════════════════════════════════
 
+$r:  8px;
+$h:  46px;
 
-
-
-
-$bg:        rgba(255, 255, 255, 0.72);
-$border:    rgba(0, 0, 0, 0.08);
-$border2:   rgba(0, 0, 0, 0.15);
-$text:      #1A1A1A;
-$muted:     #6B6B6B;
-$green:     #1ed760;
-$green-text: #16a34a;
-$orange:    #f97316;
-$r:         8px;
-$h:         46px;
-
-// ── Bar ──
+// ── Bar ──────────────────────────────────────────────────────────
 .navbar {
   position: fixed;
   top: 0;
@@ -25,10 +14,11 @@ $h:         46px;
   right: 0;
   height: $h;
   z-index: 1000;
-  background: $bg;
+  background: var(--nav-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid $border;
+  border-bottom: 1px solid var(--nav-border);
+  box-shadow: var(--nav-shadow);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -36,17 +26,16 @@ $h:         46px;
   gap: 8px;
   font-family: 'Inter', sans-serif;
   font-size: 0.85rem;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.02);
 }
 
-// ── Sides ──
+// ── Sides ────────────────────────────────────────────────────────
 .left, .right {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-// ── Separator — glowing accent chevron ──
+// ── Separator ────────────────────────────────────────────────────
 .sep {
   display: flex;
   align-items: center;
@@ -54,7 +43,6 @@ $h:         46px;
   width: 18px;
   height: 20px;
   flex-shrink: 0;
-  margin: 0 0px;
   pointer-events: none;
   position: relative;
 
@@ -63,89 +51,78 @@ $h:         46px;
     font-size: 1.05rem;
     font-weight: 500;
     line-height: 1;
-    color: rgba(99, 102, 241, 0.4);
-    text-shadow:
-      0 0 6px rgba(99, 102, 241, 0.35),
-      0 0 14px rgba(99, 102, 241, 0.15);
+    color: var(--accent);
+    opacity: 0.45;
     display: block;
-    transition: color 0.2s ease, text-shadow 0.2s ease;
   }
 }
 
-.dark .sep::after {
-  color: rgba(129, 140, 248, 0.45);
-  text-shadow:
-    0 0 8px rgba(129, 140, 248, 0.45),
-    0 0 18px rgba(129, 140, 248, 0.2);
-}
-
-
-// ════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 //  BRAND
-// ════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 .brand {
   display: flex;
   align-items: center;
   gap: 7px;
   text-decoration: none;
-  color: $text;
+  color: var(--text-primary);
   padding: 4px 6px;
   border-radius: $r;
-  transition: background 0.15s;
-  &:hover { background: rgba(0,0,0,0.04); }
+  transition: background 0.15s !important;
+  &:hover { background: var(--bg-hover); }
 }
 
 .brandIcon {
   width: 24px;
   height: 24px;
-  background: rgba(168, 216, 255, 0.35);
+  background: var(--accent-muted);
   border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $text;
+  color: var(--text-primary);
   flex-shrink: 0;
-  svg polygon { stroke: $text; }
-  svg circle { fill: $text; }
+  svg polygon { stroke: var(--text-primary); }
+  svg circle { fill: var(--text-primary); }
 }
 
 .brandText {
   font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.1em;
-  color: $text;
+  color: var(--text-primary);
 }
 
 .freeBadge {
   font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  background: rgba(0,0,0,0.05);
-  border: 1px solid rgba(0,0,0,0.08);
-  color: $muted;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
   padding: 1px 6px;
   border-radius: 4px;
 }
 
-// ════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 //  SELECTOR BUTTONS (project / env)
-// ════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 .selectorBtn, .envBtn {
   display: flex;
   align-items: center;
   gap: 6px;
   background: transparent;
   border: none;
-  color: $text;
+  color: var(--text-primary);
   font-size: 0.85rem;
   font-family: inherit;
   font-weight: 600;
   padding: 5px 8px;
   border-radius: $r;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.15s !important;
   white-space: nowrap;
-  &:hover { background: rgba(0,0,0,0.04); }
+  &:hover { background: var(--bg-hover); }
 }
 
 .selectorLabel {
@@ -156,82 +133,66 @@ $h:         46px;
 }
 
 .caret {
-  transition: transform 0.2s;
+  transition: transform 0.2s !important;
   flex-shrink: 0;
-  color: $muted;
+  color: var(--text-muted);
 }
 .caretOpen { transform: rotate(180deg); }
 
-// ── PRODUCTION badge ──
+// ── PRODUCTION badge ─────────────────────────────────────────────
 .prodBadge {
   font-size: 0.6rem;
   font-weight: 800;
   letter-spacing: 0.1em;
-  background: rgba(249, 115, 22, 0.12);
+  background: var(--orange-bg);
   border: 1px solid rgba(249, 115, 22, 0.25);
-  color: #c2410c;
+  color: var(--orange);
   padding: 2px 7px;
   border-radius: 4px;
 }
 
-// ── Connect button ──
+// ── Connect button ────────────────────────────────────────────────
 .connectBtn {
   display: flex;
   align-items: center;
   gap: 5px;
-  background: #fff;
-  border: none;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
   border-radius: $r;
-  color: #4f46e5;
+  color: var(--accent);
   font-size: 0.85rem;
   font-family: inherit;
   font-weight: 600;
   padding: 5px 12px;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(99, 102, 241, 0.08);
+  transition: all 0.2s ease !important;
 
   &:hover {
-    background: #f5f3ff;
-    color: #3730a3;
-    transform: translateY(-2px) scale(1.04);
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
-    animation: none;
-  }
-
-  &:active {
-    box-shadow: 0 1px 4px rgba(99, 102, 241, 0.12);
+    background: var(--accent-muted);
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
   }
 }
 
-// ── Service mode icon badge (shown on dashboard navbar) ──
+// ── Service mode icon badge ───────────────────────────────────────
 .svcIconBadge {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #4F46E5;
+  color: var(--accent);
   flex-shrink: 0;
-
-  .dark & {
-    color: #818CF8;
-  }
 }
 
-// ── Service mode nav text (shown on services page) ──
+// ── Service mode nav text ─────────────────────────────────────────
 .svcModeNav {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(79, 70, 229, 0.07);
-  border: 1px solid rgba(79, 70, 229, 0.15);
+  background: var(--accent-muted);
+  border: 1px solid var(--accent-border);
   border-radius: 100px;
   padding: 4px 10px;
-
-  .dark & {
-    background: rgba(99, 102, 241, 0.1);
-    border-color: rgba(99, 102, 241, 0.2);
-  }
 }
 
 .svcModeText {
@@ -239,20 +200,16 @@ $h:         46px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #4F46E5;
-
-  .dark & {
-    color: #818CF8;
-  }
+  color: var(--accent);
 }
 
-// ════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 //  RIGHT SIDE
-// ════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 .ghostBtn {
   background: transparent;
   border: none;
-  color: $muted;
+  color: var(--text-muted);
   font-size: 0.85rem;
   font-family: inherit;
   font-weight: 500;
@@ -260,24 +217,24 @@ $h:         46px;
   border-radius: $r;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.15s;
-  &:hover { color: $text; background: rgba(0,0,0,0.04); }
+  transition: all 0.15s !important;
+  &:hover { color: var(--text-primary); background: var(--bg-hover); }
 }
 
-// ── Search ──
+// ── Search ────────────────────────────────────────────────────────
 .searchBox {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(0,0,0,0.03);
-  border: 1px solid $border;
-  border-radius: 100px; // pill shape match
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 100px;
   padding: 5px 12px;
   cursor: pointer;
-  transition: all 0.25s;
+  transition: all 0.25s !important;
   width: 140px;
   overflow: hidden;
-  &:hover { background: #FFF; border-color: rgba(0,0,0,0.15); box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+  &:hover { background: var(--bg-hover); border-color: var(--border-strong); }
 }
 
 @keyframes spinSearch {
@@ -287,27 +244,27 @@ $h:         46px;
 
 .searchOpen {
   width: 240px;
-  background: #FFF !important;
-  border-color: #3b82f6 !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+  background: var(--bg-overlay) !important;
+  border-color: var(--border-focus) !important;
+  box-shadow: 0 0 0 3px var(--accent-muted) !important;
 
   .searchIco {
-    color: #3b82f6 !important;
+    color: var(--accent) !important;
     animation: spinSearch 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   }
 }
 
-.searchIco { color: $muted; flex-shrink: 0; transition: color 0.2s; }
+.searchIco { color: var(--text-muted); flex-shrink: 0; transition: color 0.2s !important; }
 
 .searchInput {
   background: transparent;
   border: none;
   outline: none;
-  color: $text;
+  color: var(--text-primary);
   font-size: 0.85rem;
   font-family: inherit;
   width: 100%;
-  &::placeholder { color: $muted; }
+  &::placeholder { color: var(--text-muted); }
 }
 
 .kbdBtn {
@@ -320,9 +277,9 @@ $h:         46px;
 
 .kbd {
   font-size: 0.65rem;
-  color: $muted;
-  background: rgba(0,0,0,0.05);
-  border: 1px solid rgba(0,0,0,0.1);
+  color: var(--text-muted);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
   border-radius: 4px;
   padding: 2px 6px;
   font-family: inherit;
@@ -331,7 +288,7 @@ $h:         46px;
   user-select: none;
 }
 
-// ── Icon buttons ──
+// ── Icon buttons ──────────────────────────────────────────────────
 .iconBtn {
   width: 32px;
   height: 32px;
@@ -341,18 +298,18 @@ $h:         46px;
   background: transparent;
   border: none;
   border-radius: $r;
-  color: $muted;
+  color: var(--text-muted);
   cursor: pointer;
-  transition: all 0.15s;
-  &:hover { background: rgba(0,0,0,0.05); color: $text; }
+  transition: all 0.15s !important;
+  &:hover { background: var(--bg-hover); color: var(--text-primary); }
 }
 
-// ── Upgrade ──
+// ── Upgrade button ────────────────────────────────────────────────
 .upgradeBtn {
   display: flex;
   align-items: center;
-  background: $text;
-  color: #FFF;
+  background: var(--text-primary);
+  color: var(--bg-base);
   font-size: 0.8rem;
   font-weight: 700;
   font-family: inherit;
@@ -362,20 +319,19 @@ $h:         46px;
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
-  transition: all 0.15s;
+  transition: all 0.15s !important;
   margin-left: 4px;
-  &:hover { background: #333; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-  &:active { transform: translateY(0); }
+  &:hover { opacity: 0.85; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
 }
 
-// ── Avatar ──
+// ── Avatar ────────────────────────────────────────────────────────
 .avatar {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: #f4f4f5;
-  border: 1.5px solid rgba(0,0,0,0.1);
-  color: #1a1a1a;
+  background: var(--bg-hover);
+  border: 1.5px solid var(--border);
+  color: var(--text-primary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -383,30 +339,17 @@ $h:         46px;
   margin-left: 6px;
   padding: 0;
   overflow: hidden;
-  transition: all 0.15s;
-
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-
-  &:hover { border-color: rgba(0,0,0,0.25); transform: scale(1.05); }
+  transition: all 0.15s !important;
+  svg { width: 100%; height: 100%; }
+  &:hover { border-color: var(--border-strong); transform: scale(1.05); }
 }
 
-// ════════════════════════════════════════════
-//  DROPDOWN (Light theme)
-// ════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+//  DROPDOWN — fully token-driven
+// ════════════════════════════════════════════════════════════════
 @keyframes dropIn {
-  0% { 
-    opacity: 0; 
-    transform: translateY(-10px) scale(0.95); 
-    filter: blur(8px);
-  }
-  100% { 
-    opacity: 1; 
-    transform: translateY(0) scale(1); 
-    filter: blur(0);
-  }
+  0% { opacity: 0; transform: translateY(-10px) scale(0.95); filter: blur(6px); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 }
 
 .dropWrap { position: relative; }
@@ -415,14 +358,14 @@ $h:         46px;
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
-  min-width: 220px;
-  background: #FFF;
-  border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 12px;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+  min-width: 230px;
+  background: var(--drop-bg);
+  border: 1px solid var(--drop-border);
+  border-radius: 14px;
+  box-shadow: var(--drop-shadow);
   z-index: 500;
   transform-origin: top left;
-  animation: dropIn 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.15) forwards;
+  animation: dropIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.15) forwards;
   overflow: hidden;
   padding: 6px;
 }
@@ -441,44 +384,36 @@ $h:         46px;
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: #f4f4f5;
-  border: 1px solid rgba(0,0,0,0.08);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 10px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
-  color: #1a1a1a;
-
-  svg {
-    width: 100%;
-    height: 100%;
-  }
+  color: var(--text-primary);
+  svg { width: 100%; height: 100%; }
 }
 
 .dropUser {
   font-size: 0.9rem;
   font-weight: 600;
-  color: $text;
-  text-transform: none;
-  letter-spacing: 0;
+  color: var(--text-primary);
   margin-bottom: 2px;
 }
 
 .dropEmail {
   font-size: 0.78rem;
-  color: $muted;
+  color: var(--text-muted);
   font-weight: 400;
-  text-transform: none;
-  letter-spacing: 0;
 }
 
 .dropDivider {
   height: 1px;
-  background: rgba(0,0,0,0.06);
+  background: var(--drop-divider);
   margin: 4px 0;
 }
 
@@ -487,18 +422,19 @@ $h:         46px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: $muted;
+  color: var(--text-faint);
   padding: 10px 14px 4px;
 }
 
+// ── 3-Way Theme Switcher ─────────────────────────────────────────
 .themeToggleRow {
   display: flex;
   align-items: center;
-  background: rgba(0,0,0,0.04);
-  border-radius: 8px;
-  padding: 4px;
+  background: var(--bg-hover);
+  border-radius: 10px;
+  padding: 3px;
   margin: 0 10px 8px;
-  gap: 4px;
+  gap: 2px;
 }
 
 .themeToggleBtn {
@@ -506,29 +442,58 @@ $h:         46px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 0;
+  gap: 5px;
+  padding: 6px 4px;
   border: none;
   background: transparent;
-  border-radius: 6px;
-  color: $muted;
-  font-size: 0.8rem;
+  border-radius: 7px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-  
-  &:hover { color: $text; }
+  transition: all 0.2s !important;
+  white-space: nowrap;
+  &:hover { color: var(--text-primary); background: var(--bg-active); }
 }
 
 .themeToggleBtnActive {
-  background: #FFF;
-  color: $text;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  background: var(--bg-overlay);
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+
+  // Dark-blue active has accent tint
+  [data-theme="dark-blue"] & {
+    background: var(--accent-muted);
+    color: var(--accent);
+    box-shadow: 0 2px 8px rgba(56, 189, 248, 0.15);
+  }
 }
+
+.themeToggleBtnDarkBlue.themeToggleBtnActive {
+  color: var(--accent);
+  [data-theme="dark-blue"] & { color: var(--accent); }
+}
+
+// System button — active state shows a subtle OS-indicator tint
+.themeToggleBtnSystem.themeToggleBtnActive {
+  background: var(--bg-overlay);
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 7px;
+    border: 1px solid var(--border-strong);
+    pointer-events: none;
+  }
+}
+.themeToggleBtnSystem { position: relative; }
 
 .dropEmpty {
   padding: 10px 14px;
   font-size: 0.85rem;
-  color: $muted;
+  color: var(--text-muted);
 }
 
 .dropItem {
@@ -538,33 +503,37 @@ $h:         46px;
   width: 100%;
   padding: 10px 14px;
   border: none;
-  border-radius: 6px;
+  border-radius: 7px;
   background: transparent;
-  color: $text;
+  color: var(--text-primary);
   font-size: 0.85rem;
   font-weight: 500;
   font-family: inherit;
   text-align: left;
   cursor: pointer;
-  transition: background 0.15s;
-  &:hover { background: rgba(0,0,0,0.04); }
+  transition: background 0.15s !important;
+  &:hover { background: var(--drop-item-hover); }
 }
 
-.dropItemActive { color: $green-text; background: #F0FDF4; &:hover { background: #DCFCE7; } }
+.dropItemActive {
+  color: var(--green);
+  background: var(--green-bg);
+  &:hover { background: var(--green-bg); filter: brightness(0.95); }
+}
 
 .dropItemDot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: $muted;
+  background: var(--text-muted);
   flex-shrink: 0;
 }
 
-.dropItemCheck { margin-left: auto; color: $green-text; }
+.dropItemCheck { margin-left: auto; color: var(--green); }
 
 .dropItemDanger {
-  color: #ef4444;
-  &:hover { background: #FEF2F2; }
+  color: var(--red);
+  &:hover { background: var(--red-bg); }
 }
 
 .signOutBtn {
@@ -584,30 +553,24 @@ $h:         46px;
   position: absolute;
   top: 0;
   left: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease !important;
 }
 
 .signOutArrow {
   position: absolute;
   top: 0;
   left: 0;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .signOutText {
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .signOutBtn:hover {
-  .signOutDoor {
-    opacity: 0;
-  }
-  .signOutArrow {
-    transform: translateX(166px);
-  }
-  .signOutText {
-    transform: translateX(2px);
-  }
+  .signOutDoor { opacity: 0; }
+  .signOutArrow { transform: translateX(166px); }
+  .signOutText { transform: translateX(2px); }
 }
 
 .dropAction {
@@ -617,111 +580,30 @@ $h:         46px;
   width: 100%;
   padding: 10px 14px;
   border: none;
-  border-radius: 6px;
+  border-radius: 7px;
   background: transparent;
-  color: $text;
+  color: var(--text-primary);
   font-size: 0.85rem;
   font-weight: 600;
   font-family: inherit;
   text-align: left;
   cursor: pointer;
-  transition: background 0.15s;
-  &:hover { background: rgba(0,0,0,0.04); }
+  transition: background 0.15s !important;
+  &:hover { background: var(--drop-item-hover); }
 }
 
-// ════════════════════════════════════════════
-//  DARK MODE
-// ════════════════════════════════════════════
+// ── Legacy .dark class overrides (for components that still pass className)
+// These are kept as fallback but the real theming is via data-theme attr now
 .dark {
-  background: rgba(10, 10, 10, 0.72);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-
-  .brandText { color: #fff; }
-  .brandIcon { 
-    background: rgba(168, 216, 255, 0.15);
-    svg polygon { stroke: #fff; }
-    svg circle { fill: #fff; }
-  }
-  .brand:hover { background: rgba(255,255,255,0.06); }
-
-  .sep { background: rgba(255, 255, 255, 0.08); }
-
-  .selectorLabel, .selectorBtn { color: #fff; }
-  .envBtn {
-    color: #fff;
-    &:hover { background: rgba(255, 255, 255, 0.06); }
-  }
-  .prodBadge { background: rgba(249, 115, 22, 0.15); border-color: rgba(249, 115, 22, 0.3); color: #fdba74; }
-
-  .connectBtn {
-    background: rgba(255,255,255,0.05);
-    color: #fff;
-    &:hover { background: rgba(255,255,255,0.1); }
-  }
-
-  .navBtn, .feedbackBtn {
-    color: #a1a1aa;
-    &:hover { background: rgba(255,255,255,0.08); color: #fff; }
-  }
-
-  .searchBox {
-    background: rgba(255,255,255,0.05);
-    border-color: rgba(255,255,255,0.1);
-    color: #fff;
-    .searchIcon { color: #888; }
-    .shortcut { background: rgba(255,255,255,0.15); color: #ccc; border-color: transparent; }
-    &:hover { background: rgba(255,255,255,0.1); }
-  }
-  .searchOpen {
-    background: #18181b !important;
-    border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
-  }
-
-  .userBtn { border-color: rgba(255,255,255,0.15); }
-  
-  .avatar {
-    background: rgba(255,255,255,0.05);
-    border-color: rgba(255,255,255,0.1);
-    color: #fff;
-    &:hover { border-color: rgba(255,255,255,0.25); }
-  }
-
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--nav-border);
+  box-shadow: var(--nav-shadow);
+  .brandText { color: var(--text-primary); }
+  .sep { background: var(--border); }
+  .selectorLabel, .selectorBtn, .envBtn { color: var(--text-primary); }
   .drop {
-    background: #18181b;
-    border-color: #27272a;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-  }
-
-  .dropHeader {
-    .dropUser { color: #fff; }
-    .dropEmail { color: #a1a1aa; }
-  }
-
-  .dropAvatar {
-    background: rgba(255,255,255,0.05);
-    border-color: rgba(255,255,255,0.1);
-    color: #fff;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-  }
-  
-  .dropEmpty { color: #a1a1aa; }
-
-  .dropDivider { background: #27272a; }
-  .dropSectionTitle { color: #71717a; }
-
-  .themeToggleRow { background: rgba(255,255,255,0.05); }
-  .themeToggleBtn { color: #a1a1aa; &:hover { color: #fff; } }
-  .themeToggleBtnActive { background: rgba(255,255,255,0.1); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-
-  .dropItem, .dropAction {
-    color: #e4e4e7;
-    &:hover { background: rgba(255,255,255,0.08); color: #fff; }
-  }
-
-  .dropItemDanger {
-    color: #f87171;
-    &:hover { background: rgba(239, 68, 68, 0.1); color: #fca5a5; }
+    background: var(--drop-bg);
+    border-color: var(--drop-border);
+    box-shadow: var(--drop-shadow);
   }
 }

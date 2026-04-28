@@ -11,7 +11,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   const pathname = usePathname();
 
   return (
-    <div className={`${styles.layout}${dark ? ' ' + styles.dark : ''}`}>
+    <div className={styles.layout}>
       <div className={styles.ambientOrb1} />
       <div className={styles.ambientOrb2} />
       <div className={styles.gridLines} />
@@ -26,7 +26,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             Back
           </Link>
 
-          <div style={{ margin: '12px 0 6px', height: '1px', background: 'rgba(0,0,0,0.06)' }} className={styles.navDivider} />
+          <div className={styles.navDivider} />
 
           <div className={styles.navGroupLabel}>Account Settings</div>
 

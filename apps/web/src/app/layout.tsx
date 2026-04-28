@@ -45,7 +45,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${spaceGrotesk.variable} ${inter.variable} ${firaCode.variable} ${jetbrainsMono.variable}`}
+      className={`${spaceGrotesk.variable} ${inter.variable} ${firaCode.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
     >
       <head>
         {/* Material Symbols — CDN loaded, next/font doesn't support variable icon fonts */}

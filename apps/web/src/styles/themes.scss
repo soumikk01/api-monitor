@@ -1,0 +1,201 @@
+// ═══════════════════════════════════════════════════════════════════
+//  THEME TOKENS — 3 themes: light · dark · dark-blue
+//  All components reference these variables. Never hardcode colors.
+// ═══════════════════════════════════════════════════════════════════
+
+// ── LIGHT (default) ─────────────────────────────────────────────────
+:root,
+[data-theme="light"] {
+  // Backgrounds
+  --bg-base:        #F7F3EA;
+  --bg-base-2:      #F1ECE2;
+  --bg-surface:     rgba(255, 255, 255, 0.80);
+  --bg-surface-2:   rgba(255, 255, 255, 0.60);
+  --bg-overlay:     #FFFFFF;
+  --bg-input:       rgba(0, 0, 0, 0.03);
+  --bg-hover:       rgba(0, 0, 0, 0.04);
+  --bg-active:      rgba(0, 0, 0, 0.07);
+  --bg-card:        rgba(255, 255, 255, 0.75);
+
+  // Text
+  --text-primary:   #1A1A1A;
+  --text-secondary: #4B4B4B;
+  --text-muted:     #6B6B6B;
+  --text-faint:     #9CA3AF;
+  --text-inverse:   #FFFFFF;
+  --text-link:      #4F46E5;
+
+  // Borders
+  --border:         rgba(0, 0, 0, 0.08);
+  --border-strong:  rgba(0, 0, 0, 0.15);
+  --border-focus:   #6366F1;
+
+  // Navbar
+  --nav-bg:         rgba(255, 255, 255, 0.72);
+  --nav-border:     rgba(0, 0, 0, 0.08);
+  --nav-shadow:     0 2px 10px rgba(0, 0, 0, 0.04);
+
+  // Sidebar
+  --sidebar-bg:     rgba(255, 255, 255, 0.60);
+  --sidebar-border: rgba(0, 0, 0, 0.05);
+  --sidebar-hover:  rgba(0, 0, 0, 0.05);
+  --sidebar-active: rgba(0, 0, 0, 0.07);
+
+  // Dropdown
+  --drop-bg:        #FFFFFF;
+  --drop-border:    rgba(0, 0, 0, 0.10);
+  --drop-shadow:    0 12px 32px rgba(0, 0, 0, 0.10);
+  --drop-item-hover:rgba(0, 0, 0, 0.04);
+  --drop-divider:   rgba(0, 0, 0, 0.06);
+
+  // Accents
+  --accent:         #6366F1;
+  --accent-hover:   #4F46E5;
+  --accent-muted:   rgba(99, 102, 241, 0.10);
+  --accent-border:  rgba(99, 102, 241, 0.20);
+  --green:          #16a34a;
+  --green-bg:       #F0FDF4;
+  --red:            #ef4444;
+  --red-bg:         #FEF2F2;
+  --orange:         #f97316;
+  --orange-bg:      rgba(249, 115, 22, 0.10);
+
+  // Cards / code
+  --code-bg:        #F1ECE2;
+  --card-border:    rgba(0, 0, 0, 0.08);
+
+  // Scrollbar
+  --scrollbar-thumb:#C4C4C4;
+
+  // Orbs
+  --orb1:           rgba(79, 70, 229, 0.07);
+  --orb2:           rgba(168, 216, 255, 0.10);
+
+  // Grid
+  --grid-line:      rgba(0, 0, 0, 0.04);
+
+  // Typography
+  --font-mono:      'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+}
+
+// ── DARK ─────────────────────────────────────────────────────────────
+[data-theme="dark"] {
+  --bg-base:        #111113;
+  --bg-base-2:      #0D0D0F;
+  --bg-surface:     rgba(28, 28, 32, 0.80);
+  --bg-surface-2:   rgba(22, 22, 26, 0.72);
+  --bg-overlay:     #18181B;
+  --bg-input:       rgba(255, 255, 255, 0.05);
+  --bg-hover:       rgba(255, 255, 255, 0.06);
+  --bg-active:      rgba(255, 255, 255, 0.09);
+  --bg-card:        rgba(30, 30, 35, 0.75);
+
+  --text-primary:   #FAFAFA;
+  --text-secondary: #D4D4D8;
+  --text-muted:     #A1A1AA;
+  --text-faint:     #71717A;
+  --text-inverse:   #0A0A0B;
+  --text-link:      #818CF8;
+
+  --border:         rgba(255, 255, 255, 0.08);
+  --border-strong:  rgba(255, 255, 255, 0.14);
+  --border-focus:   #6366F1;
+
+  --nav-bg:         rgba(13, 13, 15, 0.80);
+  --nav-border:     rgba(255, 255, 255, 0.07);
+  --nav-shadow:     0 2px 20px rgba(0, 0, 0, 0.40);
+
+  --sidebar-bg:     rgba(17, 17, 19, 0.80);
+  --sidebar-border: rgba(255, 255, 255, 0.05);
+  --sidebar-hover:  rgba(255, 255, 255, 0.06);
+  --sidebar-active: rgba(255, 255, 255, 0.09);
+
+  --drop-bg:        #1C1C1F;
+  --drop-border:    rgba(255, 255, 255, 0.08);
+  --drop-shadow:    0 16px 48px rgba(0, 0, 0, 0.70);
+  --drop-item-hover:rgba(255, 255, 255, 0.07);
+  --drop-divider:   rgba(255, 255, 255, 0.07);
+
+  --accent:         #818CF8;
+  --accent-hover:   #A5B4FC;
+  --accent-muted:   rgba(129, 140, 248, 0.12);
+  --accent-border:  rgba(129, 140, 248, 0.22);
+  --green:          #4ADE80;
+  --green-bg:       rgba(74, 222, 128, 0.10);
+  --red:            #F87171;
+  --red-bg:         rgba(248, 113, 113, 0.10);
+  --orange:         #FB923C;
+  --orange-bg:      rgba(251, 146, 60, 0.12);
+
+  --code-bg:        #1A1A1E;
+  --card-border:    rgba(255, 255, 255, 0.07);
+
+  --scrollbar-thumb:#3F3F46;
+
+  --orb1:           rgba(99, 102, 241, 0.12);
+  --orb2:           rgba(100, 180, 255, 0.08);
+
+  --grid-line:      rgba(255, 255, 255, 0.03);
+}
+
+// ── DARK BLUE ─────────────────────────────────────────────────────────
+// Deep navy with electric sky-blue accents — like GitHub Dimmed meets
+// a professional IDE. Calmer than pure dark but richer than neutral.
+[data-theme="dark-blue"] {
+  --bg-base:        #0D1B2A;
+  --bg-base-2:      #091524;
+  --bg-surface:     rgba(14, 29, 51, 0.82);
+  --bg-surface-2:   rgba(10, 22, 40, 0.75);
+  --bg-overlay:     #112240;
+  --bg-input:       rgba(56, 189, 248, 0.05);
+  --bg-hover:       rgba(56, 189, 248, 0.07);
+  --bg-active:      rgba(56, 189, 248, 0.12);
+  --bg-card:        rgba(17, 34, 64, 0.80);
+
+  --text-primary:   #E2E8F0;
+  --text-secondary: #B8CEDD;
+  --text-muted:     #7FA3BF;
+  --text-faint:     #4D7A9E;
+  --text-inverse:   #0D1B2A;
+  --text-link:      #38BDF8;
+
+  --border:         rgba(56, 189, 248, 0.12);
+  --border-strong:  rgba(56, 189, 248, 0.22);
+  --border-focus:   #38BDF8;
+
+  --nav-bg:         rgba(10, 22, 40, 0.85);
+  --nav-border:     rgba(56, 189, 248, 0.10);
+  --nav-shadow:     0 2px 20px rgba(0, 10, 30, 0.60);
+
+  --sidebar-bg:     rgba(13, 27, 42, 0.85);
+  --sidebar-border: rgba(56, 189, 248, 0.08);
+  --sidebar-hover:  rgba(56, 189, 248, 0.08);
+  --sidebar-active: rgba(56, 189, 248, 0.14);
+
+  --drop-bg:        #112240;
+  --drop-border:    rgba(56, 189, 248, 0.12);
+  --drop-shadow:    0 16px 48px rgba(0, 0, 0, 0.70);
+  --drop-item-hover:rgba(56, 189, 248, 0.08);
+  --drop-divider:   rgba(56, 189, 248, 0.10);
+
+  --accent:         #38BDF8;
+  --accent-hover:   #7DD3FC;
+  --accent-muted:   rgba(56, 189, 248, 0.12);
+  --accent-border:  rgba(56, 189, 248, 0.24);
+  --green:          #34D399;
+  --green-bg:       rgba(52, 211, 153, 0.10);
+  --red:            #F87171;
+  --red-bg:         rgba(248, 113, 113, 0.10);
+  --orange:         #FCD34D;
+  --orange-bg:      rgba(252, 211, 77, 0.10);
+
+  --code-bg:        #091524;
+  --card-border:    rgba(56, 189, 248, 0.10);
+
+  --scrollbar-thumb:#1E4060;
+
+  --orb1:           rgba(56, 189, 248, 0.10);
+  --orb2:           rgba(56, 189, 248, 0.06);
+
+  --grid-line:      rgba(56, 189, 248, 0.03);
+}

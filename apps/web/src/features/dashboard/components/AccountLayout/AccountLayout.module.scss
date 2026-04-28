@@ -1,62 +1,33 @@
-$bg-top:     #F7F3EA;
-$bg-bot:     #F1ECE2;
-$text-main:  #1A1A1A;
-$text-muted: #6B6B6B;
-$white-glass: rgba(255, 255, 255, 0.72);
-
-$dark-bg-top:    #16161A;
-$dark-bg-bot:    #0D0D0F;
-$dark-text-main: #FAFAFA;
-$dark-text-muted:#A1A1AA;
-$dark-glass:     rgba(30, 30, 35, 0.75);
-
+// AccountLayout — token-driven, works for all 3 themes automatically
 .layout {
   position: relative;
   min-height: 100%;
-  background-image: linear-gradient(rgba(247, 243, 234, 0.7), rgba(241, 236, 226, 0.8)), url('/account_bg.png');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  color: $text-main;
+  background: linear-gradient(160deg, var(--bg-base) 0%, var(--bg-base-2) 100%);
+  color: var(--text-primary);
   font-family: 'Inter', sans-serif;
   display: flex;
   overflow: visible;
 }
 
 .ambientOrb1 {
-  position: fixed;
-  width: 500px;
-  height: 500px;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(90px);
-  z-index: 0;
-  background: radial-gradient(circle, rgba(79, 70, 229, 0.06) 0%, transparent 70%);
-  top: -200px;
-  right: -100px;
+  position: fixed; width: 500px; height: 500px; border-radius: 50%;
+  pointer-events: none; filter: blur(90px); z-index: 0;
+  background: radial-gradient(circle, var(--orb1) 0%, transparent 70%);
+  top: -200px; right: -100px;
 }
 
 .ambientOrb2 {
-  position: fixed;
-  width: 400px;
-  height: 400px;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(90px);
-  z-index: 0;
-  background: radial-gradient(circle, rgba(168, 216, 255, 0.08) 0%, transparent 70%);
-  bottom: -100px;
-  left: -100px;
+  position: fixed; width: 400px; height: 400px; border-radius: 50%;
+  pointer-events: none; filter: blur(90px); z-index: 0;
+  background: radial-gradient(circle, var(--orb2) 0%, transparent 70%);
+  bottom: -100px; left: -100px;
 }
 
 .gridLines {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 40px 40px;
   mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
 }
@@ -68,9 +39,10 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   left: 0;
   width: 200px;
   height: calc(100vh - 46px);
-  background: $white-glass;
+  background: var(--sidebar-bg);
   backdrop-filter: blur(12px);
-  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  -webkit-backdrop-filter: blur(12px);
+  border-right: 1px solid var(--sidebar-border);
   display: flex;
   flex-direction: column;
   padding: 1.25rem 0.65rem;
@@ -88,9 +60,14 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: $text-muted;
+  color: var(--text-faint);
   margin: 0.5rem 0.5rem 0.25rem 0.65rem;
-  opacity: 0.8;
+}
+
+.navDivider {
+  margin: 12px 0 6px;
+  height: 1px;
+  background: var(--border) !important;
 }
 
 .navItem {
@@ -101,46 +78,22 @@ $dark-glass:     rgba(30, 30, 35, 0.75);
   border-radius: 8px;
   font-size: 0.78rem;
   font-weight: 500;
-  color: $text-muted;
+  color: var(--text-muted);
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
-  &:hover { background: rgba(0, 0, 0, 0.05); color: $text-main; }
+  &:hover { background: var(--sidebar-hover); color: var(--text-primary); }
 }
 
 .activeNavItem {
-  background: rgba(0, 0, 0, 0.07);
-  color: $text-main;
+  background: var(--sidebar-active);
+  color: var(--text-primary);
   font-weight: 600;
 }
 
 // ── Main Content Area ────────────────────────
 .mainArea {
   flex: 1;
-  margin-left: 200px; // account for sidebar
+  margin-left: 200px;
   position: relative;
   z-index: 5;
-}
-
-// ── Dark Mode ─────────────────────────────────
-.dark {
-
-  .ambientOrb1 {
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-  }
-  .ambientOrb2 {
-    background: radial-gradient(circle, rgba(100, 180, 255, 0.1) 0%, transparent 70%);
-  }
-  .gridLines {
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  }
-  background-image: linear-gradient(rgba(22, 22, 26, 0.85), rgba(13, 13, 15, 0.95)), url('/account_bg.png');
-  color: $dark-text-main;
-
-  .sidebar { background: $dark-glass; border-color: rgba(255,255,255,0.06); }
-  .navItem { color: $dark-text-muted; &:hover { background: rgba(255,255,255,0.05); color: $dark-text-main; } }
-  .activeNavItem { background: rgba(255, 255, 255, 0.1); color: $dark-text-main; }
-  .navGroupLabel { color: $dark-text-muted; }
-  .navDivider { background: rgba(255, 255, 255, 0.06) !important; }
 }

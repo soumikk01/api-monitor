@@ -1,7 +1,4 @@
-// ProjectSidebar — shared project navigation sidebar
-$text-main:  #1A1A1A;
-$text-muted: #6B6B6B;
-$border:     rgba(0, 0, 0, 0.08);
+// ProjectSidebar — theme-aware via CSS variables
 
 .sidebar {
   position: fixed;
@@ -9,10 +6,10 @@ $border:     rgba(0, 0, 0, 0.08);
   left: 0;
   width: 64px;
   height: calc(100vh - 46px);
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--sidebar-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  border-right: 1px solid var(--sidebar-border);
   display: flex;
   flex-direction: column;
   padding: 1.25rem 0.75rem;
@@ -21,35 +18,15 @@ $border:     rgba(0, 0, 0, 0.08);
 
   &[data-state="hover"]:hover {
     width: 220px;
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 12px 0 40px rgba(0, 0, 0, 0.05);
+    background: var(--bg-surface);
+    box-shadow: 12px 0 40px rgba(0, 0, 0, 0.08);
   }
 
-  &[data-state="expanded"] {
-    width: 220px;
-  }
+  &[data-state="expanded"] { width: 220px; }
 
   &[data-state="collapsed"] {
     width: 64px;
     &:hover { box-shadow: none; width: 64px; }
-  }
-
-  :global(.dark) & {
-    background: rgba(20, 20, 20, 0.6);
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
-    &[data-state="hover"]:hover { 
-      background: rgba(20, 20, 20, 0.95);
-      box-shadow: 12px 0 40px rgba(0, 0, 0, 0.4);
-    }
-  }
-
-  :global(.aqua) & {
-    background: rgba(7, 16, 32, 0.6);
-    border-right: 1px solid rgba(0, 200, 255, 0.1);
-    &[data-state="hover"]:hover { 
-      background: rgba(7, 16, 32, 0.95);
-      box-shadow: 12px 0 40px rgba(0, 0, 0, 0.2);
-    }
   }
 }
 
@@ -58,6 +35,10 @@ $border:     rgba(0, 0, 0, 0.08);
   transform: translateX(-10px) scale(0.95);
   transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
   transition-delay: 0s;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .sidebar[data-state="hover"]:hover .label,
@@ -67,9 +48,8 @@ $border:     rgba(0, 0, 0, 0.08);
   transition-delay: 0.1s;
 }
 
-.sidebar[data-state="expanded"] .label {
-  transition-delay: 0s;
-}
+.sidebar[data-state="expanded"] .label { transition-delay: 0s; }
+
 .nav {
   display: flex;
   flex-direction: column;
@@ -85,26 +65,23 @@ $border:     rgba(0, 0, 0, 0.08);
   border-radius: 6px;
   font-size: 0.875rem;
   font-weight: 500;
-  color: $text-muted;
+  color: var(--text-muted);
   text-decoration: none;
   transition: background 0.12s, color 0.12s;
   white-space: nowrap;
   overflow: hidden;
 
-  svg {
-    flex-shrink: 0;
-    opacity: 0.7;
-  }
+  svg { flex-shrink: 0; opacity: 0.7; }
 
   &:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: $text-main;
+    background: var(--sidebar-hover);
+    color: var(--text-primary);
     svg { opacity: 1; }
   }
 
   &.active {
-    background: rgba(0, 0, 0, 0.07);
-    color: $text-main;
+    background: var(--sidebar-active);
+    color: var(--text-primary);
     font-weight: 600;
     svg { opacity: 1; }
   }
@@ -126,82 +103,48 @@ $border:     rgba(0, 0, 0, 0.08);
   justify-content: center;
   background: transparent;
   border: none;
-  color: $text-muted;
+  color: var(--text-muted);
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: $text-main;
-  }
-
-  :global(.dark) & {
-    &:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
-  }
-  :global(.aqua) & {
-    &:hover { background: rgba(0, 200, 255, 0.1); color: var(--aqua-text-main); }
+    background: var(--sidebar-hover);
+    color: var(--text-primary);
   }
 }
 
 .ctrlDrop {
   position: absolute;
   bottom: 0;
-  left: 44px; /* push to right of button */
+  left: 44px;
   width: 200px;
-  background: #FFFFFF;
-  border: 1px solid rgba(0,0,0,0.08);
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  background: var(--drop-bg);
+  border: 1px solid var(--drop-border);
+  border-radius: 10px;
+  box-shadow: var(--drop-shadow);
   padding: 8px 0;
   z-index: 100;
-  color: $text-main;
+  color: var(--text-primary);
   font-size: 0.85rem;
-
-  :global(.dark) & {
-    background: #1C1C1C;
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    color: #fff;
-  }
-
-  :global(.aqua) & {
-    background: #0A1628;
-    border: 1px solid rgba(0, 200, 255, 0.15);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    color: #E8F4FF;
-  }
 }
 
 .ctrlHeader {
   padding: 4px 16px 8px;
   font-size: 0.8rem;
-  color: $text-muted;
+  color: var(--text-muted);
   font-weight: 500;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+  border-bottom: 1px solid var(--drop-divider);
   margin-bottom: 4px;
-
-  :global(.dark) & {
-    color: #aaa;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-
-  :global(.aqua) & {
-    color: rgba(232, 244, 255, 0.7);
-    border-bottom: 1px solid rgba(0, 200, 255, 0.1);
-  }
 }
 
-.ctrlOptions {
-  display: flex;
-  flex-direction: column;
-}
+.ctrlOptions { display: flex; flex-direction: column; }
 
 .ctrlOpt {
   width: 100%;
   text-align: left;
   background: transparent;
   border: none;
-  color: $text-main;
+  color: var(--text-primary);
   padding: 8px 16px;
   cursor: pointer;
   display: flex;
@@ -212,22 +155,7 @@ $border:     rgba(0, 0, 0, 0.08);
   transition: background 0.15s;
 
   &:hover {
-    background: rgba(0,0,0,0.04);
-  }
-
-  :global(.dark) & {
-    color: #ddd;
-    &:hover {
-      background: rgba(255,255,255,0.05);
-      color: #fff;
-    }
-  }
-
-  :global(.aqua) & {
-    color: #E8F4FF;
-    &:hover {
-      background: rgba(0, 200, 255, 0.1);
-    }
+    background: var(--drop-item-hover);
   }
 }
 
@@ -239,14 +167,4 @@ $border:     rgba(0, 0, 0, 0.08);
   flex-shrink: 0;
 }
 
-.optDotActive {
-  background: $text-main;
-
-  :global(.dark) & {
-    background: #fff;
-  }
-
-  :global(.aqua) & {
-    background: #E8F4FF;
-  }
-}
+.optDotActive { background: var(--accent); }

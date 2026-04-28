@@ -1,7 +1,9 @@
 
+@use './themes.scss';
+
 /* stylelint-disable-next-line at-rule-no-unknown */
 @theme {
-  /* ── Neon palette (new landing) ── */
+  /* ── Neon palette (landing) ── */
   --color-neon-cyan:   #00F0FF;
   --color-neon-purple: #9D00FF;
   --color-neon-pink:   #FF007A;
@@ -80,13 +82,27 @@
 }
 
 body {
-  background-color: #F5F1E8;
-  background-image: linear-gradient(to bottom, #F7F3EA, #F1ECE2);
-  color: #1A1A1A;
+  background-color: var(--bg-base, #F5F1E8);
+  background-image: linear-gradient(to bottom, var(--bg-base, #F7F3EA), var(--bg-base-2, #F1ECE2));
+  color: var(--text-primary, #1A1A1A);
   font-family: var(--font-inter), sans-serif;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Smooth theme transitions */
+*, *::before, *::after {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.2s ease,
+              box-shadow 0.25s ease;
+}
+
+/* But not transforms/opacity — those should be instant */
+[class*="animate"], [class*="motion"], button, a, svg {
+  transition: none;
+}
+
+
 
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;

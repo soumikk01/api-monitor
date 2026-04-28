@@ -1,44 +1,52 @@
-import { useState, useEffect } from 'react';
+/**
+ * useTheme — wraps next-themes for use across the app.
+ *
+ * Returns:
+ *   theme       — 'light' | 'dark' | 'dark-blue' | 'system'
+ *   resolvedTheme — the actual applied theme (never 'system')
+ *   setTheme    — set theme by name
+ *   dark        — boolean: true when resolved theme is 'dark' or 'dark-blue'
+ *   isDarkBlue  — boolean: true when resolved theme is 'dark-blue'
+ *   isLight     — boolean: true when resolved theme is 'light'
+ *   isSystem    — boolean: true when theme is 'system'
+ *   cycleTheme  — cycles: light → dark → dark-blue → system → light
+ */
+import { useTheme as useNextTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
+
+export type ThemeName = 'light' | 'dark' | 'dark-blue' | 'system';
+
+const THEMES: ThemeName[] = ['light', 'dark', 'dark-blue', 'system'];
 
 export function useTheme() {
-  const [dark, setDark] = useState(false);
+  const { theme, setTheme, resolvedTheme } = useNextTheme();
+  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    // Read from localStorage on mount
-    const saved = localStorage.getItem('theme-dark') === 'true';
-    if (saved) {
-      setDark(true);
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+  // Avoid hydration mismatch — only read theme after mount
+  useEffect(() => setMounted(true), []);
 
-    // Listener for syncing state between tabs or other components
-    const onThemeChange = () => {
-      const isDark = localStorage.getItem('theme-dark') === 'true';
-      setDark(isDark);
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    };
+  // `theme` is what user chose (may be 'system')
+  const current = (mounted ? (theme ?? 'system') : 'system') as ThemeName;
+  // `resolved` is the actual CSS theme being applied (never 'system')
+  const resolved = (mounted ? (resolvedTheme ?? 'light') : 'light') as Exclude<ThemeName, 'system'>;
 
-    window.addEventListener('theme-change', onThemeChange);
-    window.addEventListener('storage', onThemeChange);
-
-    return () => {
-      window.removeEventListener('theme-change', onThemeChange);
-      window.removeEventListener('storage', onThemeChange);
-    };
-  }, []);
-
-  const toggleTheme = () => {
-    const newDark = !dark;
-    setDark(newDark);
-    localStorage.setItem('theme-dark', String(newDark));
-    window.dispatchEvent(new Event('theme-change')); // Tell other instances to update
+  const cycleTheme = () => {
+    const idx = THEMES.indexOf(current);
+    const next = THEMES[(idx + 1) % THEMES.length];
+    setTheme(next);
   };
 
-  return { dark, toggleTheme };
+  return {
+    theme: current,           // what the user selected (may be 'system')
+    resolvedTheme: resolved,  // what is actually rendered
+    setTheme: (t: ThemeName) => setTheme(t),
+    cycleTheme,
+    dark: resolved === 'dark' || resolved === 'dark-blue',
+    isDarkBlue: resolved === 'dark-blue',
+    isLight: resolved === 'light',
+    isSystem: current === 'system',
+    mounted,
+    // Legacy compat
+    toggleTheme: cycleTheme,
+  };
 }

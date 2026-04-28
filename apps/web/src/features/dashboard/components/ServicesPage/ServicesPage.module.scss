@@ -27,8 +27,8 @@ $pill:   100px;
 .page {
   position: relative;
   min-height: calc(100vh - 46px);
-  background: linear-gradient(145deg, $bg-top 0%, $bg-bot 100%);
-  color: $text-main;
+  background: linear-gradient(145deg, var(--bg-base) 0%, var(--bg-base-2) 100%);
+  color: var(--text-primary);
   font-family: 'Inter', sans-serif;
 }
 
@@ -42,23 +42,20 @@ $pill:   100px;
 }
 .ambientOrb1 {
   width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(79, 70, 229, 0.06) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--orb1) 0%, transparent 70%);
   top: -200px; right: -100px;
 }
 .ambientOrb2 {
   width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(168, 216, 255, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--orb2) 0%, transparent 70%);
   bottom: -100px; left: -100px;
 }
 
 .gridLines {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background-image:
-    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 40px 40px;
   mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
 }
@@ -76,30 +73,19 @@ $pill:   100px;
   height: calc(100vh - 46px);
   overflow-y: auto;
   flex-shrink: 0;
-  border-right: 1px solid rgba(0, 0, 0, 0.08);
-  background: $white-glass;
+  border-right: 1px solid var(--sidebar-border);
+  background: var(--sidebar-bg);
   backdrop-filter: blur(10px);
   padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  
-  .dark & {
-    background: $dark-glass;
-    border-right-color: $dark-border;
-  }
 }
 
 .sidebarBrand {
-  font-size: 0.85rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: $text-muted;
-  
-  .dark & {
-    color: $dark-text-muted;
-  }
+  font-size: 0.85rem; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .sidebarNav {
@@ -109,61 +95,27 @@ $pill:   100px;
 }
 
 .sidebarBtn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: $r-md;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  background: $accent;
-  color: #fff;
-  transition: all 0.2s ease;
-  font-family: inherit;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-radius: $r-md;
+  font-size: 0.9rem; font-weight: 600; cursor: pointer; border: none;
+  background: var(--accent); color: #fff;
+  transition: all 0.2s ease; font-family: inherit;
+  &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
 }
 
 .sidebarBtnSecondary {
   background: transparent;
-  color: $text-main;
-  border: 1px solid rgba(0,0,0,0.1);
-  
-  &:hover {
-    background: rgba(0, 0, 0, 0.04);
-    box-shadow: none;
-    transform: none;
-  }
-
-  svg { transform: rotate(180deg); } // back arrow
-  
-  .dark & {
-    color: $dark-text-main;
-    border-color: $dark-border;
-    &:hover { background: rgba(255, 255, 255, 0.05); }
-  }
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  &:hover { background: var(--sidebar-hover); box-shadow: none; transform: none; }
+  svg { transform: rotate(180deg); }
 }
 
-// Active state — when inline panel is open (e.g. Project Settings toggled on)
 .sidebarBtnActive {
-  background: rgba(99, 102, 241, 0.08) !important;
-  color: #4f46e5 !important;
-  border-color: rgba(99, 102, 241, 0.25) !important;
-
-  &:hover {
-    background: rgba(99, 102, 241, 0.12) !important;
-  }
-
-  .dark & {
-    background: rgba(99, 102, 241, 0.15) !important;
-    color: #818cf8 !important;
-    border-color: rgba(99, 102, 241, 0.3) !important;
-  }
+  background: var(--accent-muted) !important;
+  color: var(--accent) !important;
+  border-color: var(--accent-border) !important;
+  &:hover { background: var(--accent-muted) !important; filter: brightness(0.95); }
 }
 
 .content {
@@ -173,104 +125,7 @@ $pill:   100px;
   margin: 0 auto;
 }
 
-// ════════════════════════════════════════════════
-//  DARK MODE
-// ════════════════════════════════════════════════
-.dark {
-  background: linear-gradient(145deg, $dark-bg-top 0%, $dark-bg-bot 100%);
-  color: $dark-text-main;
-
-  .ambientOrb1 {
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-  }
-  .gridLines {
-    background-image:
-      linear-gradient($dark-border 1px, transparent 1px),
-      linear-gradient(90deg, $dark-border 1px, transparent 1px);
-  }
-  .breadcrumbLink { color: $dark-text-muted; &:hover { color: $dark-text-main; } }
-  .breadcrumbSep, .breadcrumbCurrent { color: $dark-text-muted; }
-  .breadcrumbActive { color: $dark-text-main; }
-  .badge {
-    background: rgba(99, 102, 241, 0.1);
-    border-color: rgba(99, 102, 241, 0.2);
-    color: #818CF8;
-  }
-  .title { color: $dark-text-main; }
-  .subtitle { color: $dark-text-muted; }
-  .card {
-    background: $dark-glass;
-    border-color: $dark-border;
-    &:hover { border-color: rgba(255,255,255,0.15); background: rgba(30, 30, 42, 0.9); }
-  }
-  .cardGlow {
-    background: radial-gradient(circle at 30% 30%, rgba(99, 102, 241, 0.15) 0%, transparent 60%);
-  }
-  .serviceIconWrap {
-    background: rgba(99, 102, 241, 0.12);
-    color: #818CF8;
-    border-color: rgba(99, 102, 241, 0.2);
-  }
-  .serviceName { color: $dark-text-main; }
-  .serviceDesc { color: $dark-text-muted; }
-  .serviceTag {
-    background: rgba(255,255,255,0.05);
-    color: $dark-text-muted;
-    border-color: $dark-border;
-  }
-  .serviceCalls { color: $dark-text-muted; }
-  .serviceDate { color: $dark-text-muted; }
-  .enterBtn {
-    color: $dark-text-muted;
-    svg { stroke: $dark-text-muted; }
-  }
-  .cardInteractive:hover .enterBtn {
-    color: $dark-text-main;
-    svg { stroke: $dark-text-main; }
-  }
-  .statusIdle { background: rgba(255,255,255,0.15); }
-  .addCard {
-    background: rgba(255,255,255,0.02);
-    border-color: $dark-border;
-    &:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.15); }
-  }
-  .addCardIcon {
-    background: rgba(99,102,241,0.1);
-    color: #818CF8;
-    border-color: rgba(99,102,241,0.2);
-  }
-  .addCardLabel { color: $dark-text-muted; }
-  .emptyTitle { color: $dark-text-main; }
-  .emptyText { color: $dark-text-muted; }
-  .modal {
-    background: rgba(15, 15, 20, 0.97);
-    border-color: $dark-border;
-  }
-  .modalTitle h2 { color: $dark-text-main; }
-  .modalTitleIcon { background: rgba(99,102,241,0.12); color: #818CF8; border-color: rgba(99,102,241,0.2); }
-  .fieldLabel { color: $dark-text-main; }
-  .fieldInput, .fieldTextarea {
-    background: rgba(255,255,255,0.04);
-    border-color: $dark-border;
-    color: $dark-text-main;
-    &::placeholder { color: $dark-text-muted; }
-    &:focus { border-color: rgba(99,102,241,0.5); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); background: rgba(255,255,255,0.06); }
-  }
-  .cancelBtn {
-    color: $dark-text-muted;
-    border-color: $dark-border;
-    &:hover { color: $dark-text-main; border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); }
-  }
-  .closeBtn {
-    background: rgba(255,255,255,0.05);
-    color: $dark-text-muted;
-    &:hover { background: rgba(255,255,255,0.1); color: $dark-text-main; }
-  }
-  .skeletonHeader, .skeletonBody, .skeletonFooter {
-    background: rgba(255,255,255,0.05);
-    &::after { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent); }
-  }
-}
+// Dark mode handled via CSS variables — no class block needed.
 
 // ════════════════════════════════════════════════
 //  BREADCRUMB
@@ -284,20 +139,14 @@ $pill:   100px;
   margin-bottom: 2rem;
 }
 .breadcrumbLink {
-  color: $text-muted;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: inherit;
-  font-family: inherit;
-  font-weight: inherit;
-  padding: 0;
-  transition: color 0.15s;
-  &:hover { color: $text-main; }
+  color: var(--text-muted); background: none; border: none;
+  cursor: pointer; font-size: inherit; font-family: inherit;
+  font-weight: inherit; padding: 0; transition: color 0.15s;
+  &:hover { color: var(--text-primary); }
 }
-.breadcrumbSep { color: rgba(0,0,0,0.2); }
-.breadcrumbCurrent { color: $text-muted; }
-.breadcrumbActive { color: $text-main; font-weight: 700; }
+.breadcrumbSep     { color: var(--text-faint); }
+.breadcrumbCurrent { color: var(--text-muted); }
+.breadcrumbActive  { color: var(--text-primary); font-weight: 700; }
 
 // ════════════════════════════════════════════════
 //  HEADER
@@ -382,8 +231,8 @@ $pill:   100px;
 // ── Service card ──
 .card {
   position: relative;
-  background: $white-glass;
-  border: 1px solid rgba(255,255,255,0.8);
+  background: var(--bg-card);
+  border: 1px solid var(--card-border);
   border-radius: $r-xl;
   text-align: left;
   font-family: inherit;
@@ -402,11 +251,11 @@ $pill:   100px;
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-    border-color: rgba(255,255,255,1);
-    background: rgba(255,255,255,0.92);
+    border-color: var(--border-strong);
+    background: var(--bg-surface);
   }
   &:focus-visible {
-    outline: 2px solid $accent-alt;
+    outline: 2px solid var(--accent);
     outline-offset: 3px;
   }
 }
@@ -417,12 +266,11 @@ $pill:   100px;
 .cardGlow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 30% 20%, rgba(79, 70, 229, 0.06) 0%, transparent 60%);
+  background: radial-gradient(circle at 30% 20%, var(--orb1) 0%, transparent 60%);
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
   z-index: 0;
-
   .cardHovered & { opacity: 1; }
 }
 
@@ -443,21 +291,11 @@ $pill:   100px;
 }
 
 .serviceIconWrap {
-  width: 44px;
-  height: 44px;
-  border-radius: $r-md;
-  background: rgba(79, 70, 229, 0.08);
-  border: 1px solid rgba(79, 70, 229, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $accent-alt;
-  transition: all 0.2s ease;
-
-  .cardInteractive:hover & {
-    background: rgba(79, 70, 229, 0.12);
-    transform: scale(1.05);
-  }
+  width: 44px; height: 44px; border-radius: $r-md;
+  background: var(--accent-muted); border: 1px solid var(--accent-border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent); transition: all 0.2s ease;
+  .cardInteractive:hover & { background: var(--accent-muted); filter: brightness(0.95); transform: scale(1.05); }
 }
 
 .statusDot {
@@ -485,138 +323,65 @@ $pill:   100px;
 }
 
 .serviceName {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: $text-main;
-  margin: 0 0 6px 0;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 1.05rem; font-weight: 800; color: var(--text-primary);
+  margin: 0 0 6px 0; letter-spacing: -0.01em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 .serviceDesc {
-  font-size: 0.84rem;
-  color: $text-muted;
-  margin: 0;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  font-size: 0.84rem; color: var(--text-muted); margin: 0; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
 }
 
 .cardFooter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 16px;
-  border-top: 1px solid rgba(0,0,0,0.06);
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 16px; border-top: 1px solid var(--border);
 }
 
-.footerMeta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+.footerMeta { display: flex; align-items: center; gap: 8px; }
 
 .serviceTag {
-  font-size: 0.72rem;
-  font-weight: 700;
-  background: rgba(0,0,0,0.05);
-  border: 1px solid rgba(0,0,0,0.06);
-  border-radius: $pill;
-  padding: 2px 8px;
-  color: $text-muted;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: 0.72rem; font-weight: 700;
+  background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: $pill; padding: 2px 8px;
+  color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;
 }
 
-.serviceCalls {
-  font-size: 0.8rem;
-  color: $text-muted;
-  font-weight: 500;
-}
-
-.serviceDate {
-  font-size: 0.78rem;
-  color: $text-muted;
-  font-weight: 500;
-}
+.serviceCalls { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+.serviceDate  { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; }
 
 .enterBtn {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: $text-muted;
+  display: flex; align-items: center; gap: 4px;
+  font-size: 0.82rem; font-weight: 700; color: var(--text-muted);
   transition: all 0.2s ease;
-
-  svg {
-    transition: transform 0.2s ease;
-    stroke: $text-muted;
-  }
-
-  .cardInteractive:hover & {
-    color: $accent-alt;
-    svg { stroke: $accent-alt; transform: translateX(3px); }
-  }
+  svg { transition: transform 0.2s ease; stroke: var(--text-muted); }
+  .cardInteractive:hover & { color: var(--accent); svg { stroke: var(--accent); transform: translateX(3px); } }
 }
 
 // ── Add service card ──
 .addCard {
-  background: rgba(255,255,255,0.35);
-  border: 1.5px dashed rgba(0,0,0,0.12);
-  border-radius: $r-xl;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 180px;
-  transition: all 0.2s ease;
-
+  background: var(--bg-input); border: 1.5px dashed var(--border-strong);
+  border-radius: $r-xl; display: flex; align-items: center;
+  justify-content: center; min-height: 180px; transition: all 0.2s ease;
   &:hover {
-    background: rgba(255,255,255,0.55);
-    border-color: rgba(79, 70, 229, 0.3);
-    transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(79, 70, 229, 0.06);
-
-    .addCardIcon {
-      background: rgba(79, 70, 229, 0.1);
-      color: $accent-alt;
-      border-color: rgba(79, 70, 229, 0.2);
-    }
-    .addCardLabel { color: $accent-alt; }
+    background: var(--accent-muted); border-color: var(--accent);
+    transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+    .addCardIcon { background: var(--accent-muted); color: var(--accent); border-color: var(--accent-border); }
+    .addCardLabel { color: var(--accent); }
   }
 }
 
-.addCardInner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
+.addCardInner { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 
 .addCardIcon {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.04);
-  border: 1px solid rgba(0,0,0,0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $text-muted;
-  transition: all 0.2s ease;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--bg-hover); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); transition: all 0.2s ease;
 }
 
-.addCardLabel {
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: $text-muted;
-  transition: color 0.2s ease;
-}
+.addCardLabel { font-size: 0.88rem; font-weight: 700; color: var(--text-muted); transition: color 0.2s ease; }
 
 // ── SVG Stroke-Draw Loader ──
 @keyframes drawCircle {
@@ -645,22 +410,15 @@ $pill:   100px;
 }
 
 .loaderSvg {
-  width: 110px;
-  height: 110px;
-  color: $accent-alt;
-  opacity: 0.75;
-
-  .dark & { color: #818CF8; opacity: 0.9; }
+  width: 110px; height: 110px;
+  color: var(--accent); opacity: 0.85;
 }
 
 .loaderPath {
-  fill: none;
-  stroke: currentColor;
-  stroke-dasharray: var(--dash-len, 600);
-  stroke-dashoffset: var(--dash-len, 600);
+  fill: none; stroke: currentColor;
+  stroke-dasharray: var(--dash-len, 600); stroke-dashoffset: var(--dash-len, 600);
   animation: drawCircle 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
-// Outer: circumference ≈ 289 for r=46; ≈ 138 for r=22; etc.
 .loaderPath1 { --dash-len: 290; animation-delay: 0s;    }
 .loaderPath2 { --dash-len: 176; animation-delay: 0.3s;  }
 .loaderPath3 { --dash-len: 63;  animation-delay: 0.58s; }
@@ -668,15 +426,9 @@ $pill:   100px;
 .loaderPath5 { --dash-len: 44;  animation-delay: 0.9s;  }
 
 .loaderLabel {
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: $accent-alt;
-  opacity: 0;
-  animation: labelFadeIn 0.4s ease 1.1s forwards;
-
-  .dark & { color: #818CF8; }
+  font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--accent);
+  opacity: 0; animation: labelFadeIn 0.4s ease 1.1s forwards;
 }
 
 
@@ -785,30 +537,18 @@ $pill:   100px;
 }
 
 .modalTitleIcon {
-  width: 38px;
-  height: 38px;
-  border-radius: $r-md;
-  background: rgba(79,70,229,0.08);
-  border: 1px solid rgba(79,70,229,0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $accent-alt;
+  width: 38px; height: 38px; border-radius: $r-md;
+  background: var(--accent-muted); border: 1px solid var(--accent-border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent);
 }
 
 .closeBtn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(0,0,0,0.05);
-  color: $text-muted;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 32px; height: 32px; border-radius: 50%; border: none;
+  background: var(--bg-hover); color: var(--text-muted);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
   transition: all 0.2s;
-  &:hover { background: rgba(0,0,0,0.09); color: $text-main; }
+  &:hover { background: var(--bg-active); color: var(--text-primary); }
 }
 
 .modalForm {
@@ -823,33 +563,17 @@ $pill:   100px;
   gap: 8px;
 }
 
-.fieldLabel {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: $text-main;
-}
-.required { color: #ef4444; margin-left: 2px; }
-.optional { color: $text-muted; font-weight: 400; }
+.fieldLabel { font-size: 0.9rem; font-weight: 700; color: var(--text-primary); }
+.required { color: var(--red); margin-left: 2px; }
+.optional { color: var(--text-muted); font-weight: 400; }
 
 .fieldInput,
 .fieldTextarea {
-  background: #fafafa;
-  border: 1.5px solid rgba(0,0,0,0.09);
-  border-radius: $r-md;
-  color: $text-main;
-  font-size: 0.95rem;
-  font-family: inherit;
-  padding: 12px 16px;
-  outline: none;
-  transition: all 0.2s ease;
-  resize: vertical;
-
-  &::placeholder { color: $text-muted; opacity: 0.6; }
-  &:focus {
-    background: #fff;
-    border-color: $accent-alt;
-    box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
-  }
+  background: var(--bg-input); border: 1.5px solid var(--border); border-radius: $r-md;
+  color: var(--text-primary); font-size: 0.95rem; font-family: inherit;
+  padding: 12px 16px; outline: none; transition: all 0.2s ease; resize: vertical;
+  &::placeholder { color: var(--text-muted); opacity: 0.6; }
+  &:focus { background: var(--bg-hover); border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-muted); }
 }
 
 .modalError {
@@ -867,30 +591,17 @@ $pill:   100px;
 }
 
 .cancelBtn {
-  background: transparent;
-  border: 1.5px solid rgba(0,0,0,0.1);
-  border-radius: $pill;
-  color: $text-muted;
-  font-size: 0.92rem;
-  font-family: inherit;
-  font-weight: 600;
-  padding: 10px 22px;
-  cursor: pointer;
-  transition: all 0.2s;
-  &:hover { border-color: rgba(0,0,0,0.2); color: $text-main; }
+  background: transparent; border: 1.5px solid var(--border);
+  border-radius: $pill; color: var(--text-muted);
+  font-size: 0.92rem; font-family: inherit; font-weight: 600;
+  padding: 10px 22px; cursor: pointer; transition: all 0.2s;
+  &:hover { border-color: var(--border-strong); color: var(--text-primary); background: var(--bg-hover); }
 }
 
 .createBtn {
-  background: $accent;
-  border: none;
-  border-radius: $pill;
-  color: #fff;
-  font-size: 0.92rem;
-  font-family: inherit;
-  font-weight: 700;
-  padding: 10px 24px;
-  cursor: pointer;
-  transition: all 0.2s;
+  background: var(--accent); border: none; border-radius: $pill;
+  color: #fff; font-size: 0.92rem; font-family: inherit; font-weight: 700;
+  padding: 10px 24px; cursor: pointer; transition: all 0.2s;
   &:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.18); }
   &:disabled { opacity: 0.45; cursor: not-allowed; }
 }

@@ -147,7 +147,7 @@ export default function OverviewPage() {
   // ── No project empty state ─────────────────────────────────────────────────
   if (!resolvedProjectId && !projectLoading) {
     return (
-      <div className={`${styles.page}${dark ? ' ' + styles.dark : ''}`}>
+    <div className={styles.page}>
         <div className={styles.ambientOrb1} />
         <div className={styles.ambientOrb2} />
         <div className={styles.gridLines} />
@@ -169,7 +169,7 @@ export default function OverviewPage() {
   }
 
   return (
-    <div className={`${styles.page}${dark ? ' ' + styles.dark : ''}`}>
+    <div className={styles.page}>
       <div className={styles.ambientOrb1} />
       <div className={styles.ambientOrb2} />
       <div className={styles.gridLines} />

@@ -206,7 +206,7 @@ export default function ServiceSettingsPage() {
   // ── Empty / not found ───────────────────────────────────────────────────────
   if (loadState === 'empty') {
     return (
-      <div className={`${styles.page}${dark ? ' ' + styles.dark : ''}`}>
+      <div className={styles.page}>
         <div className={styles.ambientOrb1} />
         <div className={styles.ambientOrb2} />
         <div className={styles.gridLines} />
@@ -233,7 +233,7 @@ export default function ServiceSettingsPage() {
   }
 
   return (
-    <div className={`${styles.page}${dark ? ' ' + styles.dark : ''}`}>
+    <div className={styles.page}>
       <div className={styles.ambientOrb1} />
       <div className={styles.ambientOrb2} />
       <div className={styles.gridLines} />

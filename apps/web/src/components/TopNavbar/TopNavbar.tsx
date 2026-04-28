@@ -4,7 +4,7 @@ import { authStorage, fetchWithAuth } from '@/lib/fetchWithAuth';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { Moon, Sun, LogOut, User, ClipboardList, MessageSquare } from 'lucide-react';
+import { Moon, Sun, Droplets, Monitor, LogOut, User, ClipboardList, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import { AVATARS } from '@/features/dashboard/components/AccountPage/avatars';
@@ -57,7 +57,7 @@ export default function TopNavbar() {
   const isServicesPage = pathname === '/services';
 
   const { user, logoutWithTransition } = useAuth();
-  const { dark, toggleTheme } = useTheme();
+  const { theme, setTheme, dark, isDarkBlue } = useTheme();
 
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   // Read cached service name synchronously (avoids 'Loading...' flash on navigation)
@@ -200,7 +200,7 @@ export default function TopNavbar() {
   };
 
   return (
-    <nav className={`${styles.navbar}${dark ? ' ' + styles.dark : ''}`} id="top-navbar">
+    <nav className={styles.navbar} id="top-navbar">
       {/* ══ LEFT ══ */}
       <div className={styles.left}>
         {/* Logo */}
@@ -404,17 +404,33 @@ export default function TopNavbar() {
               <div className={styles.dropDivider}/>
               <div className={styles.dropSectionTitle}>Theme</div>
               <div className={styles.themeToggleRow}>
-                <button 
-                  className={`${styles.themeToggleBtn} ${!dark ? styles.themeToggleBtnActive : ''}`} 
-                  onClick={() => { if (dark) toggleTheme(); }}
+                <button
+                  className={`${styles.themeToggleBtn} ${theme === 'light' ? styles.themeToggleBtnActive : ''}`}
+                  onClick={() => setTheme('light')}
+                  title="Light"
                 >
-                  <Sun size={14} style={{ marginRight: '6px' }} /> Light
+                  <Sun size={13} /> Light
                 </button>
-                <button 
-                  className={`${styles.themeToggleBtn} ${dark ? styles.themeToggleBtnActive : ''}`} 
-                  onClick={() => { if (!dark) toggleTheme(); }}
+                <button
+                  className={`${styles.themeToggleBtn} ${theme === 'dark' ? styles.themeToggleBtnActive : ''}`}
+                  onClick={() => setTheme('dark')}
+                  title="Dark"
                 >
-                  <Moon size={14} style={{ marginRight: '6px' }} /> Dark
+                  <Moon size={13} /> Dark
+                </button>
+                <button
+                  className={`${styles.themeToggleBtn} ${styles.themeToggleBtnDarkBlue} ${theme === 'dark-blue' ? styles.themeToggleBtnActive : ''}`}
+                  onClick={() => setTheme('dark-blue')}
+                  title="Dark Blue"
+                >
+                  <Droplets size={13} /> Ocean
+                </button>
+                <button
+                  className={`${styles.themeToggleBtn} ${styles.themeToggleBtnSystem} ${theme === 'system' ? styles.themeToggleBtnActive : ''}`}
+                  onClick={() => setTheme('system')}
+                  title="System (follows OS)"
+                >
+                  <Monitor size={13} /> System
                 </button>
               </div>
 
