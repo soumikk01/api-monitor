@@ -1,22 +1,18 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import { fetchWithAuth } from '@/lib/fetchWithAuth';
+import { queryClient } from '@/lib/queryClient';
+import { queryKeys, fetchProjects as fetchProjectsList, type Project } from '@/lib/queries';
 import styles from './ProjectsPage.module.scss';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
 
-interface Project {
-  id: string;
-  name: string;
-  description?: string;
-  serviceMode?: 'single' | 'multi';
-  createdAt: string;
-  _count?: { apiCalls?: number, services?: number };
-}
+
 
 type SortKey = 'name' | 'createdAt';
 type ViewMode = 'grid' | 'list';
@@ -92,15 +88,8 @@ const MultiServiceIcon = () => (
 export default function ProjectsPage() {
   const router = useRouter();
   const { isLoading: authLoading } = useAuth();
-  
   const { dark } = useTheme();
-  const [projects, setProjects] = useState<Project[]>(() => {
-    // Seed from localStorage so list shows instantly on navigation-back
-    if (typeof window === 'undefined') return [];
-    try { return JSON.parse(localStorage.getItem('cachedProjectsV2') ?? '[]') as Project[]; }
-    catch { return []; }
-  });
-  const [loading, setLoading] = useState(true);
+
   const [iconAnimDone, setIconAnimDone] = useState(false);
   const titleIconRef = useRef<HTMLDivElement>(null);
   const [search, setSearch] = useState('');
@@ -111,38 +100,79 @@ export default function ProjectsPage() {
   const [serviceMode, setServiceMode] = useState<'single' | 'multi'>('single');
   const [newName, setNewName] = useState('');
   const [newDesc, setNewDesc] = useState('');
-  const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-
-  // Edit (rename) state
   const [editTarget, setEditTarget] = useState<Project | null>(null);
   const [editName, setEditName] = useState('');
   const [editDesc, setEditDesc] = useState('');
-  const [editing, setEditing] = useState(false);
   const [editError, setEditError] = useState('');
 
+  // ── Projects list via React Query ─────────────────────────────────────────
+  const { data: projects = [], isLoading: projectsLoading } = useQuery({
+    queryKey: queryKeys.projects.list(),
+    queryFn: fetchProjectsList,
+    // Seed from localStorage for instant render before first fetch completes
+    placeholderData: () => {
+      try { return JSON.parse(localStorage.getItem('cachedProjectsV2') ?? '[]') as Project[]; }
+      catch { return []; }
+    },
+  });
 
-  /* ── fetch projects ── */
-  const fetchProjects = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetchWithAuth(`${API}/projects`);
-      if (!res.ok) throw new Error('Failed to fetch');
-      const data = await res.json() as Project[];
-      setProjects(data);
-      // Cache for instant render on next visit
-      localStorage.setItem('cachedProjectsV2', JSON.stringify(data));
-    } catch {
-      /* silently ignore — cached or empty state shown */
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // ── Create project mutation ────────────────────────────────────────────────
+  const createMutation = useMutation({
+    mutationFn: async (payload: { name: string; description?: string; serviceMode: string }) => {
+      const res = await fetchWithAuth(`${API}/projects`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const d = await res.json() as { message?: string };
+        throw new Error(d.message ?? 'Failed to create project');
+      }
+      return res.json() as Promise<{ id: string }>;
+    },
+    onSuccess: (created) => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.projects.list() });
+      setShowModal(false);
+      setNewName('');
+      setNewDesc('');
+      router.push(`/services?projectId=${created.id}`);
+    },
+    onError: (err: Error) => setCreateError(err.message),
+  });
 
-  // Refetch every time the component mounts (e.g. navigating back from services page)
-  useEffect(() => { void fetchProjects(); }, [fetchProjects]);
+  // ── Delete project mutation ───────────────────────────────────────────────
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await fetchWithAuth(`${API}/projects/${id}`, { method: 'DELETE' });
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.projects.list() });
+      setDeleteTarget(null);
+    },
+  });
+
+  // ── Rename / update project mutation ─────────────────────────────────────
+  const editMutation = useMutation({
+    mutationFn: async (payload: { id: string; name: string; description?: string }) => {
+      const res = await fetchWithAuth(`${API}/projects/${payload.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: payload.name, description: payload.description }),
+      });
+      if (!res.ok) {
+        const d = await res.json() as { message?: string };
+        throw new Error(d.message ?? 'Failed to update project');
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.projects.list() });
+      setEditTarget(null);
+    },
+    onError: (err: Error) => setEditError(err.message),
+  });
 
   /* ── close menu on outside click ── */
   useEffect(() => {
@@ -151,7 +181,7 @@ export default function ProjectsPage() {
     return () => document.removeEventListener('click', handler);
   }, []);
 
-  /* ── open modal (reset to step 1) ── */
+  /* ── open modal ── */
   const openCreateModal = () => {
     setModalStep(1);
     setServiceMode('single');
@@ -161,70 +191,20 @@ export default function ProjectsPage() {
     setShowModal(true);
   };
 
-  /* ── create project + navigate to services ── */
-  const handleCreate = async (e: React.FormEvent) => {
+  /* ── handlers delegating to mutations ── */
+  const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName.trim()) return;
-    setCreating(true);
-    setCreateError('');
-    try {
-      const res = await fetchWithAuth(`${API}/projects`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: newName.trim(),
-          description: newDesc.trim() || undefined,
-          serviceMode,
-        }),
-      });
-      if (!res.ok) {
-        const d = await res.json() as { message?: string };
-        throw new Error(d.message ?? 'Failed to create project');
-      }
-      const created = await res.json() as { id: string };
-      setShowModal(false);
-      setNewName('');
-      setNewDesc('');
-      router.push(`/services?projectId=${created.id}`);
-    } catch (err) {
-      setCreateError(err instanceof Error ? err.message : 'Something went wrong');
-    } finally {
-      setCreating(false);
-    }
+    createMutation.mutate({ name: newName.trim(), description: newDesc.trim() || undefined, serviceMode });
   };
 
-  /* ── delete project ── */
-  const handleDelete = async (id: string) => {
-    try {
-      await fetchWithAuth(`${API}/projects/${id}`, { method: 'DELETE' });
-      setProjects(prev => prev.filter(p => p.id !== id));
-    } catch { /* ignore */ }
-    setDeleteTarget(null);
-  };
+  const handleDelete = (id: string) => deleteMutation.mutate(id);
 
-  /* ── rename / update project ── */
-  const handleEdit = async (e: React.FormEvent) => {
+  const handleEdit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editTarget || !editName.trim()) return;
-    setEditing(true);
     setEditError('');
-    try {
-      const res = await fetchWithAuth(`${API}/projects/${editTarget.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: editName.trim(), description: editDesc.trim() || undefined }),
-      });
-      if (!res.ok) {
-        const d = await res.json() as { message?: string };
-        throw new Error(d.message ?? 'Failed to update project');
-      }
-      setEditTarget(null);
-      await fetchProjects();
-    } catch (err) {
-      setEditError(err instanceof Error ? err.message : 'Something went wrong');
-    } finally {
-      setEditing(false);
-    }
+    editMutation.mutate({ id: editTarget.id, name: editName.trim(), description: editDesc.trim() || undefined });
   };
 
   /* ── filtered + sorted list ── */
@@ -237,16 +217,16 @@ export default function ProjectsPage() {
 
   const initials = (name: string) => name.slice(0, 2).toUpperCase();
 
-  // Only show the full loading skeleton when there's no cached data to show
-  const isInitialLoading = (authLoading || loading) && projects.length === 0;
+  const isInitialLoading = (authLoading || projectsLoading) && projects.length === 0;
 
-  /* Fly animation: once loading done, after a brief moment trigger fly-to-header */
+  /* Fly animation once loading done */
   useEffect(() => {
     if (!isInitialLoading && !iconAnimDone) {
       const t = setTimeout(() => setIconAnimDone(true), 600);
       return () => clearTimeout(t);
     }
   }, [isInitialLoading, iconAnimDone]);
+
 
   return (
     <div className={`${styles.page}${dark ? ' ' + styles.dark : ''}`}>
@@ -527,8 +507,8 @@ export default function ProjectsPage() {
                 {createError && <p className={styles.modalError}>{createError}</p>}
                 <div className={styles.modalActions}>
                   <button type="button" className={styles.cancelBtn} onClick={() => setModalStep(1)}>← Back</button>
-                  <button id="create-project-submit" type="submit" className={styles.createBtn} disabled={creating || !newName.trim()}>
-                    {creating ? 'Creating…' : 'Create project'}
+                  <button id="create-project-submit" type="submit" className={styles.createBtn} disabled={createMutation.isPending || !newName.trim()}>
+                    {createMutation.isPending ? 'Creating…' : 'Create project'}
                   </button>
                 </div>
               </form>
@@ -573,8 +553,8 @@ export default function ProjectsPage() {
               {editError && <p className={styles.modalError}>{editError}</p>}
               <div className={styles.modalActions}>
                 <button type="button" className={styles.cancelBtn} onClick={() => setEditTarget(null)}>Cancel</button>
-                <button type="submit" className={styles.createBtn} disabled={editing || !editName.trim()}>
-                  {editing ? 'Saving…' : 'Save changes'}
+                <button type="submit" className={styles.createBtn} disabled={editMutation.isPending || !editName.trim()}>
+                  {editMutation.isPending ? 'Saving…' : 'Save changes'}
                 </button>
               </div>
             </form>

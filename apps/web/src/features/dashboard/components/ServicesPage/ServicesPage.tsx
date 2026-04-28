@@ -1,28 +1,18 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useTheme } from '@/hooks/useTheme';
 import { fetchWithAuth } from '@/lib/fetchWithAuth';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { queryClient } from '@/lib/queryClient';
+import { queryKeys, fetchProject, fetchServices, type Service, type Project } from '@/lib/queries';
 import ProjectSettingsContent from '@/features/dashboard/components/SettingsPage/ProjectSettingsContent';
 import styles from './ServicesPage.module.scss';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
 
-interface Service {
-  id: string;
-  name: string;
-  description?: string;
-  isDefault: boolean;
-  createdAt: string;
-  _count?: { apiCalls?: number };
-}
 
-interface Project {
-  id: string;
-  name: string;
-  serviceMode: string; // 'single' | 'multi'
-}
 
 /* ── Animated hex logo ── */
 const HexLogo = () => (
@@ -107,86 +97,73 @@ export default function ServicesPage() {
     router.replace(`${pathname}?${params.toString()}`);
   };
 
-  const [project, setProject] = useState<Project | null>(() => {
-    // Seed from localStorage so the title never flickers to 'Loading…'
-    if (typeof window === 'undefined') return null;
-    const cached = localStorage.getItem(`project:${searchParams.get('projectId') ?? ''}`);
-    if (!cached) return null;
-    try { return JSON.parse(cached) as Project; } catch { return null; }
-  });
-  const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newServiceName, setNewServiceName] = useState('');
   const [newServiceDesc, setNewServiceDesc] = useState('');
-  const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState('');
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [initializing, setInitializing] = useState(false);
 
-  /* ── Fetch project + services in one pass ── */
-  const fetchData = useCallback(async () => {
-    if (!projectId) return;
-    setLoading(true);
-    try {
-      const [projRes, svcRes] = await Promise.all([
-        fetchWithAuth(`${API}/projects/${projectId}`),
-        fetchWithAuth(`${API}/projects/${projectId}/services`),
-      ]);
+  // ── Project detail via React Query ─────────────────────────────────────────
+  const { data: project, isLoading: projectLoading } = useQuery({
+    queryKey: queryKeys.projects.detail(projectId),
+    queryFn: () => fetchProject(projectId),
+    enabled: !!projectId,
+    placeholderData: () => {
+      try {
+        const list = JSON.parse(localStorage.getItem('cachedProjectsV2') ?? '[]') as Project[];
+        return list.find(p => p.id === projectId);
+      } catch { return undefined; }
+    },
+  });
 
-      if (projRes.ok) {
-        const proj = await projRes.json() as Project;
-        setProject(proj);
-        // Cache for instant render next time
-        localStorage.setItem(`project:${projectId}`, JSON.stringify(proj));
+  // ── Services list via React Query (30s stale time) ─────────────────────────
+  const { data: services = [], isLoading: servicesLoading } = useQuery({
+    queryKey: queryKeys.services.list(projectId),
+    queryFn: () => fetchServices(projectId),
+    enabled: !!projectId,
+    staleTime: 30_000,
+  });
+
+  const loading = projectLoading && !project;
+
+  // ── Create service mutation ────────────────────────────────────────────────
+  const createMutation = useMutation({
+    mutationFn: async (payload: { name: string; description?: string }) => {
+      const res = await fetchWithAuth(`${API}/projects/${projectId}/services`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const d = await res.json() as { message?: string };
+        throw new Error(d.message ?? 'Failed to create service');
       }
-      if (svcRes.ok) {
-        setServices(await svcRes.json() as Service[]);
-      }
-    } catch { /* ignore */ } finally {
-      setLoading(false);
-    }
-  }, [projectId]);
-
-  useEffect(() => { void fetchData(); }, [fetchData]);
+      return res.json();
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.services.list(projectId) });
+      setShowCreateModal(false);
+      setNewServiceName('');
+      setNewServiceDesc('');
+    },
+    onError: (err: Error) => setCreateError(err.message),
+  });
 
   /* ── Navigate into service dashboard ── */
   const openService = (serviceId: string) => {
     router.push(`/dashboard?projectId=${projectId}&serviceId=${serviceId}`);
   };
 
-  /* ── Create new service (multi-service mode) ── */
-  const handleCreateService = async (e: React.FormEvent) => {
+  /* ── Create new service handler ── */
+  const handleCreateService = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newServiceName.trim()) return;
-    setCreating(true);
     setCreateError('');
-    try {
-      const res = await fetchWithAuth(`${API}/projects/${projectId}/services`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: newServiceName.trim(),
-          description: newServiceDesc.trim() || undefined,
-        }),
-      });
-      if (!res.ok) {
-        const d = await res.json() as { message?: string };
-        throw new Error(d.message ?? 'Failed to create service');
-      }
-      setShowCreateModal(false);
-      setNewServiceName('');
-      setNewServiceDesc('');
-      await fetchData();
-    } catch (err) {
-      setCreateError(err instanceof Error ? err.message : 'Something went wrong');
-    } finally {
-      setCreating(false);
-    }
+    createMutation.mutate({ name: newServiceName.trim(), description: newServiceDesc.trim() || undefined });
   };
 
-  const [initializing, setInitializing] = useState(false);
-
-  /* ── Quick-init: create the default service for old single-mode projects ── */
+  /* ── Quick-init default service ── */
   const initDefaultService = async () => {
     if (!project) return;
     setInitializing(true);
@@ -194,12 +171,11 @@ export default function ServicesPage() {
       const res = await fetchWithAuth(`${API}/projects/${projectId}/services`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: `default-service_${project.name}`,
-          description: 'Default service',
-        }),
+        body: JSON.stringify({ name: `default-service_${project.name}`, description: 'Default service' }),
       });
-      if (res.ok) await fetchData();
+      if (res.ok) {
+        void queryClient.invalidateQueries({ queryKey: queryKeys.services.list(projectId) });
+      }
     } catch { /* ignore */ } finally {
       setInitializing(false);
     }
@@ -529,9 +505,9 @@ export default function ServicesPage() {
                   <button
                     type="submit"
                     className={styles.createBtn}
-                    disabled={creating || !newServiceName.trim()}
+                    disabled={createMutation.isPending || !newServiceName.trim()}
                   >
-                    {creating ? 'Creating…' : 'Create Service'}
+                    {createMutation.isPending ? 'Creating…' : 'Create Service'}
                   </button>
                 </div>
               </form>
