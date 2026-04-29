@@ -13,6 +13,7 @@ interface Props {
 
 export default function ServiceSettingsSidebar({
   projectId,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   serviceId: _serviceId,
   activeSection: propActiveSection,
   onSectionChange,

@@ -435,7 +435,7 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
         <div className={styles.steps}>
           <StepCard num={1} title="Install FastAPI & Uvicorn">
             <div className={styles.stepDesc}>
-              The monitoring agent uses only Python's <strong>standard library</strong> — no extra packages for monitoring itself.
+              The monitoring agent uses only Python&apos;s <strong>standard library</strong> — no extra packages for monitoring itself.
             </div>
             <TermBlock
               title="Terminal"
@@ -527,7 +527,7 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
 
           <StepCard num={3} title="Watch your Go APIs stream live! 🎉">
             <div className={styles.stepDesc}>
-              Hit any endpoint on <code style={{ fontFamily: 'monospace', fontSize: '0.85em' }}>http://localhost:8080/api/v1/ping</code> to confirm it's working.
+              Hit any endpoint on <code style={{ fontFamily: 'monospace', fontSize: '0.85em' }}>http://localhost:8080/api/v1/ping</code> to confirm it&apos;s working.
             </div>
             <div className={styles.endpointList}>
               {[
