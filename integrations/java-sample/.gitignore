@@ -1,0 +1,14 @@
+# Java build output
+target/
+*.class
+*.jar
+
+# Maven wrapper JAR (optional — include if you want zero-install setup)
+# .mvn/wrapper/maven-wrapper.jar
+
+# IDE files
+.idea/
+*.iml
+.classpath
+.project
+.settings/
