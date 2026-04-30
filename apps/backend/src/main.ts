@@ -48,7 +48,7 @@ async function bootstrap() {
 
   console.log('');
   console.log(
-    `${c.cyan}${c.bold}  ⚡ API Nest — Backend Starting${c.reset}  ${c.gray}(${env})${c.reset}`,
+    `${c.cyan}${c.bold}  ⚡ Apio — Backend Starting${c.reset}  ${c.gray}(${env})${c.reset}`,
   );
   console.log(`${c.gray}  ─────────────────────────────────────────${c.reset}`);
 

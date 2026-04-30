@@ -10,7 +10,7 @@ const SEND_EVERY_MS = 500;
 export function patchFetch() {
   const originalFetch = globalThis.fetch;
   if (!originalFetch) {
-    console.warn('[api-nest] fetch not available, skipping fetch patch');
+    console.warn('[apio] fetch not available, skipping fetch patch');
     return;
   }
 
@@ -84,6 +84,6 @@ export function patchFetch() {
     }
   };
 
-  console.log('[api-nest] ✅ Fetch interceptor active');
+  console.log('[apio] ✅ Fetch interceptor active');
   startSender(SEND_EVERY_MS);
 }

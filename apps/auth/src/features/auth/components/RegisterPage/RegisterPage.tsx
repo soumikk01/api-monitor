@@ -91,7 +91,7 @@ export default function RegisterPage() {
               </svg>
             </div>
             <h1 className={styles.introTitle}>Create your account</h1>
-            <p className={styles.introSub}>Join API Nest to monitor your APIs</p>
+            <p className={styles.introSub}>Join Apio to monitor your APIs</p>
           </div>
 
           <header className={styles.navWrap}>
@@ -101,7 +101,7 @@ export default function RegisterPage() {
                   <polygon points="10,1 19,6 19,14 10,19 1,14 1,6" stroke="#1A1A1A" strokeWidth="1.5" fill="none"/>
                   <circle cx="10" cy="10" r="3" fill="#1A1A1A"/>
                 </svg>
-                <span className={styles.logoMark}>API Nest</span>
+                <span className={styles.logoMark}>Apio</span>
               </div>
               <a href={process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'} className={styles.backLink}>← Home</a>
             </nav>

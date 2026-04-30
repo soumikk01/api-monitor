@@ -211,7 +211,7 @@ export default function TopNavbar() {
               <circle cx="10" cy="10" r="3" fill="currentColor"/>
             </svg>
           </span>
-          <span className={styles.brandText}>API NEST</span>
+          <span className={styles.brandText}>APIO</span>
         </Link>
 
         {!isProjectsPage && !isAccountPage && (

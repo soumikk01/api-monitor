@@ -1,6 +1,6 @@
 <div align="center">
   <br />
-  <h3>⚡ API NEST</h3>
+  <h3>⚡ APIO</h3>
   <p><strong>The modern, real-time observability platform for your backend services.</strong></p>
   <br />
 
@@ -17,7 +17,7 @@
 
 ## 📖 Overview
 
-**API Nest** is a professional, full-stack SaaS solution providing real-time, deep visibility into your application's API traffic. Whether you are debugging, monitoring performance latency, or ensuring production stability, API Nest seamlessly intercepts HTTP requests and streams them to a beautiful dashboard in real-time.
+**Apio** is a professional, full-stack SaaS solution providing real-time, deep visibility into your application's API traffic. Whether you are debugging, monitoring performance latency, or ensuring production stability, Apio seamlessly intercepts HTTP requests and streams them to a beautiful dashboard in real-time.
 
 Forget digging through terminal logs. Plug in the zero-config CLI tool and watch your traffic matrix light up instantly.
 
@@ -26,7 +26,7 @@ Forget digging through terminal logs. Plug in the zero-config CLI tool and watch
 ## ✨ Key Features
 
 - **🔴 Real-Time Observability**: Powered by WebSockets + Socket.io, watch API traffic flow into the dashboard with zero delay.
-- **🔌 Zero-Config Interceptor**: A drop-in `api-nest-cli` NPM package auto-patches `fetch`, `http`, and `https` natively. No code refactoring required.
+- **🔌 Zero-Config Interceptor**: A drop-in `apio-cli` NPM package auto-patches `fetch`, `http`, and `https` natively. No code refactoring required.
 - **🏗️ Turborepo Monorepo**: All apps managed together — one `bun install`, one `bun turbo dev`.
 - **🔐 Per-Tab Security**: Tokens stored in `sessionStorage` — each browser tab has its own isolated session.
 - **🧱 Horizontally Scalable Backend**: Two NestJS instances behind NGINX, synced via Redis pub/sub.
@@ -53,7 +53,7 @@ api-monitor/                         ← Turborepo monorepo root
     ├── docs/       → :3002          Next.js — Documentation site
     ├── admin/      → :3003          Next.js — Admin panel
     ├── backend/    → :4000 / :4001  NestJS — REST API + WebSocket + BullMQ Worker
-    └── cli/        → npm            api-nest-cli (published to npm)
+    └── cli/        → npm            apio-cli (published to npm)
 ```
 
 <br />
@@ -111,17 +111,17 @@ Log into the dashboard (`http://localhost:3000`) → Settings → **Get Command*
 
 **2. Initialize the interceptor in your app**
 ```bash
-npx api-nest-cli init --token sdk_<YOUR_TOKEN>
+npx apio-cli init --token sdk_<YOUR_TOKEN>
 ```
 
 **3. Add to your app's entry file**
 ```ts
 // At the very top of your server entry point
-import 'api-nest-cli/register';
+import 'apio-cli/register';
 ```
 
 **4. Watch the dashboard**  
-Start your app. API Nest will intercept every outgoing HTTP request and stream it to your dashboard in real-time.
+Start your app. Apio will intercept every outgoing HTTP request and stream it to your dashboard in real-time.
 
 <br />
 

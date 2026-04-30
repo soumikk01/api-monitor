@@ -15,4 +15,4 @@ patchIncomingRequests();
 patchAxios();
 patchFetch();
 
-console.log('[api-nest] 🟢 Monitoring active — incoming + outgoing HTTP captured');
+console.log('[apio] 🟢 Monitoring active — incoming + outgoing HTTP captured');

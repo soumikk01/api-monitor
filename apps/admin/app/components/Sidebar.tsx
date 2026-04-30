@@ -29,7 +29,7 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="sidebar-logo">
         <div className="sidebar-logo-icon">📡</div>
-        <span className="sidebar-logo-text">API Nest</span>
+        <span className="sidebar-logo-text">Apio</span>
         <span className="sidebar-logo-badge">ADMIN</span>
       </div>
 

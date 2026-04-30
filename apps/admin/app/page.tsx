@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
       <div className="login-left">
         <div className="login-brand">
           <div className="login-brand-icon">📡</div>
-          <h1>API Nest<br />Admin Panel</h1>
+          <h1>Apio<br />Admin Panel</h1>
           <p>
             Full visibility into every API call across all users and projects.
             Real-time monitoring, analytics, and platform management in one place.
@@ -110,7 +110,7 @@ export default function AdminLoginPage() {
           </form>
 
           <p style={{ marginTop: '24px', fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center' }}>
-            Admin access only · API Nest Platform
+            Admin access only · Apio Platform
           </p>
         </div>
       </div>

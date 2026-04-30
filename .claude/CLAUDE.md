@@ -1,7 +1,7 @@
 # API Monitor — Claude Context
 
 ## Project Overview
-API Nest is a real-time API observability SaaS platform. It intercepts HTTP calls from your backend via an NPM SDK, streams them over WebSockets, and displays them in a glassmorphic dashboard.
+Apio is a real-time API observability SaaS platform. It intercepts HTTP calls from your backend via an NPM SDK, streams them over WebSockets, and displays them in a glassmorphic dashboard.
 
 ## Monorepo Structure (Turborepo + Bun)
 ```

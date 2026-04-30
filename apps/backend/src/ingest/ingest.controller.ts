@@ -15,7 +15,7 @@ export class IngestController {
 
   /**
    * POST /ingest/setup
-   * Called by `api-nest init` — validates SDK token and auto-creates/returns
+   * Called by `apio init` — validates SDK token and auto-creates/returns
    * a project for the given project name. Returns { projectId, projectName }.
    */
   @Post('setup')

@@ -81,8 +81,8 @@ const nextConfig = {
 
 The docs page covers:
 
-1. **Overview** — What API Nest is, key features
-2. **Quick Start** — Install CLI, run `api-nest init`
+1. **Overview** — What Apio is, key features
+2. **Quick Start** — Install CLI, run `apio init`
 3. **Architecture** — System diagram, data flow
 4. **API Reference** — REST endpoints, WebSocket events
 5. **CLI Reference** — All commands and flags

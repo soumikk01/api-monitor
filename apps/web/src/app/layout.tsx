@@ -33,8 +33,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "API Nest — Real-time API Monitoring",
-  description: "API Nest gives engineering teams real-time visibility into every API call. Monitor uptime, latency, and errors across all your microservices with a single command.",
+  title: "Apio — Real-time API Monitoring",
+  description: "Apio gives engineering teams real-time visibility into every API call. Monitor uptime, latency, and errors across all your microservices with a single command.",
 };
 
 export default function RootLayout({

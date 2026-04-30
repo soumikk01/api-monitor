@@ -71,6 +71,6 @@ export function patchAxios() {
     },
   );
 
-  console.log('[api-nest] ✅ Axios interceptor active');
+  console.log('[apio] ✅ Axios interceptor active');
   startSender(SEND_EVERY_MS);
 }

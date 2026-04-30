@@ -1,7 +1,7 @@
 {
-  "name": "api-nest-cli",
+  "name": "apio-cli",
   "version": "1.0.9",
-  "description": "CLI agent for API Nest — intercepts HTTP calls in your dev project and streams them to the dashboard",
+  "description": "CLI agent for Apio — intercepts HTTP calls in your dev project and streams them to the dashboard",
   "main": "dist/index.js",
   "exports": {
     ".": "./dist/index.js",
@@ -10,7 +10,7 @@
     "./dist/register.js": "./dist/register.js"
   },
   "bin": {
-    "api-nest": "dist/index.js"
+    "apio": "dist/index.js"
   },
   "files": [
     "dist",

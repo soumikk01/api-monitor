@@ -39,7 +39,7 @@ export default function AnalyticsPage() {
         const list = Array.isArray(d) ? (d as Project[]) : [];
         setProjects(list);
         if (list.length) setSelectedProject(list[0].id);
-        if (!Array.isArray(d)) console.warn('[api-nest] /projects returned non-array:', d);
+        if (!Array.isArray(d)) console.warn('[apio] /projects returned non-array:', d);
       })
       .catch(console.error);
   }, []);

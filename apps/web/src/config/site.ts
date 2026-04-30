@@ -1,6 +1,6 @@
 export const siteConfig = {
-  name: 'API Nest',
+  name: 'Apio',
   description: 'Monitor your APIs with neural precision.',
-  url: 'https://api-nest.dev',
+  url: 'https://apio.one',
   version: '1.0.0',
 };
