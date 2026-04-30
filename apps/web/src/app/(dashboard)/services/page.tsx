@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import ServicesPage from '@/features/dashboard/components/ServicesPage/ServicesPage';
 
 export const metadata = {
-  title: 'Services | Apio',
+  title: 'Services | API Nest',
   description: 'Manage services for your project',
 };
 

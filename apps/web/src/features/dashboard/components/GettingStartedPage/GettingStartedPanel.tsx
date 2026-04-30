@@ -143,7 +143,22 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
     bun:  { install: 'bun add',      exec: 'bunx',     run: 'bun run dev' },
   }[pm];
 
-  const cliCommand = `${pmCmds.exec} apio-cli@latest init --token ${sdkToken || 'sdk_your_token_here'}`;
+  // Real token used in clipboard copy — never shown in full on screen
+  const tok = sdkToken || 'sdk_your_token_here';
+  const backBase = API.replace('/api/v1', '');
+
+  // Masked version shown on screen — reveal only on explicit user action
+  const maskToken = (t: string) => t.length > 12 ? `${t.slice(0, 12)}••••••••` : t;
+  const displayTok = tokenVisible ? tok : maskToken(tok);
+
+  // Install URL — upgrade to HTTPS in production
+  const isLocalhost = backBase.includes('localhost') || backBase.includes('127.0.0.1');
+  const installBase = isLocalhost ? backBase : backBase.replace('http://', 'https://');
+
+  const cliCmd = `${pmCmds.exec} api-nest-cli@latest init --token ${tok}`;
+  // Display version with masked token
+  const cliCmdDisplay = `${pmCmds.exec} api-nest-cli@latest init --token ${displayTok}`;
+
 
   useEffect(() => {
     let cancelled = false;
@@ -281,22 +296,24 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
             />
           </StepCard>
 
-            <div style={{marginBottom:'0.75rem'}}>
-              <div style={{fontSize:'0.75rem',fontWeight:700,color:'#888',marginBottom:'0.4rem',textTransform:'uppercase',letterSpacing:'0.06em'}}>Step 2a — Install the package</div>
-              <div className={styles.terminal}>
-                <div className={styles.termHeader}>
-                  <span className={styles.termDot} style={{background:'#ff5f57'}}/>
-                  <span className={styles.termDot} style={{background:'#febc2e'}}/>
-                  <span className={styles.termDot} style={{background:'#28c840'}}/>
-                  <span className={styles.termTitle}>Terminal</span>
-                  <button className={styles.termCopy} onClick={() => copy(`${pmCmds.install} apio-cli`, 'install')}>
-                    {copied === 'install' ? '✓ Copied!' : 'Copy'}
-                  </button>
-                </div>
-                <div className={styles.termBody}>
-                  <span className={styles.prompt}>~/your-backend ❯ </span>
-                  <span className={styles.cmd}>{pmCmds.install} apio-cli</span>
-                </div>
+          <StepCard num={2} title="Run the init command — auto-configures everything">
+            <div className={styles.stepDesc}>
+              This validates your token, creates a project, and patches your start script automatically.
+              <strong> No source file changes needed.</strong>
+            </div>
+            <div className={styles.terminal}>
+              <div className={styles.termHeader}>
+                <span className={styles.termDot} style={{ background: '#ff5f57' }} />
+                <span className={styles.termDot} style={{ background: '#febc2e' }} />
+                <span className={styles.termDot} style={{ background: '#28c840' }} />
+                <span className={styles.termTitle}>Terminal — initialize monitoring</span>
+                <button className={`${styles.termCopy} ${copied === 'node-init' ? styles.termCopied : ''}`} onClick={() => copy(cliCmd, 'node-init')}>
+                  {copied === 'node-init' ? '✓ Copied!' : 'Copy'}
+                </button>
+              </div>
+              <div className={styles.termBody}>
+                <span className={styles.prompt}>~/your-project ❯ </span>
+                <span className={styles.cmd}>{cliCmdDisplay}</span>
               </div>
             </div>
             <CaptureGrid items={[
@@ -321,16 +338,14 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
             <SuccessTip>Look for <strong>[api-nest] Monitoring active</strong> in your terminal output.</SuccessTip>
           </StepCard>
 
-            <div className={styles.whatHappens}>
-              <div className={styles.whatTitle}>What the init command does automatically:</div>
-              <div className={styles.whatList}>
-                {[
-                  '✅ Validates your SDK token with the Apio backend',
-                  '✅ Creates a project named after your folder',
-                  '✅ Patches your package.json "dev"/"start" script with --import flag',
-                  '✅ Saves .apio.json config with your project ID',
-                  '✅ Zero source file changes — monitoring loads via Node.js flag',
-                ].map(item => <div key={item} className={styles.whatItem}>{item}</div>)}
+          <StepCard num={4} title="Watch your APIs stream live! 🎉">
+            <div className={styles.stepDesc}>
+              Make any HTTP request to your server — it appears on the dashboard instantly with method, path, status, and latency.
+            </div>
+            <div className={styles.ctaCard}>
+              <div className={styles.ctaText}>
+                <h3>Open your live dashboard</h3>
+                <p>Traffic streams in real-time via WebSocket</p>
               </div>
               <Link href="/dashboard" className={styles.dashBtn}>
                 View Dashboard →
@@ -359,8 +374,25 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
                 </button>
               ))}
             </div>
-            <div style={{marginTop:'1rem',padding:'0.85rem 1.2rem',background:'rgba(16,185,129,0.06)',border:'1px solid rgba(16,185,129,0.15)',borderRadius:12,fontSize:'0.85rem',color:'#059669'}}>
-              🟢 You will see <strong>[apio] Monitoring active</strong> in your terminal when it&apos;s working.
+            <EnvBlock
+              winKey="java-setup-win" unixKey="java-setup-unix"
+              win={`$env:APINEST_SDK_TOKEN="${tok}"\n$env:APINEST_BACKEND_URL="${installBase}"\niwr -useb ${installBase}/install.ps1 | iex`}
+              unix={`export APINEST_SDK_TOKEN="${tok}"\nexport APINEST_BACKEND_URL="${installBase}"\ncurl -fsSL ${installBase}/install.sh | bash`}
+              winDisplay={`$env:APINEST_SDK_TOKEN="${displayTok}"\n$env:APINEST_BACKEND_URL="${installBase}"\niwr -useb ${installBase}/install.ps1 | iex`}
+              unixDisplay={`export APINEST_SDK_TOKEN="${displayTok}"\nexport APINEST_BACKEND_URL="${installBase}"\ncurl -fsSL ${installBase}/install.sh | bash`}
+              copied={copied} onCopy={copy}
+            />
+            <CaptureGrid items={[
+              'Auto-detects your Java package name',
+              'Places ApiMonitorFilter.java in src/main/java/<your.package>/',
+              'No pom.xml changes needed',
+              'No Maven dependencies to add',
+            ]} />
+          </StepCard>
+
+          <StepCard num={2} title="Start your Spring Boot server — monitoring is live">
+            <div className={styles.stepDesc}>
+              The filter is already in place. Just start your server normally:
             </div>
             <TermBlock
               title="Maven wrapper"
@@ -414,16 +446,19 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
             />
           </StepCard>
 
-      {/* Docker Section */}
-      <div className={styles.trouble} style={{marginBottom:'1.5rem'}}>
-        <div className={styles.troubleTitle}>🐳 Using Docker?</div>
-        <p style={{fontSize:'0.9rem',color:'#6B6B6B',marginBottom:'1.25rem',lineHeight:1.6}}>
-          When your server runs inside a Docker container,{' '}
-          <code style={{background:'rgba(0,0,0,0.06)',padding:'2px 6px',borderRadius:4,fontFamily:'monospace',fontSize:'0.85em'}}>localhost:4000</code>{' '}
-          points to the container itself — not your host machine.
-          Use environment variables to tell the agent where to reach the Apio backend.{' '}
-          <strong>No file changes needed.</strong>
-        </p>
+          <StepCard num={2} title="Set your SDK token as an environment variable">
+            <div className={styles.stepDesc}>
+              The <code style={{ fontFamily: 'monospace', fontSize: '0.85em' }}>ApiMonitorMiddleware</code> reads the token from the environment — zero code changes.
+            </div>
+            <EnvBlock
+              winKey="py-env-win" unixKey="py-env-unix"
+              win={`$env:APINEST_SDK_TOKEN="${tok}"\n$env:APINEST_BACKEND_URL="${backBase}"\n$env:PORT="8000"`}
+              unix={`export APINEST_SDK_TOKEN="${tok}"\nexport APINEST_BACKEND_URL="${backBase}"\nexport PORT=8000`}
+              fileType="python"
+              fileContent={`APINEST_SDK_TOKEN=${tok}\nAPINEST_BACKEND_URL=${backBase}\nPORT=8000`}
+              copied={copied} onCopy={copy}
+            />
+          </StepCard>
 
           <StepCard num={3} title="Run the server — monitoring starts automatically">
             <TermBlock
@@ -440,12 +475,22 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
             <div className={styles.stepDesc}>
               Hit any endpoint on <code style={{ fontFamily: 'monospace', fontSize: '0.85em' }}>http://localhost:8000</code> — every request appears instantly.
             </div>
-            <pre className={styles.termBody}><span className={styles.cmd}>{`docker run \\
-  -e APIO_BACKEND_URL=http://host.docker.internal:4000 \\
-  -e APIO_SDK_TOKEN=${sdkToken || 'sdk_your_token'} \\
-  -e APINEST_PROJECT_ID=your_project_id \\
-  your-image`}</span></pre>
-          </div>
+            <div className={styles.endpointList}>
+              {[
+                ['GET',  '/api/ping', 'Health check'],
+                ['POST', '/api/auth/login', 'Authentication'],
+                ['GET',  '/api/users', 'User list (requires auth)'],
+                ['GET',  '/api/products', 'Product catalog'],
+                ['GET',  '/docs', 'Swagger UI (auto-generated)'],
+              ].map(([m, path, desc]) => (
+                <div key={path} className={styles.endpointItem}>
+                  <span className={`${styles.methodBadge} ${m === 'GET' ? styles.methodGet : styles.methodPost}`}>{m}</span>
+                  <code style={{ fontFamily: 'monospace', fontSize: '0.8em' }}>{path}</code>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginLeft: 'auto' }}>{desc}</span>
+                </div>
+              ))}
+            </div>
+          </StepCard>
         </div>
       )}
 
@@ -456,14 +501,57 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
             <div className={styles.stepDesc}>
               The Go middleware reads <code style={{ fontFamily: 'monospace', fontSize: '0.85em' }}>APINEST_SDK_TOKEN</code> at startup — zero code changes needed.
             </div>
-            <pre className={styles.termBody}><span className={styles.comment}>{`services:
-  backend:
-    build: .
-    environment:`}</span>{'\n'}
-<span className={styles.cmd}>{`      APIO_BACKEND_URL: http://host.docker.internal:4000
-      APIO_SDK_TOKEN: ${sdkToken || 'sdk_your_token'}
-      APINEST_PROJECT_ID: your_project_id`}</span></pre>
-          </div>
+            <EnvBlock
+              winKey="go-env-win" unixKey="go-env-unix"
+              win={`$env:APINEST_SDK_TOKEN="${tok}"\n$env:APINEST_BACKEND_URL="${backBase}"\n$env:PORT="8080"`}
+              unix={`export APINEST_SDK_TOKEN="${tok}"\nexport APINEST_BACKEND_URL="${backBase}"\nexport PORT=8080`}
+              fileType="go"
+              fileContent={`APINEST_SDK_TOKEN=${tok}\nAPINEST_BACKEND_URL=${backBase}\nPORT=8080`}
+              copied={copied} onCopy={copy}
+            />
+          </StepCard>
+
+          <StepCard num={2} title="Run the server — no build step required">
+            <div className={styles.stepDesc}>
+              Go compiles and runs in one command. No <code style={{ fontFamily: 'monospace', fontSize: '0.85em' }}>go build</code> required.
+            </div>
+            <TermBlock
+              title="Terminal"
+              cmd="go run main.go"
+              copyKey="go-run"
+              copied={copied}
+              onCopy={copy}
+            />
+            <SuccessTip>Look for <strong>[api-monitor] Sender active → …/ingest</strong>. Server runs on <strong>http://localhost:8080</strong>.</SuccessTip>
+          </StepCard>
+
+          <StepCard num={3} title="Watch your Go APIs stream live! 🎉">
+            <div className={styles.stepDesc}>
+              Hit any endpoint on <code style={{ fontFamily: 'monospace', fontSize: '0.85em' }}>http://localhost:8080/api/v1/ping</code> to confirm it&apos;s working.
+            </div>
+            <div className={styles.endpointList}>
+              {[
+                ['GET',  '/api/v1/ping', 'Health check'],
+                ['POST', '/api/v1/auth/login', 'Authentication'],
+                ['GET',  '/api/v1/users', 'User list'],
+                ['GET',  '/api/v1/products', 'Product catalog'],
+                ['GET',  '/api/v1/system/slow', 'Intentional 2-3s delay'],
+              ].map(([m, path, desc]) => (
+                <div key={path} className={styles.endpointItem}>
+                  <span className={`${styles.methodBadge} ${m === 'GET' ? styles.methodGet : styles.methodPost}`}>{m}</span>
+                  <code style={{ fontFamily: 'monospace', fontSize: '0.8em' }}>{path}</code>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginLeft: 'auto' }}>{desc}</span>
+                </div>
+              ))}
+            </div>
+            <div className={styles.ctaCard} style={{ marginTop: '1rem' }}>
+              <div className={styles.ctaText}>
+                <h3>Watch it live</h3>
+                <p>Real-time traffic on your dashboard</p>
+              </div>
+              <Link href="/dashboard" className={styles.dashBtn}>View Dashboard →</Link>
+            </div>
+          </StepCard>
         </div>
       )}
 
@@ -495,26 +583,23 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
       <div className={styles.trouble}>
         <div className={styles.troubleTitle}>🛠️ Troubleshooting</div>
         <div className={styles.troubleList}>
-          <details className={styles.faq}>
-            <summary>APIs not showing after starting the server?</summary>
-            <p>Make sure you ran <code>npm install apio-cli@latest</code> AND <code>npx apio-cli@latest init --token ...</code> before starting. Also confirm you see <strong>[apio] Monitoring active</strong> in the terminal output.</p>
-          </details>
-          <details className={styles.faq}>
-            <summary>Live Socket shows &quot;Connecting&quot;?</summary>
-            <p>The WebSocket can&apos;t reach the Apio backend. Make sure the backend is running on port 4000 and refresh the page.</p>
-          </details>
-          <details className={styles.faq}>
-            <summary>Server crashes with &quot;Cannot find module apio-cli/register.js&quot;?</summary>
-            <p>Run <code>npm install apio-cli@latest</code> inside your <strong>backend folder</strong> first, then run the init command again.</p>
-          </details>
-          <details className={styles.faq}>
-            <summary>Running from a monorepo root?</summary>
-            <p>Run both commands from inside your backend directory: <code>cd backend</code>, then <code>npm install apio-cli@latest</code>, then the init command.</p>
-          </details>
-          <details className={styles.faq}>
-            <summary>My project uses TypeScript / ES Modules?</summary>
-            <p>Fully supported. The CLI detects <code>&quot;type&quot;: &quot;module&quot;</code> in your package.json and uses <code>--import</code> flag (ESM) instead of <code>--require</code> (CJS) automatically.</p>
-          </details>
+          {[
+            ['APIs not showing after starting the server?',
+              'Make sure you ran the install AND init commands before starting. Confirm you see [api-nest] Monitoring active in the terminal.'],
+            ['Dashboard shows "Connecting"?',
+              'The WebSocket can\'t reach the API Nest backend. Make sure the backend is running on port 4000 and refresh the page.'],
+            ['"Cannot find module api-nest-cli/register.js"?',
+              'Run npm install api-nest-cli@latest inside your backend folder first, then run the init command again.'],
+            ['Running from a monorepo root?',
+              'Run both commands from inside your backend directory: cd backend, then npm install api-nest-cli, then the init command.'],
+            ['Using TypeScript or ES Modules?',
+              'Fully supported. The CLI detects "type": "module" in your package.json and uses --import (ESM) instead of --require (CJS) automatically.'],
+          ].map(([q, a]) => (
+            <details key={q} className={styles.faq}>
+              <summary>{q}</summary>
+              <p>{a}</p>
+            </details>
+          ))}
         </div>
       </div>
 

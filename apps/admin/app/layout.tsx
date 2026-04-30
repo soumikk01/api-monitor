@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Apio — Admin',
-  description: 'Admin panel for Apio platform',
+  title: 'API Nest — Admin',
+  description: 'Admin panel for API Nest platform',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

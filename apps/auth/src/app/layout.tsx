@@ -31,8 +31,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Apio — Sign In",
-  description: "Sign in to your Apio account",
+  title: "API Nest — Sign In",
+  description: "Sign in to your API Nest account",
 };
 
 export default function AuthLayout({

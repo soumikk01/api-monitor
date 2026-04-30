@@ -1,4 +1,4 @@
-# System Architecture — Apio
+# System Architecture — API Nest
 
 > Full-stack real-time API monitoring system.
 
@@ -10,7 +10,7 @@
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                          DEVELOPER'S APP                                │
 │                                                                         │
-│   import 'apio-cli/register';   ← monkey-patches Node http/https   │
+│   import 'api-nest-cli/register';   ← monkey-patches Node http/https   │
 │                                                                         │
 │   app.get('/users', ...)            ← makes outgoing HTTP calls         │
 │       └── axios.get('https://api.stripe.com/...')                       │
