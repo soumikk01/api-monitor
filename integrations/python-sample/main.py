@@ -6,7 +6,7 @@ analytics, pagination, error handling, and intentional latency.
 
 Run:
     pip install fastapi uvicorn
-    APINEST_SDK_TOKEN=xxx APINEST_BACKEND_URL=http://localhost:4000 python main.py
+    APIO_SDK_TOKEN=xxx APIO_BACKEND_URL=http://localhost:4000 python main.py
 
 The ApiMonitorMiddleware captures every request automatically.
 """

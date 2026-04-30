@@ -22,9 +22,13 @@ BACKEND_URL="${APIO_BACKEND_URL:-http://localhost:4000}"
 TOKEN="${APIO_TOKEN:-}"
 
 echo ""
-echo -e "${BOLD}${BLUE}╔══════════════════════════════════════╗${RESET}"
-echo -e "${BOLD}${BLUE}║      Apio — API Monitor Setup     ║${RESET}"
-echo -e "${BOLD}${BLUE}╚══════════════════════════════════════╝${RESET}"
+printf "${CYAN}    _    ____  ___ ___  \n${RESET}"
+printf "${CYAN}   /_\\  |  _ \\|_ _/ _ \\ \n${RESET}"
+printf "${CYAN}  / _ \\ | |_) || || | | |\n${RESET}"
+printf "${CYAN} / ___ \\|  __/ | || |_| |\n${RESET}"
+printf "${CYAN}/_/   \\_\\_|   |___\\___/ ${RESET}${BLUE}.one${RESET}\n"
+echo ""
+echo -e "${BLUE}  Apio V1.0.0${RESET}"
 echo ""
 
 # ── Validate token ───────────────────────────────────────────
@@ -284,7 +288,7 @@ JSEOF
   success "apio-monitor.js installed!"
   echo ""
   echo -e "${BOLD}Add 1 line to your app entry file (app.js / index.js / main.ts):${RESET}"
-  echo -e "  ${GREEN}const { apioMiddleware } = require('./apinest-monitor');${RESET}"
+  echo -e "  ${GREEN}const { apioMiddleware } = require('./apio-monitor');${RESET}"
   echo -e "  ${GREEN}app.use(apioMiddleware);${RESET}"
   echo ""
   echo -e "${BOLD}Then run your app normally.${RESET}"
@@ -340,7 +344,7 @@ def _flush():
 def _start():
     def loop():
         while True: time.sleep(0.5); _flush()
-    t = threading.Thread(target=loop, daemon=True, name="apinest-sender"); t.start()
+    t = threading.Thread(target=loop, daemon=True, name="apio-sender"); t.start()
     if SDK_TOKEN: print(f"[api-monitor] ✅ Sender active → {INGEST_URL}")
     else: print("[api-monitor] ⚠️  APIO_SDK_TOKEN not set — monitoring disabled")
 
@@ -394,11 +398,11 @@ PYEOF
   echo ""
   echo -e "${BOLD}Add to your app:${RESET}"
   echo -e "  ${GREEN}# FastAPI:${RESET}"
-  echo -e "  ${GREEN}from apinest_monitor import ApiMonitorMiddleware${RESET}"
+  echo -e "  ${GREEN}from apio_monitor import ApiMonitorMiddleware${RESET}"
   echo -e "  ${GREEN}app.add_middleware(ApiMonitorMiddleware)${RESET}"
   echo ""
   echo -e "  ${GREEN}# Flask:${RESET}"
-  echo -e "  ${GREEN}from apinest_monitor import WsgiApiMonitorMiddleware${RESET}"
+  echo -e "  ${GREEN}from apio_monitor import WsgiApiMonitorMiddleware${RESET}"
   echo -e "  ${GREEN}app.wsgi_app = WsgiApiMonitorMiddleware(app.wsgi_app)${RESET}"
 }
 

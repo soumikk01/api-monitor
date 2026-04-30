@@ -11,8 +11,8 @@ Usage (FastAPI):
     app.add_middleware(ApiMonitorMiddleware)
 
 Config (env vars — same as Node.js CLI):
-    APINEST_SDK_TOKEN    — your service SDK token (required)
-    APINEST_BACKEND_URL  — e.g. http://localhost:4000  (required)
+    APIO_SDK_TOKEN    — your service SDK token (required)
+    APIO_BACKEND_URL  — e.g. http://localhost:4000  (required)
 """
 
 import os
@@ -27,8 +27,8 @@ import urllib.error
 
 # ── Configuration ────────────────────────────────────────────────────────────
 
-SDK_TOKEN   = os.environ.get("APINEST_SDK_TOKEN", "")
-BACKEND_URL = os.environ.get("APINEST_BACKEND_URL", "http://localhost:4000").rstrip("/")
+SDK_TOKEN   = os.environ.get("APIO_SDK_TOKEN", "")
+BACKEND_URL = os.environ.get("APIO_BACKEND_URL", "http://localhost:4000").rstrip("/")
 INGEST_URL  = f"{BACKEND_URL}/api/v1/ingest"
 BATCH_MS    = 500   # send every 500 ms (matches Node.js agent)
 MAX_QUEUE   = 1000  # safety cap — drop oldest if queue fills
@@ -96,7 +96,7 @@ def _start_sender() -> None:
     if SDK_TOKEN:
         print(f"[api-monitor] ✅ Sender active → {INGEST_URL}")
     else:
-        print("[api-monitor] ⚠️  APINEST_SDK_TOKEN not set — monitoring disabled")
+        print("[api-monitor] ⚠️  APIO_SDK_TOKEN not set — monitoring disabled")
 
 
 _start_sender()

@@ -11,8 +11,8 @@
 //   http.ListenAndServe(":8080", monitor.Middleware(mux))
 //
 // Config (env vars — same as Node.js CLI):
-//   APINEST_SDK_TOKEN    — your service SDK token (required)
-//   APINEST_BACKEND_URL  — e.g. http://localhost:4000 (required)
+//   APIO_SDK_TOKEN    — your service SDK token (required)
+//   APIO_BACKEND_URL  — e.g. http://localhost:4000 (required)
 
 package monitor
 
@@ -30,8 +30,8 @@ import (
 // ── Config ───────────────────────────────────────────────────────────────────
 
 var (
-	sdkToken   = os.Getenv("APINEST_SDK_TOKEN")
-	backendURL = strings.TrimRight(getEnvOrDefault("APINEST_BACKEND_URL", "http://localhost:4000"), "/")
+	sdkToken   = os.Getenv("APIO_SDK_TOKEN")
+	backendURL = strings.TrimRight(getEnvOrDefault("APIO_BACKEND_URL", "http://localhost:4000"), "/")
 	ingestURL  = backendURL + "/api/v1/ingest"
 )
 
@@ -92,7 +92,7 @@ var senderOnce sync.Once
 func startSender() {
 	senderOnce.Do(func() {
 		if sdkToken == "" {
-			fmt.Println("[api-monitor] ⚠️  APINEST_SDK_TOKEN not set — monitoring disabled")
+			fmt.Println("[api-monitor] ⚠️  APIO_SDK_TOKEN not set — monitoring disabled")
 			return
 		}
 		fmt.Printf("[api-monitor] ✅ Sender active → %s\n", ingestURL)

@@ -1,5 +1,5 @@
 // main.go — Go sample backend with 40+ APIs
-// Run: APINEST_SDK_TOKEN=xxx go run main.go
+// Run: APIO_SDK_TOKEN=xxx go run main.go
 package main
 
 import (
@@ -144,7 +144,7 @@ func main() {
 
 	fmt.Printf("\n🐹 Go Backend running on http://localhost:%s\n", port)
 	fmt.Printf("📡 Monitoring → %s/api/v1/ingest\n\n",
-		getEnv("APINEST_BACKEND_URL", "http://localhost:4000"))
+		getEnv("APIO_BACKEND_URL", "http://localhost:4000"))
 
 	http.ListenAndServe(":"+port, monitor.Middleware(mux))
 }

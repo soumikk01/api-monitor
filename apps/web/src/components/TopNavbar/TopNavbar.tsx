@@ -435,7 +435,7 @@ export default function TopNavbar() {
               </div>
 
               <div className={styles.dropDivider}/>
-              <a href="mailto:feedback@apinest.dev" className={styles.dropItem} style={{ textDecoration: 'none' }}>
+              <a href="mailto:feedback@apio.one" className={styles.dropItem} style={{ textDecoration: 'none' }}>
                 <MessageSquare size={14} style={{ marginRight: '8px', opacity: 0.7 }} />
                 Feedback
               </a>

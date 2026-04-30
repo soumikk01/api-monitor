@@ -19,13 +19,14 @@ function Write-Warn    { param($m) Write-Host "[apio] WARN $m" -ForegroundColor 
 function Write-Fail    { param($m) Write-Host "[apio] ERR $m" -ForegroundColor Red; exit 1 }
 
 Write-Host ""
-Write-Host "    ___    ____  ____   _   __           __ " -ForegroundColor Cyan
-Write-Host "   /   |  / __ \/  _/  / | / /__  _____/ /_" -ForegroundColor Cyan
-Write-Host "  / /| | / /_/ // /   /  |/ / _ \/ ___/ __/" -ForegroundColor Cyan
-Write-Host " / ___ |/ ____// /   / /|  /  __(__  ) /_  " -ForegroundColor Cyan
-Write-Host "/_/  |_/_/   /___/  /_/ |_/\___/____/\__/  " -ForegroundColor Cyan
+Write-Host "    _    ____  ___ ___  " -ForegroundColor Cyan
+Write-Host "   /_\  |  _ \|_ _/ _ \ " -ForegroundColor Cyan
+Write-Host "  / _ \ | |_) || || | | |" -ForegroundColor Cyan
+Write-Host " / ___ \|  __/ | || |_| |" -ForegroundColor Cyan
+Write-Host "/_/   \_\_|   |___\___/ " -ForegroundColor Cyan -NoNewline
+Write-Host ".one" -ForegroundColor DarkCyan
 Write-Host ""
-Write-Host "  :: Apio Monitor ::                          (v1.0.0)" -ForegroundColor DarkCyan
+Write-Host "  Apio V1.0.0" -ForegroundColor DarkCyan
 Write-Host ""
 
 # ── Validate token ────────────────────────────────────────────
@@ -235,7 +236,7 @@ module.exports = { apioMiddleware };
   Write-Success "Node.js installation complete!"
   Write-Host ""
   Write-Host "Add to your app entry file:" -ForegroundColor White
-  Write-Host "  const { apioMiddleware } = require('./apinest-monitor');" -ForegroundColor Green
+  Write-Host "  const { apioMiddleware } = require('./apio-monitor');" -ForegroundColor Green
   Write-Host "  app.use(apioMiddleware);" -ForegroundColor Green
 }
 
@@ -279,7 +280,7 @@ def _flush():
 def _start():
     def loop():
         while True: time.sleep(0.5); _flush()
-    threading.Thread(target=loop, daemon=True, name="apinest-sender").start()
+    threading.Thread(target=loop, daemon=True, name="apio-sender").start()
     if SDK_TOKEN: print(f"[api-monitor] OK Sender active -> {INGEST_URL}")
     else: print("[api-monitor] WARN APIO_SDK_TOKEN not set")
 
@@ -335,10 +336,10 @@ class WsgiApiMonitorMiddleware:
   Write-Host ""
   Write-Host "Add to your app:" -ForegroundColor White
   Write-Host "  # FastAPI:" -ForegroundColor Green
-  Write-Host "  from apinest_monitor import ApiMonitorMiddleware" -ForegroundColor Green
+  Write-Host "  from apio_monitor import ApiMonitorMiddleware" -ForegroundColor Green
   Write-Host "  app.add_middleware(ApiMonitorMiddleware)" -ForegroundColor Green
   Write-Host "  # Flask:" -ForegroundColor Green
-  Write-Host "  from apinest_monitor import WsgiApiMonitorMiddleware" -ForegroundColor Green
+  Write-Host "  from apio_monitor import WsgiApiMonitorMiddleware" -ForegroundColor Green
   Write-Host "  app.wsgi_app = WsgiApiMonitorMiddleware(app.wsgi_app)" -ForegroundColor Green
 }
 

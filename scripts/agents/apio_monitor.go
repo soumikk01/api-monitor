@@ -1,4 +1,4 @@
-// apinest_monitor.go
+// apio_monitor.go
 // ===================
 // Drop-in HTTP middleware for Go — paste into your project.
 //
@@ -7,27 +7,27 @@
 // Zero external dependencies — uses only the standard library.
 //
 // Setup:
-//   1. Copy this file into your project (e.g. apinest_monitor.go)
+//   1. Copy this file into your project (e.g. apio_monitor.go)
 //   2. Change the package declaration below to match your package
-//   3. Set env var: APINEST_SDK_TOKEN=your_token
+//   3. Set env var: APIO_SDK_TOKEN=your_token
 //   4. Wrap your handler (see examples below)
 //   5. Run your app normally: go run .
 //
 // net/http:
-//   http.ListenAndServe(":8080", ApinestMiddleware(yourMux))
+//   http.ListenAndServe(":8080", ApioMiddleware(yourMux))
 //
 // chi:
 //   r := chi.NewRouter()
-//   r.Use(ApinestMiddlewareFunc)
+//   r.Use(ApioMiddlewareFunc)
 //   http.ListenAndServe(":8080", r)
 //
 // gin:
 //   r := gin.Default()
-//   r.Use(ApinestGinMiddleware())
+//   r.Use(ApioGinMiddleware())
 //
 // Config (env vars):
-//   APINEST_SDK_TOKEN    — your service SDK token  (required)
-//   APINEST_BACKEND_URL  — e.g. http://localhost:4000  (default)
+//   APIO_SDK_TOKEN    — your service SDK token  (required)
+//   APIO_BACKEND_URL  — e.g. http://localhost:4000  (default)
 
 package main // ← change this to match your package
 
@@ -45,12 +45,12 @@ import (
 // ── Config ───────────────────────────────────────────────────────────────────
 
 var (
-	apinestSDKToken   = os.Getenv("APINEST_SDK_TOKEN")
-	apinestBackendURL = strings.TrimRight(apinestEnvOr("APINEST_BACKEND_URL", "http://localhost:4000"), "/")
-	apinestIngestURL  = apinestBackendURL + "/api/v1/ingest"
+	apioSDKToken   = os.Getenv("APIO_SDK_TOKEN")
+	apioBackendURL = strings.TrimRight(apioEnvOr("APIO_BACKEND_URL", "http://localhost:4000"), "/")
+	apioIngestURL  = apioBackendURL + "/api/v1/ingest"
 )
 
-func apinestEnvOr(key, def string) string {
+func apioEnvOr(key, def string) string {
 	if v := os.Getenv(key); v != "" {
 		return v
 	}
@@ -59,7 +59,7 @@ func apinestEnvOr(key, def string) string {
 
 // ── Event ─────────────────────────────────────────────────────────────────────
 
-type apinestEvent struct {
+type apioEvent struct {
 	Method         string            `json:"method"`
 	URL            string            `json:"url"`
 	StatusCode     int               `json:"statusCode"`
@@ -72,73 +72,73 @@ type apinestEvent struct {
 
 // ── Event Queue ───────────────────────────────────────────────────────────────
 
-const apinestMaxQueue = 1000
+const apioMaxQueue = 1000
 
 var (
-	apinestQueue   = make([]apinestEvent, 0, 256)
-	apinestQueueMu sync.Mutex
+	apioQueue   = make([]apioEvent, 0, 256)
+	apioQueueMu sync.Mutex
 )
 
-func apinestEnqueue(ev apinestEvent) {
-	apinestQueueMu.Lock()
-	defer apinestQueueMu.Unlock()
-	if len(apinestQueue) >= apinestMaxQueue {
-		apinestQueue = apinestQueue[1:] // drop oldest
+func apioEnqueue(ev apioEvent) {
+	apioQueueMu.Lock()
+	defer apioQueueMu.Unlock()
+	if len(apioQueue) >= apioMaxQueue {
+		apioQueue = apioQueue[1:] // drop oldest
 	}
-	apinestQueue = append(apinestQueue, ev)
+	apioQueue = append(apioQueue, ev)
 }
 
-func apinestDrain() []apinestEvent {
-	apinestQueueMu.Lock()
-	defer apinestQueueMu.Unlock()
-	if len(apinestQueue) == 0 {
+func apioDrain() []apioEvent {
+	apioQueueMu.Lock()
+	defer apioQueueMu.Unlock()
+	if len(apioQueue) == 0 {
 		return nil
 	}
-	batch := make([]apinestEvent, len(apinestQueue))
-	copy(batch, apinestQueue)
-	apinestQueue = apinestQueue[:0]
+	batch := make([]apioEvent, len(apioQueue))
+	copy(batch, apioQueue)
+	apioQueue = apioQueue[:0]
 	return batch
 }
 
 // ── Background Sender ─────────────────────────────────────────────────────────
 
-var apinestSenderOnce sync.Once
+var apioSenderOnce sync.Once
 
-func apinestStartSender() {
-	apinestSenderOnce.Do(func() {
-		if apinestSDKToken == "" {
-			fmt.Println("[api-monitor] ⚠️  APINEST_SDK_TOKEN not set — monitoring disabled")
+func apioStartSender() {
+	apioSenderOnce.Do(func() {
+		if apioSDKToken == "" {
+			fmt.Println("[api-monitor] ⚠️  APIO_SDK_TOKEN not set — monitoring disabled")
 			return
 		}
-		fmt.Printf("[api-monitor] ✅ Sender active → %s\n", apinestIngestURL)
+		fmt.Printf("[api-monitor] ✅ Sender active → %s\n", apioIngestURL)
 		go func() {
 			ticker := time.NewTicker(500 * time.Millisecond)
 			defer ticker.Stop()
 			client := &http.Client{Timeout: 5 * time.Second}
 			for range ticker.C {
-				apinestDrainAndSend(client)
+				apioDrainAndSend(client)
 			}
 		}()
 	})
 }
 
-func apinestDrainAndSend(client *http.Client) {
-	batch := apinestDrain()
+func apioDrainAndSend(client *http.Client) {
+	batch := apioDrain()
 	if len(batch) == 0 {
 		return
 	}
 	payload, err := json.Marshal(map[string]interface{}{
-		"sdkToken": apinestSDKToken,
+		"sdkToken": apioSDKToken,
 		"events":   batch,
 	})
 	if err != nil {
 		return
 	}
-	resp, err := client.Post(apinestIngestURL, "application/json", bytes.NewReader(payload))
+	resp, err := client.Post(apioIngestURL, "application/json", bytes.NewReader(payload))
 	if err != nil {
 		fmt.Printf("[api-monitor] ⚠️  Failed to send batch: %v\n", err)
 		for _, ev := range batch {
-			apinestEnqueue(ev) // re-queue on failure
+			apioEnqueue(ev) // re-queue on failure
 		}
 		return
 	}
@@ -147,13 +147,13 @@ func apinestDrainAndSend(client *http.Client) {
 
 // ── Status-capturing ResponseWriter ───────────────────────────────────────────
 
-type apinestStatusWriter struct {
+type apioStatusWriter struct {
 	http.ResponseWriter
 	status int
 	wrote  bool
 }
 
-func (sw *apinestStatusWriter) WriteHeader(code int) {
+func (sw *apioStatusWriter) WriteHeader(code int) {
 	if !sw.wrote {
 		sw.status = code
 		sw.wrote = true
@@ -161,7 +161,7 @@ func (sw *apinestStatusWriter) WriteHeader(code int) {
 	sw.ResponseWriter.WriteHeader(code)
 }
 
-func (sw *apinestStatusWriter) Write(b []byte) (int, error) {
+func (sw *apioStatusWriter) Write(b []byte) (int, error) {
 	if !sw.wrote {
 		sw.status = http.StatusOK
 		sw.wrote = true
@@ -171,14 +171,14 @@ func (sw *apinestStatusWriter) Write(b []byte) (int, error) {
 
 // ── net/http Middleware ───────────────────────────────────────────────────────
 
-// ApinestMiddleware wraps any http.Handler (net/http, chi, gorilla/mux).
+// ApioMiddleware wraps any http.Handler (net/http, chi, gorilla/mux).
 //
-//	http.ListenAndServe(":8080", ApinestMiddleware(yourMux))
-func ApinestMiddleware(next http.Handler) http.Handler {
-	apinestStartSender()
+//	http.ListenAndServe(":8080", ApioMiddleware(yourMux))
+func ApioMiddleware(next http.Handler) http.Handler {
+	apioStartSender()
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		startedAt := time.Now()
-		sw := &apinestStatusWriter{ResponseWriter: w, status: http.StatusOK}
+		sw := &apioStatusWriter{ResponseWriter: w, status: http.StatusOK}
 
 		url := "http://" + r.Host + r.RequestURI
 
@@ -195,7 +195,7 @@ func ApinestMiddleware(next http.Handler) http.Handler {
 			statusText = "error"
 		}
 
-		apinestEnqueue(apinestEvent{
+		apioEnqueue(apioEvent{
 			Method:         r.Method,
 			URL:            url,
 			StatusCode:     sw.status,
@@ -208,9 +208,9 @@ func ApinestMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// ApinestMiddlewareFunc is a chi-compatible middleware function.
+// ApioMiddlewareFunc is a chi-compatible middleware function.
 //
-//	r.Use(ApinestMiddlewareFunc)
-func ApinestMiddlewareFunc(next http.Handler) http.Handler {
-	return ApinestMiddleware(next)
+//	r.Use(ApioMiddlewareFunc)
+func ApioMiddlewareFunc(next http.Handler) http.Handler {
+	return ApioMiddleware(next)
 }
