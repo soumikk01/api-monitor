@@ -51,7 +51,7 @@ function post<T>(url: string, body: object): Promise<T> {
 }
 
 export async function initCommand(options: InitOptions) {
-  console.log('\n🔍 API Nest — Initializing...\n');
+  console.log('\n🔍 Apio — Initializing...\n');
 
   const cwd = process.cwd();
 
@@ -72,7 +72,7 @@ export async function initCommand(options: InitOptions) {
     projectId = result.projectId;
     console.log(`✅ Project ready: "${result.projectName}" (id: ${projectId})`);
   } catch (err) {
-    console.error(`\n❌ Failed to connect to API Nest backend at ${options.backend}`);
+    console.error(`\n❌ Failed to connect to Apio backend at ${options.backend}`);
     console.error(`   Error: ${(err as Error).message}`);
     console.error(`   Make sure the backend is running and try again.\n`);
     process.exit(1);
@@ -90,7 +90,7 @@ export async function initCommand(options: InitOptions) {
   // Inject require hook into the project's entry file
   injectRegisterHook(cwd);
 
-  console.log('\n🎉 API Nest is active!');
+  console.log('\n🎉 Apio is active!');
   console.log(`   Every HTTP call from your dev server will stream to the dashboard.`);
   console.log(`   Dashboard: ${options.backend.replace(':4000', ':3000')}/dashboard\n`);
 }
@@ -173,15 +173,15 @@ function findEntryRecursive(dir: string, depth = 0, maxDepth = 3): string | null
 }
 
 // Node.js flags
-const NODE_FLAG_ESM = '--import api-nest-cli/dist/register.js';
-const NODE_FLAG_CJS = '--require api-nest-cli/dist/register';
+const NODE_FLAG_ESM = '--import apio-cli/dist/register.js';
+const NODE_FLAG_CJS = '--require apio-cli/dist/register';
 // Bun preload flag (bun uses --preload instead of --import/--require)
-const BUN_FLAG = '--preload api-nest-cli/dist/register.js';
-const ALREADY_MARKER = 'api-nest-cli';
+const BUN_FLAG = '--preload apio-cli/dist/register.js';
+const ALREADY_MARKER = 'apio-cli';
 
 /**
  * Patches the `node` command inside package.json scripts so that the
- * api-nest interceptor is loaded automatically on every server start —
+ * apio interceptor is loaded automatically on every server start —
  * WITHOUT touching any source files.
  *
  * Strategy:

@@ -114,7 +114,7 @@ The docs app is fully static and makes no API calls.
 
 ## `apps/cli` — No env vars
 
-The CLI uses a local `.api-nest.json` config file (created by `api-nest init`), not environment variables.
+The CLI uses a local `.apio.json` config file (created by `apio init`), not environment variables.
 
 ---
 

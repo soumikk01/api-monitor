@@ -325,7 +325,7 @@ export default function ServiceSettingsPage() {
               <h3>SDK Token</h3>
             </div>
             <div className={styles.panelBody}>
-              <p>Use this token to connect <strong>{serviceName}</strong> to the API Nest interceptor.</p>
+              <p>Use this token to connect <strong>{serviceName}</strong> to the Apio interceptor.</p>
               <p className={styles.helperText} style={{ marginTop: '0.25rem' }}>
                 Keep it secret — anyone with this token can send data to this service.
               </p>
@@ -373,8 +373,8 @@ export default function ServiceSettingsPage() {
                 <div className={styles.formGroup}>
                   <label style={{ fontSize: '0.85rem', fontWeight: 500 }}>Usage example</label>
                   <pre style={{ background: 'rgba(0,0,0,0.05)', borderRadius: 6, padding: '0.75rem', fontSize: '0.8rem', overflow: 'auto' }}>
-                    {'import { apiNest } from ' + "'@api-nest/sdk';" + '\n\n' +
-                     'apiNest.init({ token: ' + "'" + (showToken ? sdkToken : 'sdk_' + '•'.repeat(20)) + "'" + ' });'}
+                    {'import { apio } from ' + "'@apio/sdk';" + '\n\n' +
+                     'apio.init({ token: ' + "'" + (showToken ? sdkToken : 'sdk_' + '•'.repeat(20)) + "'" + ' });'}
                   </pre>
                 </div>
               )}

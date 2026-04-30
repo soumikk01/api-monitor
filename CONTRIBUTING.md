@@ -1,4 +1,4 @@
-# API Nest — Monorepo Developer Guide
+# Apio — Monorepo Developer Guide
 
 > **Stack**: Bun · Next.js 16 · NestJS 11 · MongoDB Atlas · Redis · BullMQ · Turborepo  
 > **Runtime**: All apps run with [Bun](https://bun.sh). Node ≥18 is required for the CLI.
@@ -24,7 +24,7 @@ api-monitor/
     ├── docs/       → http://localhost:3002   (Next.js — Documentation)
     ├── admin/      → http://localhost:3003   (Next.js — Admin Panel)
     ├── backend/    → http://localhost:4000   (NestJS — REST API + WebSocket)
-    └── cli/        → npm package `api-nest-cli` (published to npm)
+    └── cli/        → npm package `apio-cli` (published to npm)
 ```
 
 ---
@@ -160,4 +160,4 @@ fix/*       ← bug fix branches
 
 - Read the package-specific `.md` file linked above first.
 - Check `apps/backend/.env.example` for required environment variables.
-- Open an issue or ask in the team Slack `#api-nest-dev`.
+- Open an issue or ask in the team Slack `#apio-dev`.

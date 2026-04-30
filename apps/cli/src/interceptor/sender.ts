@@ -49,7 +49,7 @@ export function startSender(interval = 500) {
     });
 
     req.on('error', (err) => {
-      console.error('[api-nest] Failed to send batch:', err.message);
+      console.error('[apio] Failed to send batch:', err.message);
       // Put events back into queue so they aren't lost
       getQueue().unshift(...batch);
     });

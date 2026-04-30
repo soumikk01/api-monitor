@@ -4,8 +4,8 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 
 export const metadata: Metadata = {
-  title: "API Nest — Documentation",
-  description: "Complete documentation for the API Nest monitoring system",
+  title: "Apio — Documentation",
+  description: "Complete documentation for the Apio monitoring system",
 };
 
 export default function DocsLayout({ children }: { children: React.ReactNode }) {

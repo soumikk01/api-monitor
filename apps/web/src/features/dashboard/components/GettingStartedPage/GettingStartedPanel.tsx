@@ -28,7 +28,7 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
     bun:  { install: 'bun add',      exec: 'bunx',      run: 'bun run dev' },
   }[pm];
 
-  const cliCommand = `${pmCmds.exec} api-nest-cli@latest init --token ${sdkToken || 'sdk_your_token_here'}`;
+  const cliCommand = `${pmCmds.exec} apio-cli@latest init --token ${sdkToken || 'sdk_your_token_here'}`;
 
   useEffect(() => {
     let cancelled = false;
@@ -134,13 +134,13 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
                   <span className={styles.termDot} style={{background:'#febc2e'}}/>
                   <span className={styles.termDot} style={{background:'#28c840'}}/>
                   <span className={styles.termTitle}>Terminal</span>
-                  <button className={styles.termCopy} onClick={() => copy(`${pmCmds.install} api-nest-cli`, 'install')}>
+                  <button className={styles.termCopy} onClick={() => copy(`${pmCmds.install} apio-cli`, 'install')}>
                     {copied === 'install' ? '✓ Copied!' : 'Copy'}
                   </button>
                 </div>
                 <div className={styles.termBody}>
                   <span className={styles.prompt}>~/your-backend ❯ </span>
-                  <span className={styles.cmd}>{pmCmds.install} api-nest-cli</span>
+                  <span className={styles.cmd}>{pmCmds.install} apio-cli</span>
                 </div>
               </div>
             </div>
@@ -166,10 +166,10 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
               <div className={styles.whatTitle}>What the init command does automatically:</div>
               <div className={styles.whatList}>
                 {[
-                  '✅ Validates your SDK token with the API Nest backend',
+                  '✅ Validates your SDK token with the Apio backend',
                   '✅ Creates a project named after your folder',
                   '✅ Patches your package.json "dev"/"start" script with --import flag',
-                  '✅ Saves .api-nest.json config with your project ID',
+                  '✅ Saves .apio.json config with your project ID',
                   '✅ Zero source file changes — monitoring loads via Node.js flag',
                 ].map(item => <div key={item} className={styles.whatItem}>{item}</div>)}
               </div>
@@ -199,7 +199,7 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
               </div>
             </div>
             <div style={{marginTop:'1rem',padding:'0.85rem 1.2rem',background:'rgba(16,185,129,0.06)',border:'1px solid rgba(16,185,129,0.15)',borderRadius:12,fontSize:'0.85rem',color:'#059669'}}>
-              🟢 You will see <strong>[api-nest] Monitoring active</strong> in your terminal when it&apos;s working.
+              🟢 You will see <strong>[apio] Monitoring active</strong> in your terminal when it&apos;s working.
             </div>
           </div>
         </div>
@@ -232,7 +232,7 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
           When your server runs inside a Docker container,{' '}
           <code style={{background:'rgba(0,0,0,0.06)',padding:'2px 6px',borderRadius:4,fontFamily:'monospace',fontSize:'0.85em'}}>localhost:4000</code>{' '}
           points to the container itself — not your host machine.
-          Use environment variables to tell the agent where to reach the API Nest backend.{' '}
+          Use environment variables to tell the agent where to reach the Apio backend.{' '}
           <strong>No file changes needed.</strong>
         </p>
 
@@ -247,8 +247,8 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
               <span className={styles.termTitle}>Terminal</span>
             </div>
             <pre className={styles.termBody}><span className={styles.cmd}>{`docker run \\
-  -e APINEST_BACKEND_URL=http://host.docker.internal:4000 \\
-  -e APINEST_SDK_TOKEN=${sdkToken || 'sdk_your_token'} \\
+  -e APIO_BACKEND_URL=http://host.docker.internal:4000 \\
+  -e APIO_SDK_TOKEN=${sdkToken || 'sdk_your_token'} \\
   -e APINEST_PROJECT_ID=your_project_id \\
   your-image`}</span></pre>
           </div>
@@ -268,8 +268,8 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
   backend:
     build: .
     environment:`}</span>{'\n'}
-<span className={styles.cmd}>{`      APINEST_BACKEND_URL: http://host.docker.internal:4000
-      APINEST_SDK_TOKEN: ${sdkToken || 'sdk_your_token'}
+<span className={styles.cmd}>{`      APIO_BACKEND_URL: http://host.docker.internal:4000
+      APIO_SDK_TOKEN: ${sdkToken || 'sdk_your_token'}
       APINEST_PROJECT_ID: your_project_id`}</span></pre>
           </div>
         </div>
@@ -288,19 +288,19 @@ export default function GettingStartedPanel({ projectId, serviceId, serviceName 
         <div className={styles.troubleList}>
           <details className={styles.faq}>
             <summary>APIs not showing after starting the server?</summary>
-            <p>Make sure you ran <code>npm install api-nest-cli@latest</code> AND <code>npx api-nest-cli@latest init --token ...</code> before starting. Also confirm you see <strong>[api-nest] Monitoring active</strong> in the terminal output.</p>
+            <p>Make sure you ran <code>npm install apio-cli@latest</code> AND <code>npx apio-cli@latest init --token ...</code> before starting. Also confirm you see <strong>[apio] Monitoring active</strong> in the terminal output.</p>
           </details>
           <details className={styles.faq}>
             <summary>Live Socket shows &quot;Connecting&quot;?</summary>
-            <p>The WebSocket can&apos;t reach the API Nest backend. Make sure the backend is running on port 4000 and refresh the page.</p>
+            <p>The WebSocket can&apos;t reach the Apio backend. Make sure the backend is running on port 4000 and refresh the page.</p>
           </details>
           <details className={styles.faq}>
-            <summary>Server crashes with &quot;Cannot find module api-nest-cli/register.js&quot;?</summary>
-            <p>Run <code>npm install api-nest-cli@latest</code> inside your <strong>backend folder</strong> first, then run the init command again.</p>
+            <summary>Server crashes with &quot;Cannot find module apio-cli/register.js&quot;?</summary>
+            <p>Run <code>npm install apio-cli@latest</code> inside your <strong>backend folder</strong> first, then run the init command again.</p>
           </details>
           <details className={styles.faq}>
             <summary>Running from a monorepo root?</summary>
-            <p>Run both commands from inside your backend directory: <code>cd backend</code>, then <code>npm install api-nest-cli@latest</code>, then the init command.</p>
+            <p>Run both commands from inside your backend directory: <code>cd backend</code>, then <code>npm install apio-cli@latest</code>, then the init command.</p>
           </details>
           <details className={styles.faq}>
             <summary>My project uses TypeScript / ES Modules?</summary>

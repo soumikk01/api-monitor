@@ -149,7 +149,7 @@ bun run build
 npm publish
 
 # Verify
-npm info api-nest-cli
+npm info apio-cli
 ```
 
 ---

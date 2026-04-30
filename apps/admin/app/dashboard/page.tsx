@@ -111,7 +111,7 @@ export default function OverviewPage() {
       <div className="page-header">
         <div>
           <div className="page-title">Platform Overview</div>
-          <div className="page-subtitle">Real-time summary of all API Nest activity</div>
+          <div className="page-subtitle">Real-time summary of all Apio activity</div>
         </div>
         <div className="live-indicator">
           <div className="live-dot" />
@@ -139,7 +139,7 @@ export default function OverviewPage() {
               <div className="empty-icon">📭</div>
               <div className="empty-title">No API calls yet</div>
               <div className="empty-desc">
-                Run <code style={{ fontFamily: 'var(--font-mono)', background: 'var(--surface-2)', padding: '2px 6px', borderRadius: '4px' }}>npx api-nest-cli init --token …</code> in your dev project to start monitoring
+                Run <code style={{ fontFamily: 'var(--font-mono)', background: 'var(--surface-2)', padding: '2px 6px', borderRadius: '4px' }}>npx apio-cli init --token …</code> in your dev project to start monitoring
               </div>
             </div>
           ) : (

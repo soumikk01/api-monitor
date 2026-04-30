@@ -1,27 +1,27 @@
-# api-nest-cli
+# apio-cli
 
-> Official CLI for [API Nest](https://github.com/soumikk01/api-monitor) — intercept and stream HTTP calls from your dev app to your live monitoring dashboard.
+> Official CLI for [Apio](https://github.com/soumikk01/api-monitor) — intercept and stream HTTP calls from your dev app to your live monitoring dashboard.
 
 ## Install
 
 ```bash
-npx api-nest-cli@latest init --token <your-sdk-token>
+npx apio-cli@latest init --token <your-sdk-token>
 ```
 
 Or install globally:
 
 ```bash
-npm install -g api-nest-cli
+npm install -g apio-cli
 ```
 
 ## Usage
 
-### `api-nest init`
+### `apio init`
 
-Initialize API Nest monitoring in your project. Run this inside your project's root directory:
+Initialize Apio monitoring in your project. Run this inside your project's root directory:
 
 ```bash
-api-nest init --token sdk_xxxxxxxxxxxxxxxxxxxx
+apio init --token sdk_xxxxxxxxxxxxxxxxxxxx
 ```
 
 #### Options
@@ -34,17 +34,17 @@ api-nest init --token sdk_xxxxxxxxxxxxxxxxxxxx
 
 ### What it does
 
-Running `api-nest init` will:
-1. Save your config to `.api-nest.json` in the current directory
-2. Inject a `require('api-nest-cli/register')` line at the top of your app's entry point
+Running `apio init` will:
+1. Save your config to `.apio.json` in the current directory
+2. Inject a `require('apio-cli/register')` line at the top of your app's entry point
 3. Activate HTTP interceptors (both `axios` and native `fetch`) automatically
 
-From then on, every HTTP call your dev app makes is captured and streamed in real-time to your API Nest dashboard.
+From then on, every HTTP call your dev app makes is captured and streamed in real-time to your Apio dashboard.
 
 ## How it works
 
 ```
-Your Dev App  ──(axios/fetch)──►  api-nest-cli interceptor  ──(WebSocket)──►  API Nest Dashboard
+Your Dev App  ──(axios/fetch)──►  apio-cli interceptor  ──(WebSocket)──►  Apio Dashboard
 ```
 
 The interceptor patches both `axios` and the global `fetch` function to capture:
@@ -57,11 +57,11 @@ All captured calls appear instantly in the **Live Feed** and **History** tabs of
 ## Requirements
 
 - Node.js >= 18
-- An API Nest account with a backend running (self-hosted or cloud)
+- An Apio account with a backend running (self-hosted or cloud)
 
 ## Get your SDK token
 
-1. Log in at your API Nest dashboard
+1. Log in at your Apio dashboard
 2. Click **Get Command** on the home screen
 3. Copy the `--token` value from the displayed command
 

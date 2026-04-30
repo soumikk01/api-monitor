@@ -39,7 +39,7 @@ export default function SettingsPage() {
     { label: 'Main App Port',    value: '3000' },
     { label: 'Backend Port',     value: '4000' },
     { label: 'Prisma',           value: 'MongoDB v6' },
-    { label: 'CLI Package',      value: 'api-nest-cli@1.0.0' },
+    { label: 'CLI Package',      value: 'apio-cli@1.0.0' },
   ];
 
   return (
